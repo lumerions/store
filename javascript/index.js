@@ -1,7 +1,4 @@
-// --- STATE MANAGEMENT ---
 let cart = JSON.parse(localStorage.getItem('store_cart')) || [];
-
-// --- CART FUNCTIONS ---
 
 function toggleCart() {
     const panel = document.getElementById('cart-panel');
@@ -15,18 +12,13 @@ function toggleCart() {
 
 function addToCart(name, price) {
     const item = {
-        id: Date.now(), // Unique ID for removal
+        id: Date.now(), 
         name: name,
         price: price
     };
     
     cart.push(item);
     saveAndRefresh();
-    
-    // Automatically open the side panel to show the user it worked
-    if(!document.getElementById('cart-panel').classList.contains('open')) {
-        toggleCart();
-    }
 }
 
 function removeItem(id) {
@@ -56,7 +48,6 @@ function renderCart() {
         container.innerHTML = '<p style="text-align:center; color:#999; margin-top:50px;">Your cart is empty.</p>';
     } else {
         cart.forEach(item => {
-            // Convert "$120.00" string to 120.00 number
             const numPrice = parseFloat(item.price.replace('$', ''));
             total += numPrice;
 
@@ -75,7 +66,6 @@ function renderCart() {
     totalEl.innerText = `$${total.toFixed(2)}`;
 }
 
-// --- CHECKOUT FUNCTIONS ---
 
 function openCheckout() {
     if (cart.length === 0) {
@@ -83,14 +73,10 @@ function openCheckout() {
         return;
     }
 
-    // Close side panel
     document.getElementById('cart-panel').classList.remove('open');
     document.getElementById('cart-overlay').style.display = 'none';
-
-    // Show Modal
     const total = cart.reduce((sum, item) => sum + parseFloat(item.price.replace('$', '')), 0);
     document.getElementById('modal-total-display').innerText = `$${total.toFixed(2)}`;
-    
     document.getElementById('checkout-modal').style.display = 'block';
     document.getElementById('modal-overlay').style.display = 'block';
 }
@@ -103,13 +89,10 @@ function closeCheckout() {
 function processPayment(method) {
     alert(`Redirecting to ${method} secure gateway...`);
     
-    // Clear cart after "purchase"
     cart = [];
     saveAndRefresh();
     closeCheckout();
-    
     alert("Success! Your order has been placed.");
 }
 
-// Initialize badge on load
 updateCountBadge();
