@@ -37,7 +37,4 @@ def get_item(item_id: int):
 
 @app.get("/", response_class=HTMLResponse)
 async def root(request : Request):
-    return templates.TemplateResponse(
-        name="index.html", 
-        context={"request": request}
-    )
+    return templates.TemplateResponse("index.html", {"request": request})
