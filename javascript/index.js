@@ -1,50 +1,115 @@
+// --- STATE MANAGEMENT ---
 let cart = JSON.parse(localStorage.getItem('store_cart')) || [];
+
+// --- CART FUNCTIONS ---
 
 function toggleCart() {
     const panel = document.getElementById('cart-panel');
     const overlay = document.getElementById('cart-overlay');
+    
     panel.classList.toggle('open');
     overlay.style.display = panel.classList.contains('open') ? 'block' : 'none';
+    
     renderCart();
 }
 
 function addToCart(name, price) {
-    cart.push({ id: Date.now(), name, price });
-    localStorage.setItem('store_cart', JSON.stringify(cart));
-    updateCount();
+    const item = {
+        id: Date.now(), // Unique ID for removal
+        name: name,
+        price: price
+    };
+    
+    cart.push(item);
+    saveAndRefresh();
+    
+    // Automatically open the side panel to show the user it worked
+    if(!document.getElementById('cart-panel').classList.contains('open')) {
+        toggleCart();
+    }
 }
 
 function removeItem(id) {
     cart = cart.filter(item => item.id !== id);
-    localStorage.setItem('store_cart', JSON.stringify(cart));
-    renderCart();
-    updateCount();
+    saveAndRefresh();
 }
 
-function updateCount() {
-    document.getElementById('cart-count').innerText = cart.length;
+function saveAndRefresh() {
+    localStorage.setItem('store_cart', JSON.stringify(cart));
+    updateCountBadge();
+    renderCart();
+}
+
+function updateCountBadge() {
+    const badge = document.getElementById('cart-count');
+    if(badge) badge.innerText = cart.length;
 }
 
 function renderCart() {
     const container = document.getElementById('cart-items');
     const totalEl = document.getElementById('cart-total');
-    container.innerHTML = '';
     
+    container.innerHTML = '';
     let total = 0;
-    cart.forEach(item => {
-        total += parseFloat(item.price.replace('$', ''));
-        container.innerHTML += `
-            <div class="cart-item">
-                <div class="cart-item-info">
-                    <h4>${item.name}</h4>
-                    <p>${item.price}</p>
-                    <button class="remove-btn" onclick="removeItem(${item.id})">Remove</button>
+
+    if (cart.length === 0) {
+        container.innerHTML = '<p style="text-align:center; color:#999; margin-top:50px;">Your cart is empty.</p>';
+    } else {
+        cart.forEach(item => {
+            // Convert "$120.00" string to 120.00 number
+            const numPrice = parseFloat(item.price.replace('$', ''));
+            total += numPrice;
+
+            container.innerHTML += `
+                <div class="cart-item">
+                    <div>
+                        <h4 style="font-size:0.95rem;">${item.name}</h4>
+                        <p style="font-size:0.85rem; color:#666;">${item.price}</p>
+                        <button class="remove-btn" onclick="removeItem(${item.id})">Remove</button>
+                    </div>
                 </div>
-            </div>
-        `;
-    });
+            `;
+        });
+    }
+    
     totalEl.innerText = `$${total.toFixed(2)}`;
-    if (cart.length === 0) container.innerHTML = '<p style="color:#999; text-align:center;">Your cart is empty.</p>';
 }
 
-updateCount();
+// --- CHECKOUT FUNCTIONS ---
+
+function openCheckout() {
+    if (cart.length === 0) {
+        alert("Add some items first!");
+        return;
+    }
+
+    // Close side panel
+    document.getElementById('cart-panel').classList.remove('open');
+    document.getElementById('cart-overlay').style.display = 'none';
+
+    // Show Modal
+    const total = cart.reduce((sum, item) => sum + parseFloat(item.price.replace('$', '')), 0);
+    document.getElementById('modal-total-display').innerText = `$${total.toFixed(2)}`;
+    
+    document.getElementById('checkout-modal').style.display = 'block';
+    document.getElementById('modal-overlay').style.display = 'block';
+}
+
+function closeCheckout() {
+    document.getElementById('checkout-modal').style.display = 'none';
+    document.getElementById('modal-overlay').style.display = 'none';
+}
+
+function processPayment(method) {
+    alert(`Redirecting to ${method} secure gateway...`);
+    
+    // Clear cart after "purchase"
+    cart = [];
+    saveAndRefresh();
+    closeCheckout();
+    
+    alert("Success! Your order has been placed.");
+}
+
+// Initialize badge on load
+updateCountBadge();
