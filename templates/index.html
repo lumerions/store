@@ -17,7 +17,6 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, sans-serif; }
         body { background: var(--bg); color: var(--primary); overflow-x: hidden; }
 
-        /* --- Navigation --- */
         nav {
             display: flex; justify-content: space-between; align-items: center;
             padding: 1.5rem 5%; border-bottom: 1px solid #eee;
@@ -28,7 +27,6 @@
         .cart-link { cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px; }
         #cart-count { background: var(--accent); color: white; padding: 2px 8px; border-radius: 20px; font-size: 0.75rem; }
 
-        /* --- Store UI --- */
         .hero { padding: 80px 5%; text-align: center; background: var(--grey); margin-bottom: 40px; }
         .container { max-width: 1200px; margin: 0 auto; padding: 0 5%; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 30px; padding-bottom: 100px; }
@@ -36,7 +34,6 @@
         .image-placeholder { width: 100%; aspect-ratio: 1; background: #f0f0f0; margin-bottom: 15px; border-radius: 8px; }
         .add-btn { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
 
-        /* --- SIDE CART PANEL --- */
         #cart-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.5); display: none; z-index: 1000;
@@ -89,7 +86,7 @@
 
     <header class="hero">
         <h1>{{ store_name }}</h1>
-        <p>Dynamic items served from FastAPI.</p>
+        <p>Browse store items here.</p>
     </header>
 
     <div class="container">
