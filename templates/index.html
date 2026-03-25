@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ store_name }}</title>
+    <title>{{ store_name }} | Shop</title>
     <style>
         :root {
             --primary: #111111;
@@ -11,76 +11,249 @@
             --bg: #ffffff;
             --grey: #f4f4f4;
             --text-muted: #666666;
+            --white: #ffffff;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, sans-serif; }
-        body { background: var(--bg); color: var(--primary); }
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+        }
 
+        body { 
+            background: var(--bg); 
+            color: var(--primary); 
+            line-height: 1.5;
+        }
+
+        /* --- Navigation --- */
         nav {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 1.5rem 5%; border-bottom: 1px solid #eee;
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            padding: 1.5rem 5%; 
+            border-bottom: 1px solid #eee;
+            position: sticky;
+            top: 0;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
         }
-        .logo { font-weight: 800; font-size: 1.2rem; letter-spacing: -0.5px; text-transform: uppercase; }
 
+        .logo { 
+            font-weight: 800; 
+            font-size: 1.2rem; 
+            letter-spacing: -0.5px; 
+            text-transform: uppercase; 
+            text-decoration: none;
+            color: var(--primary);
+        }
+
+        .cart-link {
+            text-decoration: none;
+            color: var(--primary);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        #cart-count {
+            background: var(--accent);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+        }
+
+        /* --- Hero --- */
         .hero {
-            padding: 80px 5%; text-align: center; background: var(--grey);
-            margin-bottom: 40px;
+            padding: 100px 5%; 
+            text-align: center; 
+            background: var(--grey);
+            margin-bottom: 60px;
         }
-        .hero h1 { font-size: 3.5rem; margin-bottom: 10px; }
-        .hero p { color: var(--text-muted); margin-bottom: 20px; }
 
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 5%; }
+        .hero h1 { 
+            font-size: 4rem; 
+            margin-bottom: 15px; 
+            letter-spacing: -2px;
+        }
+
+        .hero p { 
+            color: var(--text-muted); 
+            font-size: 1.2rem;
+            margin-bottom: 30px; 
+        }
+
+        /* --- Grid & Cards --- */
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            padding: 0 5%; 
+        }
+
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 30px; padding-bottom: 100px;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 40px; 
+            padding-bottom: 100px;
         }
 
-        .card { border: 1px solid #eee; padding: 15px; border-radius: 8px; transition: 0.2s; }
-        .card:hover { border-color: var(--accent); transform: translateY(-5px); }
+        .card { 
+            border: 1px solid #eee; 
+            padding: 20px; 
+            border-radius: 12px; 
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover { 
+            border-color: var(--accent); 
+            transform: translateY(-8px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
         .image-placeholder { 
-            width: 100%; aspect-ratio: 1; background: #eee; 
-            margin-bottom: 15px; border-radius: 4px;
-            display: flex; align-items: center; justify-content: center; color: #999;
+            width: 100%; 
+            aspect-ratio: 1; 
+            background: #f0f0f0; 
+            margin-bottom: 20px; 
+            border-radius: 8px;
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            color: #ccc;
+            font-weight: 600;
+            text-transform: uppercase;
         }
-        .card h3 { font-size: 1.1rem; margin-bottom: 5px; }
-        .card .desc { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 10px; }
-        .card .price { font-weight: 700; color: var(--accent); }
 
-        .btn {
-            background: var(--primary); color: white; padding: 10px 20px;
-            text-decoration: none; border-radius: 5px; font-weight: 500;
+        .card h3 { 
+            font-size: 1.2rem; 
+            margin-bottom: 8px; 
         }
-        @media (max-width: 600px) { .hero h1 { font-size: 2rem; } }
+
+        .card .desc { 
+            color: var(--text-muted); 
+            font-size: 0.95rem; 
+            margin-bottom: 15px; 
+            flex-grow: 1;
+        }
+
+        .card .price { 
+            font-weight: 700; 
+            font-size: 1.1rem;
+            color: var(--primary); 
+            margin-bottom: 15px;
+        }
+
+        .add-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        .add-btn:hover {
+            background: var(--accent);
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            nav { padding: 1rem 5%; }
+        }
     </style>
 </head>
 <body>
 
     <nav>
-        <div class="logo">{{ store_name }}</div>
-        <div>
-            <a href="/docs" style="text-decoration: none; color: inherit; font-size: 0.9rem;">Admin API</a>
-        </div>
+        <a href="/" class="logo">{{ store_name }}</a>
+        <a href="#" class="cart-link" onclick="toggleCartView()">
+            Cart <span id="cart-count">0</span>
+        </a>
     </nav>
 
     <header class="hero">
-        <h1>Welcome to {{ store_name }}</h1>
-        <p>Quality goods, delivered to your door.</p>
-        <a href="#shop" class="btn">Browse All</a>
+        <h1>{{ store_name }}</h1>
+        <p>Curated essentials for your lifestyle.</p>
     </header>
 
-    <div class="container" id="shop">
+    <div class="container">
         <div class="grid">
             {% for item in products %}
             <div class="card">
-                <div class="image-placeholder">Image</div>
+                <div class="image-placeholder">Product Image</div>
                 <h3>{{ item.name }}</h3>
                 <p class="desc">{{ item.desc }}</p>
                 <p class="price">{{ item.price }}</p>
+                <button 
+                    class="add-btn" 
+                    onclick="addToCart('{{ item.name }}', '{{ item.price }}')">
+                    Add to Cart
+                </button>
             </div>
             {% endfor %}
         </div>
     </div>
+
+    <div id="toast" style="position: fixed; bottom: 20px; right: 20px; background: #333; color: white; padding: 12px 24px; border-radius: 8px; display: none; z-index: 2000;">
+        Item added to cart!
+    </div>
+
+    <script>
+        // --- Cart Logic ---
+        
+        // Load cart from LocalStorage on page load
+        let cart = JSON.parse(localStorage.getItem('my_store_cart')) || [];
+        updateCartUI();
+
+        function addToCart(name, price) {
+            // Add item to our array
+            const item = { name, price, id: Date.now() };
+            cart.push(item);
+            
+            // Save to browser memory
+            localStorage.setItem('my_store_cart', JSON.stringify(cart));
+            
+            // Update the count in the corner
+            updateCartUI();
+            
+            // Show a quick notification
+            showToast(name + " added!");
+        }
+
+        function updateCartUI() {
+            const countElement = document.getElementById('cart-count');
+            if (countElement) {
+                countElement.innerText = cart.length;
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.innerText = message;
+            toast.style.display = 'block';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 2000);
+        }
+
+        function toggleCartView() {
+            if (cart.length === 0) {
+                alert("Your cart is empty!");
+            } else {
+                const names = cart.map(i => i.name).join("\n");
+                alert("Your Cart:\n" + names);
+            }
+        }
+    </script>
 
 </body>
 </html>
