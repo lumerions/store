@@ -36,8 +36,8 @@ def get_item(item_id: int):
 
 
 @app.get("/", response_class=HTMLResponse)
-async def root(request : Request):
-products = [
+async def root(request: Request):
+    products = [
         {"name": "Premium Product", "price": "$120.00", "desc": "Limited Edition"},
         {"name": "Everyday Essential", "price": "$45.00", "desc": "Best Seller"},
         {"name": "The Collector's Item", "price": "$250.00", "desc": "New Arrival"},
