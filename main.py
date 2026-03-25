@@ -54,7 +54,7 @@ async def root(request: Request):
 
 @app.get("/login",response_class=HTMLResponse)
 async def login(request: Request):
-    return templates.TemplateResponse("index.html", {
+    return templates.TemplateResponse("login.html", {
         "request": request, 
         "store_name": "MODERN",  
     })
