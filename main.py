@@ -11,6 +11,7 @@ app = FastAPI(
 
 templates = Jinja2Templates(directory="templates")
 app.mount("/javascript", StaticFiles(directory="javascript"), name="javascript")
+app.mount("/images", StaticFiles(directory="images"), name="javascript")
 
 @app.get("/api/data")
 def get_sample_data():
