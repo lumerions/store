@@ -17,7 +17,6 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         body { background: var(--bg); color: var(--primary); overflow-x: hidden; }
 
-        /* --- Navigation --- */
         nav {
             display: flex; justify-content: space-between; align-items: center;
             padding: 1.2rem 5%; border-bottom: 1px solid #eee;
@@ -27,17 +26,29 @@
         .logo { font-weight: 800; font-size: 1.2rem; text-decoration: none; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; }
         
         .nav-right { display: flex; align-items: center; gap: 25px; }
-        .cart-link { cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px; font-size: 0.9rem; }
-        #cart-count { background: var(--accent); color: white; padding: 2px 8px; border-radius: 20px; font-size: 0.75rem; }
         
-        .login-btn { 
-            text-decoration: none; color: var(--primary); font-weight: 600; font-size: 0.9rem;
-            padding: 8px 18px; border: 1.5px solid var(--primary); border-radius: 6px;
+        .cart-link, .login-btn { 
+            cursor: pointer; 
+            font-weight: 600; 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            font-size: 0.9rem; 
+            text-decoration: none; 
+            color: var(--primary);
             transition: 0.2s ease;
+            background: none;
+            border: none;
+            padding: 0;
         }
-        .login-btn:hover { background: var(--primary); color: white; }
 
-        /* --- Store UI --- */
+        .cart-link:hover, .login-btn:hover { 
+            color: var(--accent);
+            background: transparent; 
+        }
+
+        #cart-count { background: var(--accent); color: white; padding: 2px 8px; border-radius: 20px; font-size: 0.75rem; }
+
         .hero { padding: 80px 5%; text-align: center; background: var(--grey); margin-bottom: 40px; }
         .hero h1 { font-size: 2.5rem; margin-bottom: 10px; }
         .container { max-width: 1200px; margin: 0 auto; padding: 0 5%; }
@@ -50,7 +61,6 @@
         .price { font-weight: 700; color: var(--accent); margin-bottom: 8px; }
         .add-btn { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; margin-top: auto; }
 
-        /* --- Side Cart Panel --- */
         #cart-overlay, #modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.4); display: none; z-index: 1000;
@@ -67,7 +77,6 @@
         .cart-footer { padding: 20px; border-top: 1px solid #eee; }
         .checkout-btn { width: 100%; padding: 15px; background: var(--accent); color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; }
 
-        /* --- Checkout Modal --- */
         #checkout-modal {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
             width: 90%; max-width: 450px; background: white; z-index: 2001;
@@ -133,9 +142,9 @@
             <div class="cart-link" onclick="toggleCart()">
                 Cart <span id="cart-count">0</span>
             </div>
-            <a href="/login" class="login-btn" style="text-decoration: none; color: inherit;">
-                    Login <span id="login"></span>
-                </a>
+            <a href="/login" class="login-btn">
+                Login <span id="login"></span>
+            </a>
         </div>
     </nav>
 
