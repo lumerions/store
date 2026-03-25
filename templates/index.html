@@ -18,7 +18,6 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, sans-serif; }
         body { background: var(--bg); color: var(--primary); overflow-x: hidden; }
 
-        /* --- Navigation --- */
         nav {
             display: flex; justify-content: space-between; align-items: center;
             padding: 1.5rem 5%; border-bottom: 1px solid #eee;
@@ -29,7 +28,6 @@
         .cart-link { cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px; }
         #cart-count { background: var(--accent); color: white; padding: 2px 8px; border-radius: 20px; font-size: 0.75rem; }
 
-        /* --- Store UI --- */
         .hero { padding: 80px 5%; text-align: center; background: var(--grey); margin-bottom: 40px; }
         .container { max-width: 1200px; margin: 0 auto; padding: 0 5%; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 30px; padding-bottom: 100px; }
@@ -38,7 +36,6 @@
         .image-placeholder { width: 100%; aspect-ratio: 1; background: #eee; margin-bottom: 15px; border-radius: 8px; }
         .add-btn { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
 
-        /* --- SIDE CART PANEL --- */
         #cart-overlay, #modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.5); display: none; z-index: 1000;
@@ -56,7 +53,6 @@
         .cart-footer { padding: 20px; border-top: 1px solid #eee; }
         .checkout-btn { width: 100%; padding: 15px; background: var(--accent); color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; }
 
-        /* --- CHECKOUT MODAL --- */
         #checkout-modal {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
             width: 90%; max-width: 450px; background: white; z-index: 2001;
@@ -106,13 +102,19 @@
             Pay with Card
         </div>
 
-        <div class="payment-method" onclick="processPayment('Bitcoin')">
-            <svg viewBox="0 0 24 24" fill="none">
-                <circle cx="12" cy="12" r="12" fill="#f7931a"/>
-                <path d="M15 8.5c.5 0 1 .4 1 1s-.4 1-1 1h-4v-2h4zm0 4.5c.5 0 1 .4 1 1s-.4 1-1 1h-5v-2h5z" fill="white"/>
-                <path d="M8 6v12m2-12v12m7-8.5a2.5 2.5 0 0 0-2.5-2.5H9v5h5.5A2.5 2.5 0 0 0 17 10.5zm0 4.5a2.5 2.5 0 0 0-2.5-2.5H9v5h5.5a2.5 2.5 0 0 0 2.5-2.5z" stroke="white" stroke-width="1.5"/>
+        <div class="payment-method" onclick="processPayment('Solana')">
+            <svg viewBox="0 0 397 311">
+                <rect width="397" height="311" rx="40" fill="black" />
+                <path d="M64.6 237.9c2.4-2.4 5.7-3.8 9.2-3.8h317.4c5.8 0 8.7 7 4.6 11.1l-62.7 62.7c-2.4 2.4-5.7 3.8-9.2 3.8H6.5c-5.8 0-8.7-7-4.6-11.1l62.7-62.7z" fill="url(#sol-g)"/>
+                <path d="M64.6 102.9c2.4-2.4 5.7-3.8 9.2-3.8h317.4c5.8 0 8.7 7 4.6 11.1l-62.7 62.7c-2.4 2.4-5.7 3.8-9.2 3.8H6.5c-5.8 0-8.7-7-4.6-11.1l62.7-62.7z" fill="url(#sol-g)"/>
+                <path d="M325.9 3.8c-2.4-2.4-5.7-3.8-9.2-3.8H7.3c-5.8 0-8.7 7-4.6 11.1l62.7 62.7c2.4 2.4 5.7 3.8 9.2 3.8h317.4c5.8 0 8.7-7 4.6-11.1l-62.7-62.7z" fill="url(#sol-g)"/>
+                <defs>
+                    <linearGradient id="sol-g" x1="391" y1="15" x2="6" y2="295" gradientUnits="userSpaceOnUse">
+                        <stop offset="0" stop-color="#9945FF"/><stop offset="1" stop-color="#14F195"/>
+                    </linearGradient>
+                </defs>
             </svg>
-            Pay with Bitcoin
+            Pay with Solana
         </div>
     </div>
 
