@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aura Home | Minimalist Living</title>
+    <style>
+        :root {
+            --bg: #f9f7f2;
+            --text: #1a1a1a;
+            --accent: #4a5d4e; 
+            --muted: #8c8c8c;
+            --white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 4rem;
+            background: var(--bg);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 500;
+        }
+
+        .hero {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            min-height: 80vh;
+            align-items: center;
+            padding: 0 4rem;
+            gap: 2rem;
+        }
+
+        .hero-content h1 {
+            font-size: 4.5rem;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            font-weight: 400;
+        }
+
+        .hero-content p {
+            font-size: 1.1rem;
+            color: var(--muted);
+            margin-bottom: 2rem;
+            max-width: 400px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background-color: var(--accent);
+            color: var(--white);
+            text-decoration: none;
+            transition: opacity 0.3s;
+        }
+
+        .hero-image {
+            background: #e5e0d8;
+            height: 70vh;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-style: italic;
+            color: #aaa;
+        }
+
+        .section {
+            padding: 6rem 4rem;
+        }
+
+        .section-title {
+            margin-bottom: 3rem;
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .product-card {
+            cursor: pointer;
+        }
+
+        .product-img {
+            aspect-ratio: 4/5;
+            background-color: #eee;
+            margin-bottom: 1rem;
+            transition: transform 0.3s;
+        }
+
+        .product-card:hover .product-img {
+            transform: scale(1.02);
+        }
+
+        .product-info h3 {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .product-info p {
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            nav { padding: 1rem 2rem; }
+            .nav-links { display: none; }
+            .hero { grid-template-columns: 1fr; padding: 2rem; text-align: center; }
+            .hero-content h1 { font-size: 3rem; }
+            .hero-content p { margin: 0 auto 2rem; }
+            .section { padding: 3rem 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">Aura Home</div>
+        <div class="nav-links">
+            <a href="#">New Arrivals</a>
+            <a href="#">Furniture</a>
+            <a href="#">Lighting</a>
+            <a href="#">Journal</a>
+        </div>
+        <div class="cart">Cart (0)</div>
+    </nav>
+
+    <header class="hero">
+        <div class="hero-content">
+            <h1>Crafted Comfort</h1>
+            <p>Discover mindful objects designed for an intentional and serene home environment.</p>
+            <a href="#" class="btn">Shop Collection</a>
+        </div>
+        <div class="hero-image">
+            [ Featured Living Room Image ]
+        </div>
+    </header>
+
+    <section class="section">
+        <h2 class="section-title">Our Most Loved</h2>
+        <div class="product-grid">
+            <div class="product-card">
+                <div class="product-img"></div>
+                <div class="product-info">
+                    <h3>Ora Pendant Light</h3>
+                    <p>$320.00</p>
+                </div>
+            </div>
+            <div class="product-card">
+                <div class="product-img"></div>
+                <div class="product-info">
+                    <h3>Sienna Ceramic Vase</h3>
+                    <p>$85.00</p>
+                </div>
+            </div>
+            <div class="product-card">
+                <div class="product-img"></div>
+                <div class="product-info">
+                    <h3>Tencel Linen Sheet Set</h3>
+                    <p>$190.00</p>
+                </div>
+            </div>
+            <div class="product-card">
+                <div class="product-img"></div>
+                <div class="product-info">
+                    <h3>Luna Armchair</h3>
+                    <p>$1,250.00</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</body>
+</html>
