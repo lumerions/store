@@ -11,6 +11,7 @@ app = FastAPI(
 
 templates = Jinja2Templates(directory="templates")
 app.mount("/javascript", StaticFiles(directory="javascript"), name="javascript")
+app.mount("/css", StaticFiles(directory="css"), name="css")
 
 @app.get("/api/data")
 def get_sample_data():
@@ -55,6 +56,13 @@ async def root(request: Request):
 @app.get("/login",response_class=HTMLResponse)
 async def login(request: Request):
     return templates.TemplateResponse("login.html", {
+        "request": request, 
+        "store_name": "MODERN",  
+    })
+
+@app.get("/signup",response_class=HTMLResponse)
+async def login(request: Request):
+    return templates.TemplateResponse("signup.html", {
         "request": request, 
         "store_name": "MODERN",  
     })
