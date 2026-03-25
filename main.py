@@ -51,3 +51,10 @@ async def root(request: Request):
         "store_name": "MODERN",  
         "products": products
     })
+
+@app.get("/login",response_class=HTMLResponse)
+async def login(request: Request):
+    return templates.TemplateResponse("index.html", {
+        "request": request, 
+        "store_name": "MODERN",  
+    })
