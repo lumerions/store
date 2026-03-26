@@ -6,15 +6,18 @@
     <title>Sign Up | {{ store_name }}</title>
     <link rel="stylesheet" href="/css/style.css?v=999">
 </head>
+<div id="error-box" class="error-container" style="display: none;">
+    <p id="error-message"></p>
+</div>
 <body class="auth-wrapper"> 
     <div class="auth-card">
         <h2>Create Account</h2>
         <p>Join {{ store_name }} to track your orders.</p>
         
-        <form action="/signup" method="post">
+        <form id="signupForm" action="/signup" method="post">
             <div class="form-group">
-                <label for="full_name">Full Name</label>
-                <input type="text" id="full_name" name="full_name" placeholder="John Doe" required>
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" placeholder="johndoe123" required>
             </div>
             
             <div class="form-group">

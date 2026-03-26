@@ -1,98 +1,62 @@
-let cart = JSON.parse(localStorage.getItem('store_cart')) || [];
+document.getElementById('signupForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-function toggleCart() {
-    const panel = document.getElementById('cart-panel');
-    const overlay = document.getElementById('cart-overlay');
-    
-    panel.classList.toggle('open');
-    overlay.style.display = panel.classList.contains('open') ? 'block' : 'none';
-    
-    renderCart();
-}
-
-function addToCart(name, price) {
-    const item = {
-        id: Date.now(), 
-        name: name,
-        price: price
-    };
-    
-    cart.push(item);
-    saveAndRefresh();
-}
-
-function removeItem(id) {
-    cart = cart.filter(item => item.id !== id);
-    saveAndRefresh();
-}
-
-function saveAndRefresh() {
-    localStorage.setItem('store_cart', JSON.stringify(cart));
-    updateCountBadge();
-    renderCart();
-}
-
-function updateCountBadge() {
-    const badge = document.getElementById('cart-count');
-    if(badge) badge.innerText = cart.length;
-}
-
-function renderCart() {
-    const container = document.getElementById('cart-items');
-    const totalEl = document.getElementById('cart-total');
-    
-    container.innerHTML = '';
-    let total = 0;
-
-    if (cart.length === 0) {
-        container.innerHTML = '<p style="text-align:center; color:#999; margin-top:50px;">Your cart is empty.</p>';
-    } else {
-        cart.forEach(item => {
-            const numPrice = parseFloat(item.price.replace('$', ''));
-            total += numPrice;
-
-            container.innerHTML += `
-                <div class="cart-item">
-                    <div>
-                        <h4 style="font-size:0.95rem;">${item.name}</h4>
-                        <p style="font-size:0.85rem; color:#666;">${item.price}</p>
-                        <button class="remove-btn" onclick="removeItem(${item.id})">Remove</button>
-                    </div>
-                </div>
-            `;
-        });
+    function showError(text) {
+        errorMessage.innerText = text;
+        errorBox.style.display = 'block';
     }
-    
-    totalEl.innerText = `$${total.toFixed(2)}`;
-}
 
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirm_password').value;
+    const username = document.getElementById('username').value.trim();
+    const submitBtn = document.getElementById('submit-btn');
 
-function openCheckout() {
-    if (cart.length === 0) {
-        alert("Add some items first!");
+    if (password !== confirmPassword) {
+        showError("Passwords dont match.")
+        return
+    }
+
+    if (username.length > 20) {
+        showError("Username cannot be over 20 characters.")
+        return
+    }
+
+    if (password.length < 8) {
+        showError("Passwords must be atleast 8 characters long.")
+        return
+    }
+
+    const usernameRegex = /^\w{3,20}$/;
+
+    if (!usernameRegex.test(username)) {
+        showError("Username can only contain letters, numbers, and underscores (3-20 characters).");
         return;
     }
 
-    document.getElementById('cart-panel').classList.remove('open');
-    document.getElementById('cart-overlay').style.display = 'none';
-    const total = cart.reduce((sum, item) => sum + parseFloat(item.price.replace('$', '')), 0);
-    document.getElementById('modal-total-display').innerText = `$${total.toFixed(2)}`;
-    document.getElementById('checkout-modal').style.display = 'block';
-    document.getElementById('modal-overlay').style.display = 'block';
-}
+    submitBtn.disabled = true;
+    submitBtn.innerText = "Creating account...";
 
-function closeCheckout() {
-    document.getElementById('checkout-modal').style.display = 'none';
-    document.getElementById('modal-overlay').style.display = 'none';
-}
+    async function signup() {
+        try {
+            const response = await fetch("/signup", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    confirmpassword: confirmPassword,
+                    password: password,
+                    username: username,
+                    email: email
+                })
+            })
+            
+            console.log(await response.json())
+        } catch(error) {
+            console.log(error)
+        }
+    }
 
-function processPayment(method) {
-    alert(`Redirecting to ${method} secure gateway...`);
-    
-    cart = [];
-    saveAndRefresh();
-    closeCheckout();
-    alert("Success! Your order has been placed.");
-}
-
-updateCountBadge();
+    signup()
+})
