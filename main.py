@@ -126,7 +126,8 @@ async def signuppost(data: SignupSchema):
     except ValueError as customError:
         return JSONResponse({"success": False, "message": str(customError)})
 
-    except Exception:
+    except Exception as e:
+      print(e)
       return JSONResponse({"success": False,"message": "Internal Server Error."})
 
 
