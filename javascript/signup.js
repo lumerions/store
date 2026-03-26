@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const signupForm = document.getElementById('signupForm');
     if (!signupForm) return;
-    
+
     document.getElementById('signupForm').addEventListener('submit', async (e) => {
         e.preventDefault();
 
@@ -12,6 +12,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const confirmPassword = document.getElementById('confirm_password').value;
         const username = document.getElementById('username').value.trim();
         const submitBtn = document.getElementById('submit-btn');
+
+        if (!submitBtn) {
+            console.error("Critical Error: submit-btn not found in HTML.");
+            return;
+        }
 
         errorBox.style.display = 'none'
 
