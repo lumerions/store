@@ -5,16 +5,14 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('signupForm').addEventListener('submit', async (e) => {
         e.preventDefault();
 
-
-        const form = e.target;
-        const submitBtn = form.querySelector('#submit-btn');
+        const submitBtn = document.getElementById('submit-btn');
         const errorBox = document.getElementById('error-box');
         const errorMessage = document.getElementById('error-message');
-        const username = form.querySelector('#username').value.trim();
-        const email = form.querySelector('#email').value.trim();
-        const password = form.querySelector('#password').value;
-        const confirmPassword = form.querySelector('#confirm_password').value;
-        
+        const username = document.getElementById('username').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirm_password').value;
+
         if (!submitBtn) {
             console.error("Critical Error: submit-btn not found in HTML.");
             return;
@@ -54,42 +52,37 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-
-        async function signup() {
-            try {
-                const response = await fetch("/signup", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        confirmpassword: confirmPassword,
-                        password: password,
-                        username: username,
-                        email: email
-                    })
+        try {
+            const response = await fetch("/signup", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    confirmpassword: confirmPassword,
+                    password: password,
+                    username: username,
+                    email: email
                 })
+            })
 
-                const responseJson = await response.json()
+            const responseJson = await response.json()
 
-                console.log(responseJson)
+            console.log(responseJson)
 
-                if (!responseJson.success) {
-                    showError(responseJson.message)
-                    return
-                }
-                
-                window.location.replace("/login")
-            } catch(error) {
-                console.log(error)
-                if (error.message) {
-                    showError(error.message)
-                } else {
-                    showError(String(error))
-                }
+            if (!responseJson.success) {
+                showError(responseJson.message)
+                return
+            }
+            
+            window.location.replace("/login")
+        } catch(error) {
+            console.log(error)
+            if (error.message) {
+                showError(error.message)
+            } else {
+                showError(String(error))
             }
         }
-
-        signup()
     })
 })
