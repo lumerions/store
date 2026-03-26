@@ -14,7 +14,12 @@ document.getElementById('signupForm').addEventListener('submit', async (e) => {
     function showError(text) {
         errorMessage.innerText = text;
         errorBox.style.display = 'block';
+        submitBtn.disabled = false;
+        submitBtn.innerText = "Create account";
     }
+
+    submitBtn.disabled = true;
+    submitBtn.innerText = "Creating account...";
 
     if (password !== confirmPassword) {
         showError("Passwords dont match.")
@@ -38,8 +43,6 @@ document.getElementById('signupForm').addEventListener('submit', async (e) => {
         return;
     }
 
-    submitBtn.disabled = true;
-    submitBtn.innerText = "Creating account...";
 
     async function signup() {
         try {
