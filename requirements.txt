@@ -6,3 +6,4 @@ psycopg[pool,binary]
 slowapi
 pydantic
 pydantic-settings
+email-validator
