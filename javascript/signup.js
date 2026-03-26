@@ -61,6 +61,8 @@ document.getElementById('signupForm').addEventListener('submit', async (e) => {
 
             const responseJson = await response.json()
 
+            console.log(responseJson)
+
             if (!responseJson.success) {
                 showError(responseJson.message)
                 return
@@ -68,6 +70,7 @@ document.getElementById('signupForm').addEventListener('submit', async (e) => {
             
             window.location.replace("/login")
         } catch(error) {
+            console.log(error)
             if (error.message) {
                 showError(error.message)
             } else {
