@@ -1,83 +1,88 @@
-document.getElementById('signupForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
+document.addEventListener('DOMContentLoaded', () => {
+    const signupForm = document.getElementById('signupForm');
+    if (!signupForm) return;
+    
+    document.getElementById('signupForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
 
-    const errorBox = document.getElementById('error-box');
-    const errorMessage = document.getElementById('error-message');
-    const email = document.getElementById('email').value.trim();
-    const password = document.getElementById('password').value;
-    const confirmPassword = document.getElementById('confirm_password').value;
-    const username = document.getElementById('username').value.trim();
-    const submitBtn = document.getElementById('submit-btn');
+        const errorBox = document.getElementById('error-box');
+        const errorMessage = document.getElementById('error-message');
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirm_password').value;
+        const username = document.getElementById('username').value.trim();
+        const submitBtn = document.getElementById('submit-btn');
 
-    errorBox.style.display = 'none'
+        errorBox.style.display = 'none'
 
-    function showError(text) {
-        errorMessage.innerText = text;
-        errorBox.style.display = 'block';
-        submitBtn.disabled = false;
-        submitBtn.innerText = "Create account";
-    }
+        function showError(text) {
+            errorMessage.innerText = text;
+            errorBox.style.display = 'block';
+            submitBtn.disabled = false;
+            submitBtn.innerText = "Create account";
+        }
 
-    submitBtn.disabled = true;
-    submitBtn.innerText = "Creating account...";
+        submitBtn.disabled = true;
+        submitBtn.innerText = "Creating account...";
 
-    if (password !== confirmPassword) {
-        showError("Passwords dont match.")
-        return
-    }
+        if (password !== confirmPassword) {
+            showError("Passwords dont match.")
+            return
+        }
 
-    if (username.length > 20) {
-        showError("Username cannot be over 20 characters.")
-        return
-    }
+        if (username.length > 20) {
+            showError("Username cannot be over 20 characters.")
+            return
+        }
 
-    if (password.length < 8) {
-        showError("Passwords must be atleast 8 characters long.")
-        return
-    }
+        if (password.length < 8) {
+            showError("Passwords must be atleast 8 characters long.")
+            return
+        }
 
-    const usernameRegex = /^\w{3,20}$/;
+        const usernameRegex = /^\w{3,20}$/;
 
-    if (!usernameRegex.test(username)) {
-        showError("Username can only contain letters, numbers, and underscores (3-20 characters).");
-        return;
-    }
+        if (!usernameRegex.test(username)) {
+            showError("Username can only contain letters, numbers, and underscores (3-20 characters).");
+            return;
+        }
 
 
-    async function signup() {
-        try {
-            const response = await fetch("/signup", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    confirmpassword: confirmPassword,
-                    password: password,
-                    username: username,
-                    email: email
+        async function signup() {
+            try {
+                const response = await fetch("/signup", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        confirmpassword: confirmPassword,
+                        password: password,
+                        username: username,
+                        email: email
+                    })
                 })
-            })
 
-            const responseJson = await response.json()
+                const responseJson = await response.json()
 
-            console.log(responseJson)
+                console.log(responseJson)
 
-            if (!responseJson.success) {
-                showError(responseJson.message)
-                return
-            }
-            
-            window.location.replace("/login")
-        } catch(error) {
-            console.log(error)
-            if (error.message) {
-                showError(error.message)
-            } else {
-                showError(String(error))
+                if (!responseJson.success) {
+                    showError(responseJson.message)
+                    return
+                }
+                
+                window.location.replace("/login")
+            } catch(error) {
+                console.log(error)
+                if (error.message) {
+                    showError(error.message)
+                } else {
+                    showError(String(error))
+                }
             }
         }
-    }
 
-    signup()
+        signup()
+    })
 })
