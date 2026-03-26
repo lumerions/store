@@ -5,14 +5,16 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('signupForm').addEventListener('submit', async (e) => {
         e.preventDefault();
 
+
+        const form = e.target;
+        const submitBtn = form.querySelector('#submit-btn');
         const errorBox = document.getElementById('error-box');
         const errorMessage = document.getElementById('error-message');
-        const email = document.getElementById('email').value.trim();
-        const password = document.getElementById('password').value;
-        const confirmPassword = document.getElementById('confirm_password').value;
-        const username = document.getElementById('username').value.trim();
-        const submitBtn = document.getElementById('submit-btn');
-
+        const username = form.querySelector('#username').value.trim();
+        const email = form.querySelector('#email').value.trim();
+        const password = form.querySelector('#password').value;
+        const confirmPassword = form.querySelector('#confirm_password').value;
+        
         if (!submitBtn) {
             console.error("Critical Error: submit-btn not found in HTML.");
             return;
