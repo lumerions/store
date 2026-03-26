@@ -21,13 +21,13 @@ pool = ConnectionPool("postgresql://neondb_owner:npg_nuc5NPZl0DJA@ep-tiny-waterf
 app.mount("/javascript", StaticFiles(directory="javascript"), name="javascript")
 app.mount("/css", StaticFiles(directory="css"), name="css")
 
-class signup(BaseModel):
+class SignupSchema(BaseModel):
     confirmpassword: str
     password: str
     username: str
     email: EmailStr
 
-class login(BaseModel):
+class LoginSchema(BaseModel):
     username: str
     password: str
 
@@ -50,9 +50,16 @@ async def root(request: Request):
         "products": products
     })
 
-@app.get("/login",response_class=HTMLResponse)
+@app.get("/ratelimited",response_class=HTMLResponse)
 async def login(request: Request):
     return templates.TemplateResponse("login.html", {
+        "request": request, 
+        "store_name": "MODERN",  
+    })
+
+@app.get("/notfound",response_class=HTMLResponse)
+async def login(request: Request):
+    return templates.TemplateResponse("notfound.html", {
         "request": request, 
         "store_name": "MODERN",  
     })
@@ -65,7 +72,7 @@ async def signup(request: Request):
     })
 
 @app.post("/signup",response_class=JSONResponse)
-async def signuppost(data: signup):
+async def signuppost(data: SignupSchema):
     username = data.get("username")
     email = data.get("email")
     password = data.get("password")
@@ -124,5 +131,5 @@ async def signuppost(data: signup):
 
 
 @app.post("/login",response_class=JSONResponse)
-async def loginpost(data : login):
+async def loginpost(data : LoginSchema):
     print(data)
