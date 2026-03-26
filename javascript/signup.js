@@ -1,16 +1,20 @@
 document.getElementById('signupForm').addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    function showError(text) {
-        errorMessage.innerText = text;
-        errorBox.style.display = 'block';
-    }
-
+    const errorBox = document.getElementById('error-box');
+    const errorMessage = document.getElementById('error-message');
     const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
     const confirmPassword = document.getElementById('confirm_password').value;
     const username = document.getElementById('username').value.trim();
     const submitBtn = document.getElementById('submit-btn');
+
+    errorBox.style.display = 'none'
+
+    function showError(text) {
+        errorMessage.innerText = text;
+        errorBox.style.display = 'block';
+    }
 
     if (password !== confirmPassword) {
         showError("Passwords dont match.")
@@ -51,10 +55,21 @@ document.getElementById('signupForm').addEventListener('submit', async (e) => {
                     email: email
                 })
             })
+
+            const responseJson = await response.json()
+
+            if (!responseJson.success) {
+                showError(responseJson.message)
+                return
+            }
             
-            console.log(await response.json())
+            window.location.replace("/login")
         } catch(error) {
-            console.log(error)
+            if (error.message) {
+                showError(error.message)
+            } else {
+                showError(String(error))
+            }
         }
     }
 
