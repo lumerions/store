@@ -1,0 +1,17 @@
+from pydantic import BaseModel, EmailStr
+
+class SignupSchema(BaseModel):
+    confirmpassword: str
+    password: str
+    username: str
+    email: EmailStr
+
+class LoginSchema(BaseModel):
+    username: str
+    password: str
+
+class AddItemSchema(BaseModel):
+    itemname: str
+    price: str
+    imageurl: str
+    description: str

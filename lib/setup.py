@@ -13,4 +13,15 @@ with getPostgresConnection() as conn:
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
         """)
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS storeitems (
+                itemid SERIAL PRIMARY KEY,
+                price VARCHAR(30) NOT NULL,
+                itemname VARCHAR(100) UNIQUE NOT NULL,
+                imageurl TEXT NOT NULL,
+                description TEXT NOT NULL,
+                offsale BOOLEAN NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+        """)
         conn.commit()

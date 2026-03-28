@@ -9,7 +9,7 @@
 <body>
 
     <nav>
-        <a href="/" class="logo">Admin: {{ store_name }}</a>
+        <a href="/" class="logo">{{ store_name }}</a>
         <div class="nav-right">
             <a href="/" class="login-btn">View Store</a>
             <button type="button" id="logout-btn" class="login-btn">Logout</button>
@@ -32,7 +32,7 @@
                     </div>
                     <div class="form-group">
                         <label>Price</label>
-                        <input type="text" id="itemPrice" placeholder="e.g. $59.99" required>
+                        <input type="text" id="itemPrice" placeholder="e.g. 59.99" required>
                     </div>
                     <div class="form-group full-width">
                         <label>Image URL</label>
@@ -40,14 +40,60 @@
                     </div>
                     <div class="form-group full-width">
                         <label>Description</label>
-                        <textarea id="itemDesc" placeholder="Describe the item's features..." required></textarea>
+                        <textarea id="itemDesc" placeholder="Describe the item..." required></textarea>
                     </div>
                 </div>
                 <button type="submit" class="submit-btn" id="submitBtn">Add Item to Store</button>
             </form>
         </div>
+
+        <div class="admin-card" style="margin-top: 30px; border-left: 5px solid var(--accent);">
+            <h3 style="margin-bottom: 20px;">Update Existing Product</h3>
+            <p style="font-size: 0.85rem; color: #666; margin-bottom: 15px;">Enter the <b>exact</b> name of the item you wish to modify.</p>
+            <form id="edit-item-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Current Item Name</label>
+                        <input type="text" id="editItemName" placeholder="Enter existing name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>New Price</label>
+                        <input type="text" id="editItemPrice" placeholder="New price">
+                    </div>
+                    <div class="form-group full-width">
+                        <label>New Image URL</label>
+                        <input type="url" id="editItemImage" placeholder="New image URL">
+                    </div>
+                    <div class="form-group full-width">
+                        <label>New Description</label>
+                        <textarea id="editItemDesc" placeholder="New description"></textarea>
+                    </div>
+                </div>
+                <button type="submit" class="submit-btn" id="editSubmitBtn" style="background: #444;">Save Changes</button>
+            </form>
+        </div>
+
+        <div class="admin-card" style="margin-top: 30px;">
+            <h3 style="margin-bottom: 20px;">User Security</h3>
+            <form id="lock-account-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Target Username</label>
+                        <input type="text" id="lockUsername" placeholder="username_to_lock" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Action</label>
+                        <select id="lockAction" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+                            <option value="lock">Lock Account</option>
+                            <option value="unlock">Unlock Account</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="submit-btn" id="lockSubmitBtn" style="background: var(--accent);">Update User Status</button>
+            </form>
+        </div>
     </div>
 
-    <div id="notification-toast" class="toast-left"></div>
+    <div id="notification-toast" class="toast-left" style="display: none; position: fixed; bottom: 20px; left: 20px; background: #333; color: white; padding: 15px 25px; border-radius: 8px; z-index: 1000;"></div>
 </body>
 </html>
