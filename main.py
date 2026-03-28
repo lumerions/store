@@ -22,7 +22,12 @@ app.mount("/css", StaticFiles(directory="css"), name="css")
 
 def setSessionCookie(response : Response,SessionId):
     response.set_cookie(
-        key="SessionId", value="12345", max_age=3600, httponly=True
+        key="SessionId", 
+        value=SessionId, 
+        max_age=34560000,  
+        httponly=True,  
+        secure=True,  
+        samesite="Lax", 
     )
 
 class SignupSchema(BaseModel):
