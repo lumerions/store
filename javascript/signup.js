@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (error.message) {
                 showError(error.message)
             } else {
-                showError(String(error))
+                showError(error.detail.msg)
             }
         }
     })
