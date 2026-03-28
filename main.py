@@ -38,12 +38,6 @@ app.state.limiter = limiter
 async def ratelimited(request : Request,exc: RateLimitExceeded):
     return RedirectResponse(url="/ratelimited")
 
-@app.exception_handler(HTTPException)
-async def httpexceptions(request : Request,exc: HTTPException):
-    if exc.status_code == 500:
-        return RedirectResponse(url="/internalerror")
-    elif exc.status_code == 404:
-        return RedirectResponse(url="/notfound")
 
 def setSessionCookie(response : Response,SessionId):
     response.set_cookie(
@@ -215,3 +209,10 @@ async def loginpost(data : LoginSchema, response: Response):
     except Exception as e:
       print(e)
       return JSONResponse({"success": False,"message": "Internal Server Error."})
+    
+@app.get("/{path:path}", response_class=HTMLResponse)
+async def catch_all(request: Request, path: str):
+    return templates.TemplateResponse("notfound.html", {
+        "request": request, 
+        "store_name": cfg.StoreName,  
+    })
