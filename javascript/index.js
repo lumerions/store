@@ -1,5 +1,3 @@
-const { da } = require("zod/locales");
-
 let cart = JSON.parse(localStorage.getItem('store_cart')) || [];
 
 function showNotification(text, type = 'error') {
