@@ -129,7 +129,7 @@ async def signuppost(data: SignupSchema, response: Response):
                 else:
                     conn.commit()
                     setSessionCookie(response,sessionId)
-                    getRedisInstance.set(sessionId,"1")
+                    getRedisInstance().set(sessionId,"1")
 
                 return JSONResponse({"success": True})
 
@@ -171,7 +171,7 @@ async def loginpost(data : LoginSchema, response: Response):
                         raise ValueError("Incorrect username or password.")
                     
                     setSessionCookie(response,sessionId)
-                    getRedisInstance.set(sessionId,"1")
+                    getRedisInstance().set(sessionId,"1")
                 else:
                     raise ValueError("Incorrect username or password.")
                 
