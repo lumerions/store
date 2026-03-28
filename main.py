@@ -115,9 +115,9 @@ async def login(request: Request):
 @app.get("/userloggedin",response_class=JSONResponse)
 @limiter.limit("50/minute")
 async def userloggedin(request: Request,SessionId: str = Cookie(None)):
-    sessionData =  getRedisInstance().get(SessionId)
+    sessionData =  getRedisInstance().get(str(SessionId))
     print(sessionData)
-    return JSONResponse({"loggedin": True})
+    return JSONResponse({"loggedin": sessionData})
 
 @app.post("/signup",response_class=JSONResponse)
 @limiter.limit("50/minute")
