@@ -1,5 +1,23 @@
 let cart = JSON.parse(localStorage.getItem('store_cart')) || [];
 
+
+function showNotification(text, type = 'error') {
+    const container = document.getElementById('notification-toast');
+    const toast = document.createElement('div');
+    toast.className = `toast-card toast-${type}`;
+    toast.innerText = text;
+
+    container.appendChild(toast);
+
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(-20px)';
+        toast.style.transition = 'all 0.3s ease';
+        
+        setTimeout(() => toast.remove(), 3000);
+    }, 3000);
+}
+
 function toggleCart() {
     const panel = document.getElementById('cart-panel');
     const overlay = document.getElementById('cart-overlay');
@@ -68,7 +86,7 @@ function renderCart() {
 
 function openCheckout() {
     if (cart.length === 0) {
-        alert("Add some items first!");
+        showNotification("Add some items first!")
         return;
     }
 
@@ -85,13 +103,11 @@ function closeCheckout() {
     document.getElementById('modal-overlay').style.display = 'none';
 }
 
-function processPayment(method) {
-    alert(`Redirecting to ${method} secure gateway...`);
-    
+function processPayment(method) {    
     cart = [];
     saveAndRefresh();
     closeCheckout();
-    alert("Success! Your order has been placed.");
+    showNotification("Success! Your order has been placed.", "success");
 }
 
 updateCountBadge();
