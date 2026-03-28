@@ -1,26 +1,49 @@
 from fastapi import FastAPI,Request,Response,Cookie
-from fastapi.responses import HTMLResponse,JSONResponse
+from fastapi.responses import HTMLResponse,JSONResponse,RedirectResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
+from fastapi.exceptions import HTTPException
 from pydantic import BaseModel, EmailStr
 import re,os,sys,bcrypt,secrets
 libPath = os.path.join(os.path.dirname(__file__), 'lib')
 sys.path.append(libPath)
+from slowapi import Limiter
+from slowapi.errors import RateLimitExceeded
+from slowapi.middleware import SlowAPIMiddleware
 from lib.config import Config
 from lib.postgres import getPostgresConnection
 from lib.redis import getRedisInstance
 
+templates = Jinja2Templates(directory="templates")
+cfg = Config()
+
 app = FastAPI(
-    title="Vercel + FastAPI",
-    description="Vercel + FastAPI",
+    title=cfg.StoreName,
+    description=cfg.StoreName,
     version="1.0.0",
 )
 
-
-templates = Jinja2Templates(directory="templates")
-cfg = Config()
 app.mount("/javascript", StaticFiles(directory="javascript"), name="javascript")
 app.mount("/css", StaticFiles(directory="css"), name="css")
+
+def LimiterFunction(request : Request):
+    print(request.client.host)
+    return request.client.host
+
+limiter = Limiter(key_func=LimiterFunction)
+app.add_middleware(SlowAPIMiddleware)
+app.state.limiter = limiter
+
+@app.exception_handler(RateLimitExceeded)
+async def ratelimited(request : Request,exc: RateLimitExceeded):
+    return RedirectResponse(url="/ratelimited")
+
+@app.exception_handler(HTTPException)
+async def httpexceptions(request : Request,exc: HTTPException):
+    if exc.status_code == 500:
+        return RedirectResponse(url="/internalerror")
+    elif exc.status_code == 404:
+        return RedirectResponse(url="/notfound")
 
 def setSessionCookie(response : Response,SessionId):
     response.set_cookie(
