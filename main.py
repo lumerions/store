@@ -3,11 +3,11 @@ from fastapi.responses import HTMLResponse,JSONResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, EmailStr
-import re,psycopg,os,sys,bcrypt,secrets
-from psycopg_pool import ConnectionPool
+import re,os,sys,bcrypt,secrets
 libPath = os.path.join(os.path.dirname(__file__), 'lib')
 sys.path.append(libPath)
 from config import Config
+from lib.postgres import getPostgresConnection
 
 app = FastAPI(
     title="Vercel + FastAPI",
@@ -17,7 +17,6 @@ app = FastAPI(
 
 templates = Jinja2Templates(directory="templates")
 cfg = Config()
-pool = ConnectionPool("postgresql://neondb_owner:npg_nuc5NPZl0DJA@ep-tiny-waterfall-adb4f3n3-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require")
 app.mount("/javascript", StaticFiles(directory="javascript"), name="javascript")
 app.mount("/css", StaticFiles(directory="css"), name="css")
 
@@ -31,9 +30,6 @@ class LoginSchema(BaseModel):
     username: str
     password: str
 
-
-def getPostgresConnection():
-    return pool.connection()
 
 @app.get("/", response_class=HTMLResponse)
 async def root(request: Request):
@@ -134,3 +130,40 @@ async def signuppost(data: SignupSchema):
 @app.post("/login",response_class=JSONResponse)
 async def loginpost(data : LoginSchema):
     print(data)
+
+    try:
+        with getPostgresConnection() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute("""
+                    CREATE TABLE IF NOT EXISTS accounts (
+                        userid SERIAL PRIMARY KEY,
+                        sessionid TEXT NOT NULL,
+                        username VARCHAR(20) UNIQUE NOT NULL,
+                        email VARCHAR(50) NOT NULL,
+                        password VARCHAR(100) NOT NULL,
+                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    );
+                """)
+
+                cursor.execute("""
+                    INSERT INTO accounts (username, email, password, sessionid)
+                    VALUES (%s, %s, %s, %s)
+                    ON CONFLICT (username) DO NOTHING
+                    RETURNING userid;
+                """, (username, email, hashedpassword, sessionId))
+
+                rowFetch = cursor.fetchone()
+
+                if not rowFetch:
+                    raise ValueError("Username already exists.")
+                else:
+                    conn.commit()
+
+                return JSONResponse({"success": True})
+
+    except ValueError as customError:
+        return JSONResponse({"success": False, "message": str(customError)})
+
+    except Exception as e:
+      print(e)
+      return JSONResponse({"success": False,"message": "Internal Server Error."})
