@@ -95,7 +95,8 @@ async def login(request: Request):
 @app.get("/userloggedin",response_class=JSONResponse)
 async def userloggedin(request: Request,SessionId: str = Cookie(None)):
     sessionData =  getRedisInstance().get(SessionId)
-    return JSONResponse({"loggedin": sessionData})
+    print(sessionData)
+    return JSONResponse({"loggedin": True})
 
 @app.post("/signup",response_class=JSONResponse)
 async def signuppost(data: SignupSchema, response: Response):
