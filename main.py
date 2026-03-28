@@ -58,7 +58,7 @@ async def root(request: Request):
 
 @app.get("/ratelimited",response_class=HTMLResponse)
 async def login(request: Request):
-    return templates.TemplateResponse("login.html", {
+    return templates.TemplateResponse("ratelimited.html", {
         "request": request, 
         "store_name": "MODERN",  
     })
@@ -73,6 +73,13 @@ async def login(request: Request):
 @app.get("/signup",response_class=HTMLResponse)
 async def signup(request: Request):
     return templates.TemplateResponse("signup.html", {
+        "request": request, 
+        "store_name": "MODERN",  
+    })
+
+@app.get("/login",response_class=HTMLResponse)
+async def login(request: Request):
+    return templates.TemplateResponse("login.html", {
         "request": request, 
         "store_name": "MODERN",  
     })
