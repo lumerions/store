@@ -27,7 +27,6 @@ app.mount("/javascript", StaticFiles(directory="javascript"), name="javascript")
 app.mount("/css", StaticFiles(directory="css"), name="css")
 
 def LimiterFunction(request : Request):
-    print(request.client.host)
     return request.client.host
 
 limiter = Limiter(key_func=LimiterFunction)
@@ -117,6 +116,7 @@ async def login(request: Request):
 async def userloggedin(request: Request,SessionId: str = Cookie(None)):
     sessionData =  getRedisInstance().get(str(SessionId))
     print(sessionData)
+    print(SessionId)
     return JSONResponse({"loggedin": sessionData})
 
 @app.post("/signup",response_class=JSONResponse)
