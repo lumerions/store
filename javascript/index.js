@@ -1,6 +1,5 @@
 let cart = JSON.parse(localStorage.getItem('store_cart')) || [];
 
-
 function showNotification(text, type = 'error') {
     let container = document.getElementById('notification-toast');
     
@@ -137,7 +136,6 @@ async function CheckIfUserLoggedIn() {
             if (loginBtn) {
                 loginBtn.style.display = 'none'
             }
-            console.log('e')
         }
 
     } catch {

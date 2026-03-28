@@ -62,10 +62,8 @@ class LoginSchema(BaseModel):
 @limiter.limit("50/minute")
 async def root(request: Request):
     products = [
-        {"name": "Premium Product", "price": "$120.00", "desc": "Limited Edition"},
-        {"name": "Everyday Essential", "price": "$45.00", "desc": "Best Seller"},
-        {"name": "The Collector's Item", "price": "$250.00", "desc": "New Arrival"},
-        {"name": "Starter Pack", "price": "$80.00", "desc": "Great Value"},
+        {"name": "Premium Product", "price": "$120.00", "desc": "Limited Edition","image":"https://tr.rbxcdn.com/180DAY-c9ab21640c6e765b1425c79ce261703d/110/110/Hat/Webp/noFilter"},
+        {"name": "Premium Product", "price": "$120.00", "desc": "Limited Edition","image":"https://tr.rbxcdn.com/180DAY-c9ab21640c6e765b1425c79ce261703d/110/110/Hat/Webp/noFilter"},
     ]
     
     return templates.TemplateResponse("index.html", {
@@ -177,8 +175,6 @@ async def signuppost(request: Request,data: SignupSchema, response: Response):
 @app.post("/login",response_class=JSONResponse)
 @limiter.limit("50/minute")
 async def loginpost(request : Request,data : LoginSchema, response: Response):
-    print(data)
-
     username = data.username
     password = data.password
 
@@ -191,7 +187,6 @@ async def loginpost(request : Request,data : LoginSchema, response: Response):
                 """, (username,))
 
                 result = cursor.fetchone()
-
 
                 if result:
                     locked = result[0]
