@@ -160,6 +160,7 @@ if (loginBtn) {
                     },
                     credentials: "include"
                 })
+                window.location.reload()
             } catch {
                 window.location.href = "/internalerror"
             }
