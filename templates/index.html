@@ -51,9 +51,14 @@
     <nav>
         <a href="/" class="logo">{{ store_name }}</a>
         <div class="nav-right">
+            <a href="/admin" id="admin-btn" class="login-btn" style="display: none;">
+                Admin
+            </a>
+
             <div class="cart-link" onclick="toggleCart()">
                 Cart <span id="cart-count">0</span>
             </div>
+            
             <button type="button" id="login-link" class="login-btn">
                 Login <span id="login"></span>
             </button>
