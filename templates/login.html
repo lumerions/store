@@ -11,13 +11,17 @@
         <h2>Welcome back</h2>
         <p>Enter your details to access your account.</p>
 
+        <div id="error-box" class="error-container" style="display: none;">
+            <p id="error-message"></p>
+        </div>
+
         <form id="loginForm">
 
             <div class="form-group">
                 <label for="username">Username</label>
                 <input type="text" id="username" name="username" placeholder="johndoe123" required>
             </div>
-            
+
             <div class="form-group">
                 <label for="password">Password</label>
                 <input type="password" id="password" name="password" placeholder="••••••••" required>
