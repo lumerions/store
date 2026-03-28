@@ -213,7 +213,7 @@ async def loginpost(request : Request,data : LoginSchema, response: Response):
 @app.post("/logout")
 @app.post("/logout/")
 @limiter.limit("50/minute")
-async def logout(response: Response):
+async def logout(request : Request,response: Response):
     response.delete_cookie(
         key="SessionId",
         path="/",
