@@ -149,10 +149,20 @@ async function CheckIfUserLoggedIn() {
 CheckIfUserLoggedIn()
 
 if (loginBtn) {
-    loginBtn.addEventListener('click', function(event) {
+    loginBtn.addEventListener('click', async function(event) {
         event.preventDefault(); 
         if (loginBtnText.innerText === "Logout") {
-
+            try {
+                await fetch("/logout", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    credentials: "include"
+                })
+            } catch {
+                window.location.href = "/internalerror"
+            }
         } else {
             window.location.href = "/login"
         }
