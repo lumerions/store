@@ -3,93 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ store_name }}</title>
+    <title>Admin Panel | {{ store_name }}</title>
     <link rel="stylesheet" href="/css/style.css?v=999">
 </head>
 <body>
 
-    <div id="cart-overlay" onclick="toggleCart()"></div>
-    <div id="modal-overlay" onclick="closeCheckout()"></div>
-
-    <div id="cart-panel">
-        <div class="cart-header">
-            <h3>Your Cart</h3>
-            <button class="close-x" onclick="toggleCart()">&times;</button>
-        </div>
-        <div id="cart-items"></div>
-        <div class="cart-footer">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
-                <strong>Total:</strong>
-                <strong id="cart-total">$0.00</strong>
-            </div>
-            <button class="checkout-btn" onclick="openCheckout()">Go to Checkout</button>
-        </div>
-    </div>
-
-    <div id="checkout-modal">
-        <div class="modal-header">
-            <h3>Checkout</h3>
-            <button class="close-x" onclick="closeCheckout()">&times;</button>
-        </div>
-        <p style="margin-bottom: 10px;">Total Due: <span id="modal-total-display" style="font-weight: 800; color: var(--accent);"></span></p>
-        
-        <div class="payment-method" onclick="processPayment('Credit Card')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
-            Pay with Card
-        </div>
-
-        <div class="payment-method" onclick="processPayment('Solana')">
-            <svg role="img" viewBox="0 0 397.7 311.7" xmlns="http://www.w3.org/2000/svg" style="color: #14F195;">
-                <path fill="currentColor" d="M64.6,237.9c2.4-2.4,5.7-3.8,9.2-3.8h317.4c5.8,0,8.7,7,4.6,11.1l-62.7,62.7c-2.4,2.4-5.7,3.8-9.2,3.8H6.5c-5.8,0-8.7-7-4.6-11.1L64.6,237.9z"></path>
-                <path fill="currentColor" d="M64.6,3.8C67.1,1.4,70.4,0,73.8,0h317.4c5.8,0,8.7,7,4.6,11.1l-62.7,62.7c-2.4,2.4-5.7,3.8-9.2,3.8H6.5c-5.8,0-8.7-7-4.6-11.1L64.6,3.8z"></path>
-                <path fill="currentColor" d="M333.1,120.1c-2.4-2.4-5.7-3.8-9.2-3.8H6.5c-5.8,0-8.7,7-4.6,11.1l62.7,62.7c2.4,2.4,5.7,3.8,9.2,3.8h317.4c5.8,0,8.7-7,4.6-11.1L333.1,120.1z"></path>
-            </svg>
-            Pay with Solana
-        </div>
-    </div>
-
     <nav>
         <a href="/" class="logo">{{ store_name }}</a>
         <div class="nav-right">
-            <a href="/admin" id="admin-btn" class="admin-btn" style="display: none !important;">
-                Admin
-            </a>
-
-            <div class="cart-link" onclick="toggleCart()">
-                Cart <span id="cart-count">0</span>
-            </div>
-            
-            <button type="button" id="login-link" class="login-btn">
-                Login <span id="login"></span>
+            <a href="/" class="login-btn">View Store</a>
+            <button type="button" id="logout-btn" class="login-btn">
+                Logout
             </button>
         </div>
     </nav>
 
-    <header class="hero">
-        <h1>Welcome to {{ store_name }}</h1>
-        <p>Premium items curated just for you.</p>
+    <header class="hero" style="padding: 40px 20px;">
+        <h1>Inventory Control</h1>
+        <p>Manage your premium curated items and security.</p>
     </header>
 
     <div class="container">
-        <div class="grid">
-            {% for item in products %}
-            <div class="card">
-                {% if item.image %}
-                <img src="{{ item.image }}" alt="{{ item.name }}" class="product-img">
-                {% else %}
-                <div class="product-img" style="display: flex; align-items: center; justify-content: center; background: #eee; color: #aaa;">No Image</div>
-                {% endif %}
-                
-                <h3>{{ item.name }}</h3>
-                <p class="price">{{ item.price }}</p>
-                <p style="font-size: 0.85rem; color: #888; margin-bottom: 15px;">{{ item.desc }}</p>
-                <button class="add-btn" onclick="addToCart('{{ item.name }}', '{{ item.price }}')">Add to Cart</button>
+        <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));">
+            
+            <div class="card" style="text-align: left;">
+                <h3 style="border-bottom: 2px solid var(--accent); padding-bottom: 10px; margin-bottom: 20px;">Add New Product</h3>
+                <form id="add-item-form">
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label style="display:block; font-size: 0.8rem; font-weight: bold; margin-bottom: 5px;">Item Name</label>
+                        <input type="text" id="itemName" style="width:100%; padding:10px; border: 1px solid #ddd; border-radius: 5px;" placeholder="e.g. Premium Hoodie" required>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label style="display:block; font-size: 0.8rem; font-weight: bold; margin-bottom: 5px;">Price</label>
+                        <input type="text" id="itemPrice" style="width:100%; padding:10px; border: 1px solid #ddd; border-radius: 5px;" placeholder="e.g. 59.99" required>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label style="display:block; font-size: 0.8rem; font-weight: bold; margin-bottom: 5px;">Image URL</label>
+                        <input type="url" id="itemImage" style="width:100%; padding:10px; border: 1px solid #ddd; border-radius: 5px;" placeholder="https://..." required>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label style="display:block; font-size: 0.8rem; font-weight: bold; margin-bottom: 5px;">Description</label>
+                        <textarea id="itemDesc" style="width:100%; padding:10px; border: 1px solid #ddd; border-radius: 5px; height: 80px;" placeholder="Describe the item..." required></textarea>
+                    </div>
+                    <button type="submit" class="add-btn" id="submitBtn" style="width: 100%;">Add Item to Store</button>
+                </form>
             </div>
-            {% endfor %}
+
+            <div class="card" style="text-align: left; border-top: 4px solid var(--accent);">
+                <h3 style="border-bottom: 2px solid var(--accent); padding-bottom: 10px; margin-bottom: 20px;">Edit Existing Product</h3>
+                <form id="edit-item-form">
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label style="display:block; font-size: 0.8rem; font-weight: bold; margin-bottom: 5px;">Target Item Name</label>
+                        <input type="text" id="editItemName" style="width:100%; padding:10px; border: 1px solid #ddd; border-radius: 5px; background: #f9f9f9;" placeholder="Exact name in DB" required>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label style="display:block; font-size: 0.8rem; font-weight: bold; margin-bottom: 5px;">New Price</label>
+                        <input type="text" id="editItemPrice" style="width:100%; padding:10px; border: 1px solid #ddd; border-radius: 5px;">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label style="display:block; font-size: 0.8rem; font-weight: bold; margin-bottom: 5px;">New Image URL</label>
+                        <input type="url" id="editItemImage" style="width:100%; padding:10px; border: 1px solid #ddd; border-radius: 5px;">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label style="display:block; font-size: 0.8rem; font-weight: bold; margin-bottom: 5px;">New Description</label>
+                        <textarea id="editItemDesc" style="width:100%; padding:10px; border: 1px solid #ddd; border-radius: 5px; height: 80px;"></textarea>
+                    </div>
+                    <button type="submit" class="add-btn" id="editSubmitBtn" style="width: 100%; background: #333;">Save Changes</button>
+                </form>
+            </div>
+
+            <div class="card" style="text-align: left;">
+                <h3 style="border-bottom: 2px solid var(--accent); padding-bottom: 10px; margin-bottom: 20px;">User Security</h3>
+                <form id="lock-account-form">
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label style="display:block; font-size: 0.8rem; font-weight: bold; margin-bottom: 5px;">Target Username</label>
+                        <input type="text" id="lockUsername" style="width:100%; padding:10px; border: 1px solid #ddd; border-radius: 5px;" required>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label style="display:block; font-size: 0.8rem; font-weight: bold; margin-bottom: 5px;">Action</label>
+                        <select id="lockAction" style="width:100%; padding:10px; border: 1px solid #ddd; border-radius: 5px; background: white;">
+                            <option value="lock">Lock Account</option>
+                            <option value="unlock">Unlock Account</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="add-btn" id="lockSubmitBtn" style="width: 100%; background: var(--accent);">Update User Status</button>
+                </form>
+            </div>
+
         </div>
     </div>
 
-    <div id="notification-toast" class="toast-left"></div>
-    <script src="/javascript/index.js"></script>
+    <div id="notification-toast" class="toast-left" style="display: none;"></div>
 </body>
 </html>

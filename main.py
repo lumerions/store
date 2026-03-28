@@ -3,7 +3,6 @@ from fastapi.responses import HTMLResponse,JSONResponse,RedirectResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.exceptions import HTTPException
-from pydantic import BaseModel, EmailStr
 import re,os,sys,bcrypt,secrets
 libPath = os.path.join(os.path.dirname(__file__), 'lib')
 sys.path.append(libPath)
@@ -13,6 +12,7 @@ from slowapi.middleware import SlowAPIMiddleware
 from lib.config import Config
 from lib.postgres import getPostgresConnection
 from lib.redis import getRedisInstance
+from lib.schema import *
 
 templates = Jinja2Templates(directory="templates")
 cfg = Config()
@@ -47,16 +47,27 @@ def setSessionCookie(response : Response,SessionId):
         samesite="Lax", 
     )
 
+def trustCheckAdminUser(cursor,SessionId):
+    cursor.execute("""
+        SELECT locked,username FROM accounts WHERE SessionId = %s;
+    """, (SessionId,))
 
-class SignupSchema(BaseModel):
-    confirmpassword: str
-    password: str
-    username: str
-    email: EmailStr
+    result = cursor.fetchone()
 
-class LoginSchema(BaseModel):
-    username: str
-    password: str
+    if not result:
+        return JSONResponse({"success": False, "message": "Unknown username or sessionid."})
+
+    locked = result[0]
+    username = result[1]
+
+    if locked:
+        return JSONResponse({"success": False, "message": "This admin user is locked."})
+    
+    if str(username) != cfg.AdminUsername:
+        return JSONResponse({"success": False, "message": "Not authorized to do this action."})
+    
+    return None
+
 
 @app.get("/", response_class=HTMLResponse)
 @limiter.limit("50/minute")
@@ -247,6 +258,81 @@ async def logout(request : Request,response: Response):
         httponly=True,
         samesite="lax"
     )
+    return {"success": True}
+
+@app.post("/adminapi/additem")
+@limiter.limit("50/minute")
+async def additem(request: Request,data: AddItemSchema, SessionId: str = Cookie(None)):
+    itemname = data.itemname
+    imageurl = data.imageurl
+    description = data.description
+    price = data.price
+# hopefully 2 different admins dont run this at once
+    with getPostgresConnection() as conn:
+        with conn.cursor() as cursor:
+            trustCheck = trustCheckAdminUser(cursor,SessionId)
+
+            if trustCheck:
+                return trustCheck
+            
+            try:
+                cursor.execute("""SELECT itemid from storeitems WHERE itemname = %s;""",(itemname,))
+
+                result = cursor.fetchone()
+
+                if result:
+                    return JSONResponse({"success": False, "message": "The itemname is already taken by another itemid."})
+
+                cursor.execute("""
+                    INSERT INTO storeitems (itemname, imageurl, description, price,offsale)
+                    VALUES (%s, %s, %s, %s,%s)
+                    ON CONFLICT (itemname) DO NOTHING
+                    RETURNING itemid;
+                """, (itemname, imageurl, description, price,False))
+
+                newItem = cursor.fetchone()
+                conn.commit()
+
+                if not newItem:
+                    return JSONResponse({"success": False, "message": "The itemname is already taken by another itemid."})
+            except Exception as error:
+                conn.rollback()
+                return JSONResponse({"success": False, "message": f"Database error: {str(error)}"})
+
+    return {"success": True}
+
+
+@app.post("/adminapi/changeItemSchema")
+@limiter.limit("50/minute")
+async def additem(request: Request,data: AddItemSchema, SessionId: str = Cookie(None)):
+    itemname = data.itemname
+    imageurl = data.imageurl
+    description = data.description
+    price = data.price
+
+    with getPostgresConnection() as conn:
+        with conn.cursor() as cursor:
+            trustCheck = trustCheckAdminUser(cursor,SessionId)
+
+            if trustCheck:
+                return trustCheck
+            
+            cursor.execute("""SELECT itemid from storeitems WHERE itemname = %s;""",(itemname,))
+            result = cursor.fetchone()
+
+            if not result:
+                return JSONResponse({"success": False, "message": "No data found for that itemname."})
+
+            itemid = result[0]
+
+            cursor.execute("""
+                UPDATE storeitems 
+                SET price = %s, description = %s, imageurl= %s,itemname = %s
+                WHERE itemid = %s
+            """, (price, description,imageurl, itemname,itemid))
+
+            conn.commit()
+
     return {"success": True}
 
 @app.get("/{path:path}", response_class=HTMLResponse)
