@@ -6,7 +6,7 @@ from pydantic import BaseModel, EmailStr
 import re,os,sys,bcrypt,secrets
 libPath = os.path.join(os.path.dirname(__file__), 'lib')
 sys.path.append(libPath)
-from config import Config
+from lib.config import Config
 from lib.postgres import getPostgresConnection
 
 app = FastAPI(
