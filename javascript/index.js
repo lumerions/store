@@ -131,8 +131,8 @@ async function CheckIfUserLoggedIn() {
 
         const data = await response.json()
         console.log(data)
-        const loginBtn = document.querySelector('a.login-btn'); 
-        const logoutBtn = document.getElementById('logout-btn');
+        const loginBtn = document.querySelector('.login-btn'); 
+        const logoutBtn = document.getElementById('#logout-btn');
 
         if (!data.loggedin) {
             if (loginBtn) {
