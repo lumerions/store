@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return
             }
             
-            window.location.replace("/login")
+            window.location.replace("/")
         } catch(error) {
             console.log(error)
             if (error.message) {
