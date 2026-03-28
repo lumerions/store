@@ -130,12 +130,15 @@ async function CheckIfUserLoggedIn() {
         }
 
         const data = await response.json()
+        const loginBtn = document.querySelector('a.login-btn'); 
+        const logoutBtn = document.getElementById('logout-btn'); 
 
-        if (!data.loggedin) {
-            const loginBtn = document.querySelector('.login-btn');
-            if (loginBtn) {
-                loginBtn.style.display = 'flex'
-            }
+        if (data.loggedin) {
+            loginBtn.style.display = 'none';
+            logoutBtn.style.display = 'flex';
+        } else {
+            loginBtn.style.display = 'flex';
+            logoutBtn.style.display = 'none';
         }
 
     } catch {
