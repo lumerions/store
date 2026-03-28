@@ -116,11 +116,11 @@ async def signuppost(data: SignupSchema, response: Response):
             with conn.cursor() as cursor:
 
                 cursor.execute("""
-                    INSERT INTO accounts (username, email, password, sessionid)
+                    INSERT INTO accounts (username, email, password, sessionid,locked)
                     VALUES (%s, %s, %s, %s)
                     ON CONFLICT (username) DO NOTHING
                     RETURNING userid;
-                """, (username, email, hashedpassword, sessionId))
+                """, (username, email, hashedpassword, sessionId,False))
 
                 rowFetch = cursor.fetchone()
 
