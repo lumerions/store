@@ -129,16 +129,18 @@ async def adminload(request: Request,SessionId: str = Cookie(None)):
 
 @app.get("/userloggedin",response_class=JSONResponse)
 @limiter.limit("50/minute")
-async def userloggedin(request: Request, SessionId: str = Cookie(None)): 
-    sessionData = getRedisInstance().get(str(SessionId))
-    SessionIdList = SessionId.split("‽")
-    SessionId = SessionIdList[0]
-    SessionUsername = SessionIdList[1]
+async def userloggedin(request: Request, SessionId: str = Cookie(None)):
+    sessionData = None 
+    if SessionId:
+        sessionData = getRedisInstance().get(str(SessionId))
+        SessionIdList = SessionId.split("‽")
+        SessionId = SessionIdList[0]
+        SessionUsername = SessionIdList[1]
 
-    print(SessionIdList)
+        print(SessionIdList)
 
-    if SessionUsername == cfg.AdminUsername:
-        return JSONResponse({"loggedin": sessionData,"isadmin":True})
+        if SessionUsername == cfg.AdminUsername:
+            return JSONResponse({"loggedin": sessionData,"isadmin":True})
 
     return JSONResponse({"loggedin": sessionData})
 
