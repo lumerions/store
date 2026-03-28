@@ -2,7 +2,15 @@ let cart = JSON.parse(localStorage.getItem('store_cart')) || [];
 
 
 function showNotification(text, type = 'error') {
-    const container = document.getElementById('notification-toast');
+    let container = document.getElementById('notification-toast');
+    
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'notification-toast';
+        container.className = 'toast-left';
+        document.body.appendChild(container);
+    }
+    
     const toast = document.createElement('div');
     toast.className = `toast-card toast-${type}`;
     toast.innerText = text;
@@ -12,9 +20,9 @@ function showNotification(text, type = 'error') {
     setTimeout(() => {
         toast.style.opacity = '0';
         toast.style.transform = 'translateX(-20px)';
-        toast.style.transition = 'all 0.3s ease';
+        toast.style.transition = 'all 0.4s ease';
         
-        setTimeout(() => toast.remove(), 3000);
+        setTimeout(() => toast.remove(), 400);
     }, 3000);
 }
 
@@ -104,7 +112,6 @@ function closeCheckout() {
 }
 
 function processPayment(method) {    
-    cart = [];
     saveAndRefresh();
     closeCheckout();
     showNotification("Success! Your order has been placed.", "success");
