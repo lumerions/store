@@ -115,7 +115,7 @@ async def login(request: Request):
 @app.get("/admin",response_class=JSONResponse)
 @limiter.limit("50/minute")
 async def adminload(request: Request,SessionId: str = Cookie(None)):
-    SessionIdList = SessionId.split("-")
+    SessionIdList = SessionId.split("‽")
     SessionId = SessionIdList[0]
     SessionUsername = SessionIdList[1]
 
@@ -131,7 +131,7 @@ async def adminload(request: Request,SessionId: str = Cookie(None)):
 @limiter.limit("50/minute")
 async def userloggedin(request: Request, SessionId: str = Cookie(None)): 
     sessionData = getRedisInstance().get(str(SessionId))
-    SessionIdList = SessionId.split("-")
+    SessionIdList = SessionId.split("‽")
     SessionId = SessionIdList[0]
     SessionUsername = SessionIdList[1]
 
@@ -182,8 +182,8 @@ async def signuppost(request: Request,data: SignupSchema, response: Response):
                     raise ValueError("This username is already in use.")
                 else:
                     conn.commit()
-                    setSessionCookie(response,sessionId + "-" + username)
-                    getRedisInstance().set(sessionId + "-" + username,"1")
+                    setSessionCookie(response,sessionId + "‽" + username)
+                    getRedisInstance().set(sessionId + "‽" + username,"1")
 
                 return {"success": True}
 
@@ -221,8 +221,8 @@ async def loginpost(request : Request,data : LoginSchema, response: Response):
                     if not bcrypt.checkpw(password.encode("utf-8"),passwordHashed.encode("utf-8")):
                         raise ValueError("Incorrect username or password.")
                     
-                    setSessionCookie(response,sessionId + "-" + username)
-                    getRedisInstance().set(sessionId + "-" + username,"1")
+                    setSessionCookie(response,sessionId + "‽" + username)
+                    getRedisInstance().set(sessionId + "‽" + username,"1")
                 else:
                     raise ValueError("Incorrect username or password.")
                 
