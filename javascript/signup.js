@@ -71,7 +71,8 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log(responseJson)
 
             if (!responseJson.success) {
-                showError(responseJson.message)
+                const message = responseJson.message || responseJson.detail.msg
+                showError(message)
                 return
             }
             
@@ -81,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (error.message) {
                 showError(error.message)
             } else {
-                showError(error.detail.msg)
+                showError(String(error))
             }
         }
     })
