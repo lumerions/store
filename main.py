@@ -162,7 +162,7 @@ async def signuppost(request: Request,data: SignupSchema, response: Response):
                     setSessionCookie(response,sessionId)
                     getRedisInstance().set(sessionId,"1")
 
-                return JSONResponse({"success": True})
+                return {"success": True}
 
     except ValueError as customError:
         return JSONResponse({"success": False, "message": str(customError)})
@@ -204,7 +204,7 @@ async def loginpost(request : Request,data : LoginSchema, response: Response):
                 else:
                     raise ValueError("Incorrect username or password.")
                 
-                return JSONResponse({"success": True})
+                return {"success": True}
 
     except ValueError as customError:
         return JSONResponse({"success": False, "message": str(customError)})
