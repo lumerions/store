@@ -176,7 +176,7 @@ async def signuppost(request: Request,data: SignupSchema, response: Response):
 
 @app.post("/login",response_class=JSONResponse)
 @limiter.limit("50/minute")
-async def loginpost(Request : Request,data : LoginSchema, response: Response):
+async def loginpost(request : Request,data : LoginSchema, response: Response):
     print(data)
 
     username = data.username
