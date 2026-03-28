@@ -16,84 +16,98 @@
         </div>
     </nav>
 
-    <div class="admin-container">
-        <div class="admin-header">
-            <h2>Inventory Management</h2>
-            <span class="price">Admin Mode</span>
-        </div>
+    <header class="hero" style="padding: 40px 20px;">
+        <h1>Inventory Control</h1>
+        <p>Manage your premium curated items and security.</p>
+    </header>
 
-        <div class="admin-card">
-            <h3 style="margin-bottom: 20px;">Add New Product</h3>
-            <form id="add-item-form">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Item Name</label>
-                        <input type="text" id="itemName" placeholder="e.g. Premium Hoodie" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Price</label>
-                        <input type="text" id="itemPrice" placeholder="e.g. 59.99" required>
-                    </div>
-                    <div class="form-group full-width">
-                        <label>Image URL</label>
-                        <input type="url" id="itemImage" placeholder="https://example.com/image.jpg" required>
-                    </div>
-                    <div class="form-group full-width">
-                        <label>Description</label>
-                        <textarea id="itemDesc" placeholder="Describe the item..." required></textarea>
-                    </div>
+    <div class="container">
+        <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px;">
+            
+            <div class="card" style="text-align: left; display: flex; flex-direction: column;">
+                <div style="border-bottom: 2px solid var(--accent); margin-bottom: 20px;">
+                    <h3 style="margin-bottom: 10px;">Add New Product</h3>
                 </div>
-                <button type="submit" class="submit-btn" id="submitBtn">Add Item to Store</button>
-            </form>
-        </div>
+                
+                <form id="add-item-form" style="flex-grow: 1; display: flex; flex-direction: column;">
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label style="display:block; font-size: 0.8rem; font-weight: 800; margin-bottom: 5px; text-transform: uppercase; color: #666;">Item Name</label>
+                        <input type="text" id="itemName" style="width:100%; padding:12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem;" placeholder="e.g. Classic Hoodie" required>
+                    </div>
+                    
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label style="display:block; font-size: 0.8rem; font-weight: 800; margin-bottom: 5px; text-transform: uppercase; color: #666;">Price</label>
+                        <input type="text" id="itemPrice" style="width:100%; padding:12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem;" placeholder="e.g. 59.99" required>
+                    </div>
 
-        <div class="admin-card" style="margin-top: 30px; border-left: 5px solid var(--accent);">
-            <h3 style="margin-bottom: 20px;">Update Existing Product</h3>
-            <p style="font-size: 0.85rem; color: #666; margin-bottom: 15px;">Enter the <b>exact</b> name of the item you wish to modify.</p>
-            <form id="edit-item-form">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Current Item Name</label>
-                        <input type="text" id="editItemName" placeholder="Enter existing name" required>
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label style="display:block; font-size: 0.8rem; font-weight: 800; margin-bottom: 5px; text-transform: uppercase; color: #666;">Image URL</label>
+                        <input type="url" id="itemImage" style="width:100%; padding:12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem;" placeholder="https://..." required>
                     </div>
-                    <div class="form-group">
-                        <label>New Price</label>
-                        <input type="text" id="editItemPrice" placeholder="New price">
+
+                    <div class="form-group" style="margin-bottom: 25px;">
+                        <label style="display:block; font-size: 0.8rem; font-weight: 800; margin-bottom: 5px; text-transform: uppercase; color: #666;">Description</label>
+                        <textarea id="itemDesc" style="width:100%; padding:12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; height: 100px; resize: none;" placeholder="Item details..." required></textarea>
                     </div>
-                    <div class="form-group full-width">
-                        <label>New Image URL</label>
-                        <input type="url" id="editItemImage" placeholder="New image URL">
-                    </div>
-                    <div class="form-group full-width">
-                        <label>New Description</label>
-                        <textarea id="editItemDesc" placeholder="New description"></textarea>
-                    </div>
+
+                    <button type="submit" class="add-btn" id="submitBtn" style="width: 100%; margin-top: auto;">Create Product</button>
+                </form>
+            </div>
+
+            <div class="card" style="text-align: left; display: flex; flex-direction: column; border-top: 5px solid #333;">
+                <div style="border-bottom: 2px solid #333; margin-bottom: 20px;">
+                    <h3 style="margin-bottom: 10px;">Edit Existing Product</h3>
                 </div>
-                <button type="submit" class="submit-btn" id="editSubmitBtn" style="background: #444;">Save Changes</button>
-            </form>
-        </div>
-
-        <div class="admin-card" style="margin-top: 30px;">
-            <h3 style="margin-bottom: 20px;">User Security</h3>
-            <form id="lock-account-form">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Target Username</label>
-                        <input type="text" id="lockUsername" placeholder="username_to_lock" required>
+                
+                <form id="edit-item-form" style="flex-grow: 1; display: flex; flex-direction: column;">
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label style="display:block; font-size: 0.8rem; font-weight: 800; margin-bottom: 5px; text-transform: uppercase; color: #666;">Target Name (Search)</label>
+                        <input type="text" id="editItemName" style="width:100%; padding:12px; border: 1px solid #333; border-radius: 8px; font-size: 1rem; background: #fdfdfd;" placeholder="Exact name of item to edit" required>
                     </div>
-                    <div class="form-group">
-                        <label>Action</label>
-                        <select id="lockAction" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+                    
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label style="display:block; font-size: 0.8rem; font-weight: 800; margin-bottom: 5px; text-transform: uppercase; color: #666;">New Price</label>
+                        <input type="text" id="editItemPrice" style="width:100%; padding:12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem;" placeholder="Leave blank to keep current">
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label style="display:block; font-size: 0.8rem; font-weight: 800; margin-bottom: 5px; text-transform: uppercase; color: #666;">New Image URL</label>
+                        <input type="url" id="editItemImage" style="width:100%; padding:12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem;" placeholder="https://...">
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 25px;">
+                        <label style="display:block; font-size: 0.8rem; font-weight: 800; margin-bottom: 5px; text-transform: uppercase; color: #666;">New Description</label>
+                        <textarea id="editItemDesc" style="width:100%; padding:12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; height: 100px; resize: none;" placeholder="Update details..."></textarea>
+                    </div>
+
+                    <button type="submit" class="add-btn" id="editSubmitBtn" style="width: 100%; background: #333; margin-top: auto;">Update Details</button>
+                </form>
+            </div>
+
+            <div class="card" style="text-align: left;">
+                <div style="border-bottom: 2px solid var(--accent); margin-bottom: 20px;">
+                    <h3 style="margin-bottom: 10px;">User Security</h3>
+                </div>
+                <form id="lock-account-form">
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label style="display:block; font-size: 0.8rem; font-weight: 800; margin-bottom: 5px; text-transform: uppercase; color: #666;">Username</label>
+                        <input type="text" id="lockUsername" style="width:100%; padding:12px; border: 1px solid #ddd; border-radius: 8px;" required>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label style="display:block; font-size: 0.8rem; font-weight: 800; margin-bottom: 5px; text-transform: uppercase; color: #666;">Action</label>
+                        <select id="lockAction" style="width:100%; padding:12px; border: 1px solid #ddd; border-radius: 8px; background: white;">
                             <option value="lock">Lock Account</option>
                             <option value="unlock">Unlock Account</option>
                         </select>
                     </div>
-                </div>
-                <button type="submit" class="submit-btn" id="lockSubmitBtn" style="background: var(--accent);">Update User Status</button>
-            </form>
+                    <button type="submit" class="add-btn" id="lockSubmitBtn" style="width: 100%; background: var(--accent);">Apply Status</button>
+                </form>
+            </div>
+
         </div>
     </div>
 
-    <div id="notification-toast" class="toast-left" style="display: none; position: fixed; bottom: 20px; left: 20px; background: #333; color: white; padding: 15px 25px; border-radius: 8px; z-index: 1000;"></div>
+    <div id="notification-toast" class="toast-left" style="display: none;"></div>
+
 </body>
 </html>
