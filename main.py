@@ -123,7 +123,7 @@ async def userloggedin(request: Request,SessionId: str = Cookie(None)):
 
 @app.post("/signup",response_class=JSONResponse)
 @limiter.limit("50/minute")
-async def signuppost(data: SignupSchema, response: Response):
+async def signuppost(request: Request,data: SignupSchema, response: Response):
     username = data.username
     email = data.email
     password = data.password
@@ -176,7 +176,7 @@ async def signuppost(data: SignupSchema, response: Response):
 
 @app.post("/login",response_class=JSONResponse)
 @limiter.limit("50/minute")
-async def loginpost(data : LoginSchema, response: Response):
+async def loginpost(Request : Request,data : LoginSchema, response: Response):
     print(data)
 
     username = data.username
