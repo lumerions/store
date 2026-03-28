@@ -52,7 +52,7 @@ async def root(request: Request):
     
     return templates.TemplateResponse("index.html", {
         "request": request, 
-        "store_name": "MODERN",  
+        "store_name": cfg.StoreName,  
         "products": products
     })
 
@@ -60,28 +60,28 @@ async def root(request: Request):
 async def login(request: Request):
     return templates.TemplateResponse("ratelimited.html", {
         "request": request, 
-        "store_name": "MODERN",  
+        "store_name": cfg.StoreName,  
     })
 
 @app.get("/notfound",response_class=HTMLResponse)
 async def login(request: Request):
     return templates.TemplateResponse("notfound.html", {
         "request": request, 
-        "store_name": "MODERN",  
+        "store_name": cfg.StoreName,  
     })
 
 @app.get("/signup",response_class=HTMLResponse)
 async def signup(request: Request):
     return templates.TemplateResponse("signup.html", {
         "request": request, 
-        "store_name": "MODERN",  
+        "store_name": cfg.StoreName,  
     })
 
 @app.get("/login",response_class=HTMLResponse)
 async def login(request: Request):
     return templates.TemplateResponse("login.html", {
         "request": request, 
-        "store_name": "MODERN",  
+        "store_name": cfg.StoreName,  
     })
 
 @app.post("/signup",response_class=JSONResponse)
