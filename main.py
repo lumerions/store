@@ -47,6 +47,7 @@ def setSessionCookie(response : Response,SessionId):
         samesite="Lax", 
     )
 
+
 class SignupSchema(BaseModel):
     confirmpassword: str
     password: str
@@ -114,25 +115,30 @@ async def login(request: Request):
 @app.get("/admin",response_class=JSONResponse)
 @limiter.limit("50/minute")
 async def adminload(request: Request,SessionId: str = Cookie(None)):
-    return templates.TemplateResponse("admin.html", {
-        "request": request, 
-        "store_name": cfg.StoreName,  
-    })
+    SessionIdList = SessionId.split("-")
+    SessionId = SessionIdList[0]
+    SessionUsername = SessionIdList[1]
+
+    print(SessionIdList)
+
+    if SessionUsername == cfg.AdminUsername:
+        return templates.TemplateResponse("admin.html", {
+            "request": request, 
+            "store_name": cfg.StoreName,  
+        })
 
 @app.get("/userloggedin",response_class=JSONResponse)
 @limiter.limit("50/minute")
-async def userloggedin(request: Request, mainpage: str = None, SessionId: str = Cookie(None)): 
+async def userloggedin(request: Request, SessionId: str = Cookie(None)): 
     sessionData = getRedisInstance().get(str(SessionId))
-  
-    if mainpage:
-        SessionIdList = SessionId.split("-")
-        SessionId = SessionIdList[0]
-        SessionUsername = SessionIdList[1]
+    SessionIdList = SessionId.split("-")
+    SessionId = SessionIdList[0]
+    SessionUsername = SessionIdList[1]
 
-        print(SessionIdList)
+    print(SessionIdList)
 
-        if SessionUsername == cfg.AdminUsername:
-            return JSONResponse({"loggedin": sessionData,"isadmin":True})
+    if SessionUsername == cfg.AdminUsername:
+        return JSONResponse({"loggedin": sessionData,"isadmin":True})
 
     return JSONResponse({"loggedin": sessionData})
 
