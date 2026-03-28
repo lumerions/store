@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const signupForm = document.getElementById('signupForm');
-    if (!signupForm) return;
+    const loginForm = document.getElementById('loginForm');
+    if (!loginForm) return;
 
-    document.getElementById('signupForm').addEventListener('submit', async (e) => {
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
         e.preventDefault();
 
         const submitBtn = document.getElementById('submit-btn');
@@ -35,8 +35,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    password: password,
                     username: username,
+                    password: password,
                 })
             })
 
