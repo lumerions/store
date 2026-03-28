@@ -111,7 +111,7 @@ async def signuppost(data: SignupSchema):
                     INSERT INTO accounts (username, email, password, sessionid)
                     VALUES (%s, %s, %s, %s)
                     ON CONFLICT (username) DO NOTHING
-                    RETURNING id;
+                    RETURNING userid;
                 """, (username, email, hashedpassword, sessionId))
 
                 rowFetch = cursor.fetchone()
