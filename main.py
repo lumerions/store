@@ -73,10 +73,10 @@ async def signup(request: Request):
 
 @app.post("/signup",response_class=JSONResponse)
 async def signuppost(data: SignupSchema):
-    username = data.get("username")
-    email = data.get("email")
-    password = data.get("password")
-    confirmpassword = data.get("confirmpassword")
+    username = data.username
+    email = data.email
+    password = data.password
+    confirmpassword = data.confirmpassword
 
     if confirmpassword != password:
         return JSONResponse({"success": False,"message": "Passwords dont match."})
