@@ -131,10 +131,10 @@ async function CheckIfUserLoggedIn() {
 
         const data = await response.json()
 
-        if (data.loggedin) {
+        if (!data.loggedin) {
             const loginBtn = document.querySelector('.login-btn');
             if (loginBtn) {
-                loginBtn.style.display = 'none'
+                loginBtn.style.display = 'flex'
             }
         }
 
