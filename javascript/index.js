@@ -135,10 +135,15 @@ async function CheckIfUserLoggedIn() {
 
         if (!data.loggedin) {
             loginBtnText.innerText = "Login"
-            loginBtn.style.display = 'flex'
+            loginBtn.style.display = "flex"
         } else {
             loginBtnText.innerText = "Logout"
-            loginBtn.style.display = 'flex'
+            loginBtn.style.display = "flex"
+        }
+
+        if (data.isadmin) {
+            const adminBtn = document.getElementById("admin-btn");
+            adminBtn.style.display = "flex"
         }
 
     } catch {
@@ -167,5 +172,5 @@ if (loginBtn) {
         } else {
             window.location.href = "/login"
         }
-    });
+    })
 }
