@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log(responseJson)
 
             if (!responseJson.success) {
-                const message = responseJson.message || responseJson.detail.msg
+                const message = responseJson.message || responseJson.detail[0].msg
                 showError(message)
                 return
             }
