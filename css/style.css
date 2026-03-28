@@ -126,3 +126,32 @@ nav {
         margin-bottom: 15px;
         font-size: 14px;
     }
+.toast-left {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.toast-card {
+    background: #333;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    font-size: 0.9rem;
+    min-width: 200px;
+    border-left: 4px solid var(--accent);
+    animation: slideInLeft 0.3s ease forwards;
+}
+
+@keyframes slideInLeft {
+    from { transform: translateX(-100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+.toast-error { border-left-color: #e74c3c; }
+.toast-success { border-left-color: #2ecc71; }
