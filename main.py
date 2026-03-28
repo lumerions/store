@@ -1,4 +1,4 @@
-from fastapi import FastAPI,Request
+from fastapi import FastAPI,Request,Response
 from fastapi.responses import HTMLResponse,JSONResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
@@ -19,6 +19,11 @@ templates = Jinja2Templates(directory="templates")
 cfg = Config()
 app.mount("/javascript", StaticFiles(directory="javascript"), name="javascript")
 app.mount("/css", StaticFiles(directory="css"), name="css")
+
+def setSessionCookie(response : Response,SessionId):
+    response.set_cookie(
+        key="SessionId", value="12345", max_age=3600, httponly=True
+    )
 
 class SignupSchema(BaseModel):
     confirmpassword: str
@@ -68,7 +73,7 @@ async def signup(request: Request):
     })
 
 @app.post("/signup",response_class=JSONResponse)
-async def signuppost(data: SignupSchema):
+async def signuppost(data: SignupSchema, response: Response):
     username = data.username
     email = data.email
     password = data.password
@@ -86,22 +91,12 @@ async def signuppost(data: SignupSchema):
     if not re.fullmatch(r"^\w{3,20}$", username):
         return JSONResponse({"success": False,"message": "Username can only contain letters, numbers, and underscores (3-20 characters)."})
     
-    hashedpassword = bcrypt.hashpw(password.encode("utf-8"),bcrypt.gensalt()).decode("utf-8")
+    hashedpassword = bcrypt.hashpw(password.encode("utf-8"),bcrypt.gensalt(12)).decode("utf-8")
     sessionId = secrets.token_urlsafe(32)
 
     try:
         with getPostgresConnection() as conn:
             with conn.cursor() as cursor:
-                cursor.execute("""
-                    CREATE TABLE IF NOT EXISTS accounts (
-                        userid SERIAL PRIMARY KEY,
-                        sessionid TEXT NOT NULL,
-                        username VARCHAR(20) UNIQUE NOT NULL,
-                        email VARCHAR(50) NOT NULL,
-                        password VARCHAR(100) NOT NULL,
-                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                    );
-                """)
 
                 cursor.execute("""
                     INSERT INTO accounts (username, email, password, sessionid)
@@ -113,9 +108,10 @@ async def signuppost(data: SignupSchema):
                 rowFetch = cursor.fetchone()
 
                 if not rowFetch:
-                    raise ValueError("Username already exists.")
+                    raise ValueError("This username is already in use.")
                 else:
                     conn.commit()
+                    setSessionCookie(response,sessionId)
 
                 return JSONResponse({"success": True})
 
@@ -128,37 +124,38 @@ async def signuppost(data: SignupSchema):
 
 
 @app.post("/login",response_class=JSONResponse)
-async def loginpost(data : LoginSchema):
+async def loginpost(data : LoginSchema, response: Response):
     print(data)
+
+    username = data.username
+    password = data.password
 
     try:
         with getPostgresConnection() as conn:
             with conn.cursor() as cursor:
-                cursor.execute("""
-                    CREATE TABLE IF NOT EXISTS accounts (
-                        userid SERIAL PRIMARY KEY,
-                        sessionid TEXT NOT NULL,
-                        username VARCHAR(20) UNIQUE NOT NULL,
-                        email VARCHAR(50) NOT NULL,
-                        password VARCHAR(100) NOT NULL,
-                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                    );
-                """)
 
                 cursor.execute("""
-                    INSERT INTO accounts (username, email, password, sessionid)
-                    VALUES (%s, %s, %s, %s)
-                    ON CONFLICT (username) DO NOTHING
-                    RETURNING userid;
-                """, (username, email, hashedpassword, sessionId))
+                    SELECT locked, password,sessionid FROM accounts WHERE username = %s;
+                """, (username,))
 
-                rowFetch = cursor.fetchone()
+                result = cursor.fetchone()
 
-                if not rowFetch:
-                    raise ValueError("Username already exists.")
+
+                if result:
+                    locked = result[0]
+                    passwordHashed = result[1]
+                    sessionId = result[2]
+
+                    if locked:
+                        raise ValueError("This account has been locked.")
+                    
+                    if not bcrypt.checkpw(password.encode("utf-8"),passwordHashed.encode("utf-8")):
+                        raise ValueError("Incorrect username or password.")
+                    
+                    setSessionCookie(response,sessionId)
                 else:
-                    conn.commit()
-
+                    raise ValueError("Incorrect username or password.")
+                
                 return JSONResponse({"success": True})
 
     except ValueError as customError:

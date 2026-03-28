@@ -1,5 +1,5 @@
-from psycopg_pool import ConnectionPool
 import psycopg
+from psycopg_pool import ConnectionPool
 from config import Config
 cfg = Config()
 pool = ConnectionPool(cfg.PostgresConnection)
