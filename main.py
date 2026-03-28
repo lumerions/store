@@ -71,6 +71,13 @@ async def login(request: Request):
         "store_name": cfg.StoreName,  
     })
 
+@app.get("/internalerror",response_class=HTMLResponse)
+async def login(request: Request):
+    return templates.TemplateResponse("internalerror.html", {
+        "request": request, 
+        "store_name": cfg.StoreName,  
+    })
+
 @app.get("/signup",response_class=HTMLResponse)
 async def signup(request: Request):
     return templates.TemplateResponse("signup.html", {
@@ -87,7 +94,8 @@ async def login(request: Request):
 
 @app.get("/userloggedin",response_class=JSONResponse)
 async def userloggedin(request: Request,SessionId: str = Cookie(None)):
-    return JSONResponse({"loggedin":getRedisInstance().get(SessionId)})
+    sessionData =  getRedisInstance().get(SessionId)
+    return JSONResponse({"loggedin": sessionData})
 
 @app.post("/signup",response_class=JSONResponse)
 async def signuppost(data: SignupSchema, response: Response):

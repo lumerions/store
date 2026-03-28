@@ -66,7 +66,6 @@ function renderCart() {
     totalEl.innerText = `$${total.toFixed(2)}`;
 }
 
-
 function openCheckout() {
     if (cart.length === 0) {
         alert("Add some items first!");
@@ -96,3 +95,31 @@ function processPayment(method) {
 }
 
 updateCountBadge();
+
+async function CheckIfUserLoggedIn() {
+    try {
+        const response = await fetch("/userloggedin", {
+            method: "GET",
+            credentials: "include"
+        })
+
+        if (!response) {
+            throw new Error("GET request was not okay. " + response.statusText)
+        }
+
+        const data = await response.json()
+
+        if (data.loggedin) {
+            const loginBtn = document.querySelector('.login-btn');
+            if (loginBtn) {
+                loginBtn.style.display = 'none'
+            }
+            console.log('e')
+        }
+
+    } catch {
+        window.location.href = "/internalerror"
+    }
+}
+
+CheckIfUserLoggedIn()
