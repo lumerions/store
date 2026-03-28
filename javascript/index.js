@@ -1,6 +1,6 @@
 let cart = JSON.parse(localStorage.getItem('store_cart')) || [];
 const loginBtn = document.querySelector('.login-btn'); 
-const loginBtnText = document.querySelector('a.login-btn');
+const loginBtnText = document.querySelector('button.login-btn'); 
 
 function showNotification(text, type = 'error') {
     let container = document.getElementById('notification-toast');
