@@ -38,7 +38,6 @@ app.state.limiter = limiter
 async def ratelimited(request : Request,exc: RateLimitExceeded):
     return RedirectResponse(url="/ratelimited")
 
-
 def setSessionCookie(response : Response,SessionId):
     response.set_cookie(
         key="SessionId", 
@@ -60,6 +59,7 @@ class LoginSchema(BaseModel):
     password: str
 
 @app.get("/", response_class=HTMLResponse)
+@limiter.limit("50/minute")
 async def root(request: Request):
     products = [
         {"name": "Premium Product", "price": "$120.00", "desc": "Limited Edition"},
@@ -75,6 +75,7 @@ async def root(request: Request):
     })
 
 @app.get("/ratelimited",response_class=HTMLResponse)
+@limiter.limit("50/minute")
 async def login(request: Request):
     return templates.TemplateResponse("ratelimited.html", {
         "request": request, 
@@ -82,6 +83,7 @@ async def login(request: Request):
     })
 
 @app.get("/notfound",response_class=HTMLResponse)
+@limiter.limit("50/minute")
 async def login(request: Request):
     return templates.TemplateResponse("notfound.html", {
         "request": request, 
@@ -89,6 +91,7 @@ async def login(request: Request):
     })
 
 @app.get("/internalerror",response_class=HTMLResponse)
+@limiter.limit("50/minute")
 async def login(request: Request):
     return templates.TemplateResponse("internalerror.html", {
         "request": request, 
@@ -96,6 +99,7 @@ async def login(request: Request):
     })
 
 @app.get("/signup",response_class=HTMLResponse)
+@limiter.limit("50/minute")
 async def signup(request: Request):
     return templates.TemplateResponse("signup.html", {
         "request": request, 
@@ -103,6 +107,7 @@ async def signup(request: Request):
     })
 
 @app.get("/login",response_class=HTMLResponse)
+@limiter.limit("50/minute")
 async def login(request: Request):
     return templates.TemplateResponse("login.html", {
         "request": request, 
@@ -110,12 +115,14 @@ async def login(request: Request):
     })
 
 @app.get("/userloggedin",response_class=JSONResponse)
+@limiter.limit("50/minute")
 async def userloggedin(request: Request,SessionId: str = Cookie(None)):
     sessionData =  getRedisInstance().get(SessionId)
     print(sessionData)
     return JSONResponse({"loggedin": True})
 
 @app.post("/signup",response_class=JSONResponse)
+@limiter.limit("50/minute")
 async def signuppost(data: SignupSchema, response: Response):
     username = data.username
     email = data.email
@@ -168,6 +175,7 @@ async def signuppost(data: SignupSchema, response: Response):
 
 
 @app.post("/login",response_class=JSONResponse)
+@limiter.limit("50/minute")
 async def loginpost(data : LoginSchema, response: Response):
     print(data)
 
@@ -211,6 +219,7 @@ async def loginpost(data : LoginSchema, response: Response):
       return JSONResponse({"success": False,"message": "Internal Server Error."})
     
 @app.get("/{path:path}", response_class=HTMLResponse)
+@limiter.limit("50/minute")
 async def catch_all(request: Request, path: str):
     return templates.TemplateResponse("notfound.html", {
         "request": request, 
