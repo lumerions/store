@@ -3,24 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | {{ store_name }}</title>
+    <title>Login in to {{ store_name }}</title>
     <link rel="stylesheet" href="/css/style.css?v=999">
 </head>
 <body class="auth-wrapper">
     <div class="auth-card">
         <h2>Welcome back</h2>
         <p>Enter your details to access your account.</p>
-        
-        <form action="/login" method="post">
+
+        <form id="loginForm">
+
             <div class="form-group">
-                <label>Email Address</label>
-                <input type="email" placeholder="name@company.com" required>
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" placeholder="name@company.com" required>
             </div>
+            
             <div class="form-group">
-                <label>Password</label>
-                <input type="password" placeholder="••••••••" required>
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="••••••••" required>
             </div>
-            <button type="submit" class="submit-btn">Sign In</button>
+
+            <button type="submit" id="submit-btn" class="submit-btn">Create Account</button>
         </form>
         
         <div class="auth-footer">
@@ -28,5 +31,6 @@
             <a href="/" class="secondary-link">← Back to Store</a>
         </div>
     </div>
+    <script src="/javascript/login.js"></script>
 </body>
 </html>

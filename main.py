@@ -1,4 +1,4 @@
-from fastapi import FastAPI,Request,Response
+from fastapi import FastAPI,Request,Response,Cookie
 from fastapi.responses import HTMLResponse,JSONResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
@@ -8,12 +8,14 @@ libPath = os.path.join(os.path.dirname(__file__), 'lib')
 sys.path.append(libPath)
 from lib.config import Config
 from lib.postgres import getPostgresConnection
+from lib.redis import getRedisInstance
 
 app = FastAPI(
     title="Vercel + FastAPI",
     description="Vercel + FastAPI",
     version="1.0.0",
 )
+
 
 templates = Jinja2Templates(directory="templates")
 cfg = Config()
@@ -39,7 +41,6 @@ class SignupSchema(BaseModel):
 class LoginSchema(BaseModel):
     username: str
     password: str
-
 
 @app.get("/", response_class=HTMLResponse)
 async def root(request: Request):
@@ -83,6 +84,10 @@ async def login(request: Request):
         "request": request, 
         "store_name": cfg.StoreName,  
     })
+
+@app.get("/userloggedin",response_class=JSONResponse)
+async def userloggedin(request: Request,SessionId: str = Cookie(None)):
+    return JSONResponse({"loggedin":getRedisInstance().get(SessionId)})
 
 @app.post("/signup",response_class=JSONResponse)
 async def signuppost(data: SignupSchema, response: Response):
