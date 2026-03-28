@@ -151,7 +151,7 @@ CheckIfUserLoggedIn()
 if (loginBtn) {
     loginBtn.addEventListener('click', function(event) {
         event.preventDefault(); 
-        if (loginBtnText === "Logout") {
+        if (loginBtnText.innerText === "Logout") {
 
         } else {
             window.location.href = "/login"
