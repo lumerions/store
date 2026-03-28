@@ -1,4 +1,6 @@
 let cart = JSON.parse(localStorage.getItem('store_cart')) || [];
+const loginBtn = document.querySelector('.login-btn'); 
+const loginBtnText = document.querySelector('a.login-btn');
 
 function showNotification(text, type = 'error') {
     let container = document.getElementById('notification-toast');
@@ -130,19 +132,13 @@ async function CheckIfUserLoggedIn() {
         }
 
         const data = await response.json()
-        console.log(data)
-        const loginBtn = document.querySelector('.login-btn'); 
-        const loginBtnText = document.querySelector('a.login-btn');
 
         if (!data.loggedin) {
             loginBtnText.innerText = "Login"
             loginBtn.style.display = 'flex'
         } else {
-            console.log(loginBtn.innerText)
             loginBtnText.innerText = "Logout"
             loginBtn.style.display = 'flex'
-                        console.log(loginBtn.innerText)
-
         }
 
     } catch {
@@ -151,3 +147,14 @@ async function CheckIfUserLoggedIn() {
 }
 
 CheckIfUserLoggedIn()
+
+if (loginBtn) {
+    loginBtn.addEventListener('click', function(event) {
+        event.preventDefault(); 
+        if (loginBtnText === "Logout") {
+
+        } else {
+            window.location.href = "/login"
+        }
+    });
+}

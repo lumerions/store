@@ -115,8 +115,6 @@ async def login(request: Request):
 @limiter.limit("50/minute")
 async def userloggedin(request: Request,SessionId: str = Cookie(None)):
     sessionData =  getRedisInstance().get(str(SessionId))
-    print(sessionData)
-    print(SessionId)
     return JSONResponse({"loggedin": sessionData})
 
 @app.post("/signup",response_class=JSONResponse)
@@ -215,7 +213,7 @@ async def loginpost(request : Request,data : LoginSchema, response: Response):
     
 @app.get("/{path:path}", response_class=HTMLResponse)
 @limiter.limit("50/minute")
-async def catch_all(request: Request, path: str):
+async def catchall(request: Request, path: str):
     return templates.TemplateResponse("notfound.html", {
         "request": request, 
         "store_name": cfg.StoreName,  
