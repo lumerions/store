@@ -1,3 +1,5 @@
+const { da } = require("zod/locales");
+
 let cart = JSON.parse(localStorage.getItem('store_cart')) || [];
 
 function showNotification(text, type = 'error') {
@@ -130,6 +132,7 @@ async function CheckIfUserLoggedIn() {
         }
 
         const data = await response.json()
+        console.log(data)
         const loginBtn = document.querySelector('a.login-btn'); 
         const logoutBtn = document.getElementById('logout-btn');
 
@@ -139,7 +142,7 @@ async function CheckIfUserLoggedIn() {
             }
         } else {
             if (logoutBtn) {
-                loginBtn.style.display = 'flex'
+                logoutBtn.style.display = 'flex'
             }
         }
 
