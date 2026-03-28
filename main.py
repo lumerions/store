@@ -169,7 +169,6 @@ async def signuppost(request: Request,data: SignupSchema, response: Response):
       print(e)
       return JSONResponse({"success": False,"message": "Internal Server Error."})
 
-
 @app.post("/login",response_class=JSONResponse)
 @limiter.limit("50/minute")
 async def loginpost(request : Request,data : LoginSchema, response: Response):
@@ -211,6 +210,18 @@ async def loginpost(request : Request,data : LoginSchema, response: Response):
       print(e)
       return JSONResponse({"success": False,"message": "Internal Server Error."})
     
+@app.post("/logout")
+@app.post("/logout/")
+@limiter.limit("50/minute")
+async def logout(response: Response):
+    response.delete_cookie(
+        key="SessionId",
+        path="/",
+        httponly=True,
+        samesite="lax"
+    )
+    return {"success": True}
+
 @app.get("/{path:path}", response_class=HTMLResponse)
 @limiter.limit("50/minute")
 async def catchall(request: Request, path: str):
