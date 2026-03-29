@@ -175,6 +175,52 @@ async def userloggedin(request: Request, SessionId: str = Cookie(None)):
 
     return JSONResponse({"loggedin": sessionData})
 
+
+@app.get("/adminapi/getPendingOrders")
+@limiter.limit("50/minute")
+async def pendingorders(request: Request, SessionId: str = Cookie(None)):
+    if SessionId:
+        SessionIdList = SessionId.split(":")
+        SessionId = SessionIdList[0]
+        SessionUsername = SessionIdList[1]
+        if SessionUsername != cfg.AdminUsername:
+            return JSONResponse({"success": False,"message": "Not authorized to do this action."})
+    else:
+        return JSONResponse({"success": False,"message": "Not authorized to do this action."})
+    
+    with getPostgresConnection() as conn:
+        with conn.cursor(row_factory=dict_row) as cursor:
+            cursor.execute("""
+                SELECT id, username, items, total 
+                FROM orders 
+                WHERE delivered = False
+            """)
+
+            rows = cursor.fetchall()
+
+            rows = {
+                "success": True,
+                "orders": [
+                    {
+                    "id": 101,
+                    "username": "Builderman_99",
+                    "items": "1x Dominus Empyreus, 2x Dr. Elephant",
+                    "total": "$2000.00"
+                    },
+                    {
+                    "id": 102,
+                    "username": "Player1",
+                    "items": "1x Classic Hoodie",
+                    "total": "$50.00"
+                    }
+                ]
+            }
+
+            return {
+                "success": True, 
+                "orders": rows
+            }
+
 @app.post("/signup",response_class=JSONResponse)
 @limiter.limit("50/minute")
 async def signuppost(request: Request,data: SignupSchema, response: Response):

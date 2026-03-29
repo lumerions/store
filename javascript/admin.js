@@ -70,3 +70,44 @@ document.getElementById('edit-item-form').onsubmit = async (e) => {
     }
     await adminApi("/adminapi/changeItem", data, "editSubmitBtn")
 }
+
+async function loadPendingOrders() {
+    try {
+        const response = await fetch("/adminapi/getPendingOrders")
+        const data = await response.json()
+        
+        const tableBody = document.getElementById('orders-table-body')
+        const orderCount = document.getElementById('order-count')
+        
+        if (data.success && data.orders.length > 0) {
+            tableBody.innerHTML = ''
+            orderCount.innerText = `${data.orders.length} Pending`
+
+            data.orders.forEach(order => {
+                tableBody.innerHTML += `
+                    <tr style="border-bottom: 1px solid #eee">
+                        <td style="padding: 12px font-weight: 600">#${order.id}</td>
+                        <td style="padding: 12px">${order.username}</td>
+                        <td style="padding: 12px font-size: 0.9rem">${order.items}</td>
+                        <td style="padding: 12px color: var(--accent) font-weight: 700">${order.total}</td>
+                        <td style="padding: 12px">
+                            <button class="add-btn" 
+                                    onclick="deliverOrder(${order.id})" 
+                                    style="padding: 6px 12px font-size: 0.8rem background: #10b981">
+                                Mark Delivered
+                            </button>
+                        </td>
+                    </tr>
+                `
+            })
+        } else {
+            tableBody.innerHTML = '<tr><td colspan="5" style="padding: 40px text-align: center color: #999">No pending orders found.</td></tr>'
+            orderCount.innerText = '0 Pending'
+        }
+    } catch (err) {
+        console.log(err)
+        showNotification("Failed to load orders:")
+    }
+}
+
+loadPendingOrders()
