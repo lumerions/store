@@ -75,6 +75,8 @@ async function loadPendingOrders() {
     try {
         const response = await fetch("/adminapi/getPendingOrders")
         const data = await response.json()
+
+        console.log(data)
         
         const tableBody = document.getElementById('orders-table-body')
         const orderCount = document.getElementById('order-count')

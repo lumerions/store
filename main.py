@@ -127,6 +127,14 @@ async def login(request: Request):
         "store_name": cfg.StoreName,  
     })
 
+@app.get("/settings",response_class=HTMLResponse)
+@limiter.limit("50/minute")
+async def login(request: Request):
+    return templates.TemplateResponse("settings.html", {
+        "request": request, 
+        "store_name": cfg.StoreName,  
+    })
+
 @app.get("/signup",response_class=HTMLResponse)
 @limiter.limit("50/minute")
 async def signup(request: Request):
