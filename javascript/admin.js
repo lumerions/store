@@ -1,4 +1,3 @@
-import { fa } from 'zod/locales';
 import { showNotification } from './functions.js';
 
 async function adminApi(url,payload,btnID) {
