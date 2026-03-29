@@ -31,5 +31,5 @@ class EnableOrderEmailsSchema(BaseModel):
 class ChangeAccountEmailSchema(BaseModel):
     email: EmailStr
 
-class ChangeAccountEmailSchema(BaseModel):
+class VerifyAccountEmail(BaseModel):
     code: str

@@ -644,7 +644,7 @@ async def changeaccountemail(request: Request,data: ChangeAccountEmailSchema, re
 
 @app.post("/api/VerifyEmail")
 @limiter.limit("50/minute")
-async def verifyemail(request: Request,data: VerifyAccountEmail, response: Response, SessionId: str = Cookie(None)):
+async def verifyemail(request: Request, data: VerifyAccountEmail, response: Response, SessionId: str = Cookie(None)):
     VerificationCode = data.code
 
     if not SessionId:
