@@ -1,3 +1,4 @@
+import { fa } from 'zod/locales';
 import { showNotification } from './functions.js';
 
 async function adminApi(url,payload,btnID) {
@@ -29,7 +30,7 @@ async function adminApi(url,payload,btnID) {
         showNotification("Internal Server Error")
         return false
     } finally {
-        btn.disabled = true
+        btn.disabled = false
         btn.innerText = originalText
     }
 }
