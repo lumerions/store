@@ -1,8 +1,8 @@
 import { showNotification } from './functions.js';
 import { logout } from './functions.js';
 let cart = JSON.parse(localStorage.getItem('store_cart')) || [];
-const loginBtn = document.getElementById('login-link');
-const loginBtnText = document.getElementById('login');
+const loginBtn = document.querySelector('.login-btn'); 
+const loginBtnText = document.querySelector('button.login-btn'); 
 
 function toggleCart() {
     const panel = document.getElementById('cart-panel');
