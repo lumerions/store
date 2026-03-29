@@ -594,7 +594,7 @@ async def changeorderemail(request: Request,data: EnableOrderEmailsSchema, respo
 
 @app.post("/api/ChangeAccountEmail")
 @limiter.limit("50/minute")
-async def changeaccountemail(request: Request,data: EnableOrderEmailsSchema, response: Response, SessionId: str = Cookie(None)):
+async def changeaccountemail(request: Request,data: ChangeAccountEmailSchema, response: Response, SessionId: str = Cookie(None)):
     newEmail = data.email
 
     if not SessionId:
