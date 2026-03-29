@@ -6,6 +6,7 @@ const orderEmailsCheckBox = document.getElementById("notifyToggle")
 const emailModal = document.getElementById("emailModal")
 const profileForm = document.getElementById("profile-form")
 const verifyCodeBtn = document.getElementById("verifyCodeBtn")
+const closeModalBtn = document.getElementById('closeModalBtn')
 
 passwordForm.addEventListener("submit",async (e) => {
     e.preventDefault()
@@ -93,6 +94,7 @@ profileForm.addEventListener("submit", async (e) => {
 })
 
 verifyCodeBtn.addEventListener("click", async () => {
+    const verificationCodeInput = document.getElementById("verificationCode")
     const code = verificationCodeInput.value
     try {
         const response = await fetch("/api/VerifyEmail", {
@@ -118,6 +120,10 @@ verifyCodeBtn.addEventListener("click", async () => {
     } catch(error) {
         window.location.href = "/internalerror"
     }
+})
+
+closeModalBtn.addEventListener("click", async () => {
+    emailModal.style.display = "none"
 })
 
 logout()
