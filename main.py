@@ -287,6 +287,7 @@ async def additem(request: Request,data: AddItemSchema, SessionId: str = Cookie(
     imageurl = data.imageurl
     description = data.description
     price = data.price
+    offsale = data.offsale
 # hopefully 2 different admins dont run this at once
     with getPostgresConnection() as conn:
         with conn.cursor() as cursor:
@@ -309,7 +310,7 @@ async def additem(request: Request,data: AddItemSchema, SessionId: str = Cookie(
                     VALUES (%s, %s, %s, %s,%s)
                     ON CONFLICT (itemname) DO NOTHING
                     RETURNING itemid;
-                """, (itemname, imageurl, description, price,False))
+                """, (itemname, imageurl, description, price,offsale))
 
                 newItem = cursor.fetchone()
                 conn.commit()
@@ -330,6 +331,7 @@ async def additem(request: Request,data: AddItemSchema, SessionId: str = Cookie(
     imageurl = data.imageurl
     description = data.description
     price = data.price
+    offsale = data.offsale
 
     with getPostgresConnection() as conn:
         with conn.cursor() as cursor:
@@ -348,9 +350,9 @@ async def additem(request: Request,data: AddItemSchema, SessionId: str = Cookie(
 
             cursor.execute("""
                 UPDATE storeitems 
-                SET price = %s, description = %s, imageurl= %s,itemname = %s
+                SET price = %s, description = %s, imageurl= %s,itemname = %s,offsale = %s
                 WHERE itemid = %s
-            """, (price, description,imageurl, itemname,itemid))
+            """, (price, description,imageurl, itemname,offsale,itemid))
 
             conn.commit()
 

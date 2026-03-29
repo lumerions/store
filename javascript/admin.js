@@ -36,11 +36,14 @@ async function adminApi(url,payload,btnID) {
 
 document.getElementById('add-item-form').onsubmit = async (e) => {
     e.preventDefault()
+    const offsaleInput = document.getElementById('editItemOffsale').value.toLowerCase()
+    const isOffsale = (offsaleInput === "true")
     const data = {
         itemname: document.getElementById('itemName').value,
         price: document.getElementById('itemPrice').value,
         imageurl: document.getElementById('itemImage').value,
-        description: document.getElementById('itemDesc').value
+        description: document.getElementById('itemDesc').value,
+        offsale: isOffsale
     }
     if (await adminApi("/adminapi/newitem", data, "submitBtn")) e.target.reset()
 }
@@ -56,11 +59,14 @@ document.getElementById('lock-account-form').onsubmit = async (e) => {
 
 document.getElementById('edit-item-form').onsubmit = async (e) => {
     e.preventDefault()
+    const offsaleInput = document.getElementById('editItemOffsale').value.toLowerCase()
+    const isOffsale = (offsaleInput === "true")
     const data = {
         itemname: document.getElementById('editItemName').value,
         price: document.getElementById('editItemPrice').value,
         imageurl: document.getElementById('editItemImage').value,
-        description: document.getElementById('editItemDesc').value
+        description: document.getElementById('editItemDesc').value,
+        offsale: isOffsale
     }
     await adminApi("/adminapi/changeItem", data, "editSubmitBtn")
 }

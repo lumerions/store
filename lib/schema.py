@@ -15,6 +15,7 @@ class AddItemSchema(BaseModel):
     price: str
     imageurl: str
     description: str
+    offsale: bool
 
 class LockAccountSchema(BaseModel):
     username: str
