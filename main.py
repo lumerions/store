@@ -9,7 +9,7 @@ sys.path.append(libPath)
 from slowapi import Limiter
 from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
-from psycopg2.extras import RealDictCursor
+from psycopg.rows import dict_row
 from lib.config import Config
 from lib.postgres import getPostgresConnection
 from lib.redis import getRedisInstance
@@ -75,7 +75,7 @@ def trustCheckAdminUser(cursor,SessionId):
 async def root(request: Request):
 
     with getPostgresConnection() as conn:
-        with conn.cursor(cursor_factory=RealDictCursor) as cursor:
+        with conn.cursor(row_factory=dict_row) as cursor:
             cursor.execute("""SELECT * from storeitems""")
             rows = cursor.fetchall()
 
