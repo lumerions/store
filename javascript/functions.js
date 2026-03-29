@@ -24,7 +24,10 @@ export function showNotification(text, type = 'error') {
 }
 
 export function logout() {
-    document.querySelector('.login-btn').addEventListener('click', async function(event) {
+    const logoutBtn = document.getElementById('logout-btn')
+    if (!logoutBtn) return
+
+    logoutBtn.addEventListener('click', async function(event) {
         event.preventDefault(); 
         if (document.querySelector('button.login-btn').innerText === "Logout") {
             try {

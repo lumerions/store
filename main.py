@@ -266,6 +266,50 @@ async def pendingorders(request: Request, SessionId: str = Cookie(None)):
                 "success": True, 
                 "orders": rows
             }
+        
+    
+@app.get("/api/getSettingsData")
+@limiter.limit("50/minute")
+async def getsettingsdata(request: Request, SessionId: str = Cookie(None)):
+    sessionData = None 
+    if SessionId:
+        keys = [
+            SessionId,
+            SessionId + "e",
+            SessionId + "oe"
+        ]
+
+        sessionData, EmailCached, OrderEmailsCached = redis.mget(*keys)
+        SessionIdList = SessionId.split(":")
+        SessionId = SessionIdList[0]
+        SessionUsername = SessionIdList[1]
+
+        if EmailCached and not OrderEmailsCached:
+            with getPostgresConnection() as conn:
+                with conn.cursor() as cursor:
+                    cursor.execute("""
+                        SELECT email,orderemails password FROM accounts WHERE username = %s AND sessionid = %s;
+                    """, (SessionUsername,SessionId))
+
+                    result = cursor.fetchone()
+
+                    if not result:
+                        return JSONResponse({"success": False, "message": "This username has no data."})
+                    
+                    email = result[0]
+                    orderEmails = result[1]
+
+                    redis.mset({
+                        SessionId + "e": email,
+                        SessionId + "oe": orderEmails,
+                    })
+
+                return JSONResponse({"loggedin": sessionData,"currentemailaddress":email,"orderEmails":orderEmails})
+        else:
+            return JSONResponse({"loggedin": sessionData,"currentemailaddress":EmailCached,"orderEmails":OrderEmailsCached})
+
+    return JSONResponse({"loggedin": sessionData})
+
 
 @app.post("/signup",response_class=JSONResponse)
 @limiter.limit("50/minute")
