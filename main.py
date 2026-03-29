@@ -260,7 +260,7 @@ async def logout(request : Request,response: Response):
     )
     return {"success": True}
 
-@app.post("/adminapi/additem")
+@app.post("/adminapi/newitem")
 @limiter.limit("50/minute")
 async def additem(request: Request,data: AddItemSchema, SessionId: str = Cookie(None)):
     itemname = data.itemname
@@ -302,7 +302,7 @@ async def additem(request: Request,data: AddItemSchema, SessionId: str = Cookie(
     return {"success": True}
 
 
-@app.post("/adminapi/changeItemSchema")
+@app.post("/adminapi/changeItem")
 @limiter.limit("50/minute")
 async def additem(request: Request,data: AddItemSchema, SessionId: str = Cookie(None)):
     itemname = data.itemname
@@ -330,6 +330,46 @@ async def additem(request: Request,data: AddItemSchema, SessionId: str = Cookie(
                 SET price = %s, description = %s, imageurl= %s,itemname = %s
                 WHERE itemid = %s
             """, (price, description,imageurl, itemname,itemid))
+
+            conn.commit()
+
+    return {"success": True}
+
+@app.post("/adminapi/lockAccount")
+@limiter.limit("50/minute")
+async def additem(request: Request,data: LockAccountSchema, SessionId: str = Cookie(None)):
+    username = data.itemname
+    lockAccount = data.lockaccount
+
+    if cfg.AdminUsername == username:
+        return JSONResponse({"success": False, "message": "This account cannot be locked."})
+
+    with getPostgresConnection() as conn:
+        with conn.cursor() as cursor:
+            trustCheck = trustCheckAdminUser(cursor,SessionId)
+
+            if trustCheck:
+                return trustCheck
+            
+            cursor.execute("""
+                SELECT locked FROM accounts WHERE username = %s;
+            """, (username,))
+            
+            result = cursor.fetchone()
+
+            if not result:
+                return JSONResponse({"success": False, "message": "This username has no data."})
+
+            locked = result[0]
+
+            if locked == lockAccount:
+                return JSONResponse({"success": False, "message": "This account's status is the same value to what you are trying to set it to."})
+
+            cursor.execute("""
+                UPDATE accounts 
+                SET locked = %s
+                WHERE username = %s
+            """, (lockAccount, username))
 
             conn.commit()
 

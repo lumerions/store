@@ -16,3 +16,6 @@ class AddItemSchema(BaseModel):
     imageurl: str
     description: str
 
+class LockAccountSchema(BaseModel):
+    username: str
+    lockaccount: bool

@@ -34,22 +34,18 @@
                         <label style="display:block; font-size: 0.8rem; font-weight: 800; margin-bottom: 5px; text-transform: uppercase; color: #666;">Item Name</label>
                         <input type="text" id="itemName" style="width:100%; padding:12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem;" placeholder="e.g. Classic Hoodie" required>
                     </div>
-                    
                     <div class="form-group" style="margin-bottom: 15px;">
                         <label style="display:block; font-size: 0.8rem; font-weight: 800; margin-bottom: 5px; text-transform: uppercase; color: #666;">Price</label>
                         <input type="text" id="itemPrice" style="width:100%; padding:12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem;" placeholder="e.g. 59.99" required>
                     </div>
-
                     <div class="form-group" style="margin-bottom: 15px;">
                         <label style="display:block; font-size: 0.8rem; font-weight: 800; margin-bottom: 5px; text-transform: uppercase; color: #666;">Image URL</label>
                         <input type="url" id="itemImage" style="width:100%; padding:12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem;" placeholder="https://..." required>
                     </div>
-
                     <div class="form-group" style="margin-bottom: 25px;">
                         <label style="display:block; font-size: 0.8rem; font-weight: 800; margin-bottom: 5px; text-transform: uppercase; color: #666;">Description</label>
                         <textarea id="itemDesc" style="width:100%; padding:12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; height: 100px; resize: none;" placeholder="Item details..." required></textarea>
                     </div>
-
                     <button type="submit" class="add-btn" id="submitBtn" style="width: 100%; margin-top: auto;">Create Product</button>
                 </form>
             </div>
@@ -64,22 +60,18 @@
                         <label style="display:block; font-size: 0.8rem; font-weight: 800; margin-bottom: 5px; text-transform: uppercase; color: #666;">Target Name (Search)</label>
                         <input type="text" id="editItemName" style="width:100%; padding:12px; border: 1px solid #333; border-radius: 8px; font-size: 1rem; background: #fdfdfd;" placeholder="Exact name of item to edit" required>
                     </div>
-                    
                     <div class="form-group" style="margin-bottom: 15px;">
                         <label style="display:block; font-size: 0.8rem; font-weight: 800; margin-bottom: 5px; text-transform: uppercase; color: #666;">New Price</label>
                         <input type="text" id="editItemPrice" style="width:100%; padding:12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem;" placeholder="Leave blank to keep current">
                     </div>
-
                     <div class="form-group" style="margin-bottom: 15px;">
                         <label style="display:block; font-size: 0.8rem; font-weight: 800; margin-bottom: 5px; text-transform: uppercase; color: #666;">New Image URL</label>
                         <input type="url" id="editItemImage" style="width:100%; padding:12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem;" placeholder="https://...">
                     </div>
-
                     <div class="form-group" style="margin-bottom: 25px;">
                         <label style="display:block; font-size: 0.8rem; font-weight: 800; margin-bottom: 5px; text-transform: uppercase; color: #666;">New Description</label>
                         <textarea id="editItemDesc" style="width:100%; padding:12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; height: 100px; resize: none;" placeholder="Update details..."></textarea>
                     </div>
-
                     <button type="submit" class="add-btn" id="editSubmitBtn" style="width: 100%; background: #333; margin-top: auto;">Update Details</button>
                 </form>
             </div>
@@ -88,6 +80,7 @@
                 <div style="border-bottom: 2px solid var(--accent); margin-bottom: 20px;">
                     <h3 style="margin-bottom: 10px;">User Security</h3>
                 </div>
+
                 <form id="lock-account-form">
                     <div class="form-group" style="margin-bottom: 15px;">
                         <label style="display:block; font-size: 0.8rem; font-weight: 800; margin-bottom: 5px; text-transform: uppercase; color: #666;">Username</label>
@@ -103,11 +96,10 @@
                     <button type="submit" class="add-btn" id="lockSubmitBtn" style="width: 100%; background: var(--accent);">Apply Status</button>
                 </form>
             </div>
-
         </div>
     </div>
 
     <div id="notification-toast" class="toast-left" style="display: none;"></div>
-
+    <script src="/javascript/admin.js"></script>
 </body>
 </html>
