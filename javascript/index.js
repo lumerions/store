@@ -109,8 +109,6 @@ async function CheckIfUserLoggedIn() {
 
         const data = await response.json()
 
-        console.log(data)
-
         if (!data.loggedin) {
             loginBtnText.innerText = "Login"
             loginBtn.style.display = "flex"

@@ -339,7 +339,7 @@ async def additem(request: Request,data: AddItemSchema, SessionId: str = Cookie(
 @app.post("/adminapi/lockAccount")
 @limiter.limit("50/minute")
 async def additem(request: Request,data: LockAccountSchema, SessionId: str = Cookie(None)):
-    username = data.itemname
+    username = data.username
     lockAccount = data.lockaccount
 
     if lockAccount == "lock":
