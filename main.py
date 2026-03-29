@@ -265,7 +265,7 @@ async def signuppost(request: Request,data: SignupSchema, response: Response):
 
                 cursor.execute("""
                     INSERT INTO accounts (username, email, password, sessionid,locked,orderemails)
-                    VALUES (%s, %s, %s, %s,%s)
+                    VALUES (%s, %s, %s, %s,%s,%s)
                     ON CONFLICT (username) DO NOTHING
                     RETURNING userid;
                 """, (username, email, hashedpassword, sessionId,False,True))
