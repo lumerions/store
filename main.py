@@ -17,6 +17,7 @@ from lib.schema import *
 
 templates = Jinja2Templates(directory="templates")
 cfg = Config()
+redis = getRedisInstance()
 resend.api_key = cfg.ResendAPIKey
 
 app = FastAPI(
@@ -82,8 +83,6 @@ async def root(request: Request):
 
     items = []
 
-    print(rows)
-
     for row in rows:
         items.append({
             "name": row['itemname'],    
@@ -95,8 +94,6 @@ async def root(request: Request):
         })
 
     onsaleitems = [r for r in items if not r["offsale"]]
-
-    print(items)
 
     return templates.TemplateResponse("index.html", {
         "request": request, 
@@ -127,7 +124,6 @@ async def login(request: Request):
         "request": request, 
         "store_name": cfg.StoreName,  
     })
-
 
 
 @app.get("/settings",response_class=HTMLResponse)
@@ -179,7 +175,7 @@ async def adminload(request: Request,SessionId: str = Cookie(None)):
 async def userloggedin(request: Request, SessionId: str = Cookie(None)):
     sessionData = None 
     if SessionId:
-        sessionData = getRedisInstance().get(str(SessionId))
+        sessionData = redis.get(SessionId)
         SessionIdList = SessionId.split(":")
         SessionId = SessionIdList[0]
         SessionUsername = SessionIdList[1]
@@ -261,17 +257,18 @@ async def signuppost(request: Request,data: SignupSchema, response: Response):
     
     hashedpassword = bcrypt.hashpw(password.encode("utf-8"),bcrypt.gensalt(12)).decode("utf-8")
     sessionId = secrets.token_urlsafe(32)
+    csrfToken = secrets.token_urlsafe(16)
 
     try:
         with getPostgresConnection() as conn:
             with conn.cursor() as cursor:
 
                 cursor.execute("""
-                    INSERT INTO accounts (username, email, password, sessionid,locked)
+                    INSERT INTO accounts (username, email, password, sessionid,locked,orderemails)
                     VALUES (%s, %s, %s, %s,%s)
                     ON CONFLICT (username) DO NOTHING
                     RETURNING userid;
-                """, (username, email, hashedpassword, sessionId,False))
+                """, (username, email, hashedpassword, sessionId,False,True))
 
                 rowFetch = cursor.fetchone()
 
@@ -280,7 +277,7 @@ async def signuppost(request: Request,data: SignupSchema, response: Response):
                 else:
                     conn.commit()
                     setSessionCookie(response,sessionId + ":" + username)
-                    getRedisInstance().set(sessionId + ":" + username,"1")
+                    redis.set(sessionId + ":" + username,csrfToken)
 
                 return {"success": True}
 
@@ -319,7 +316,6 @@ async def loginpost(request : Request,data : LoginSchema, response: Response):
                         raise ValueError("Incorrect username or password.")
                     
                     setSessionCookie(response,sessionId + ":" + username)
-                    getRedisInstance().set(sessionId + ":" + username,"1")
                 else:
                     raise ValueError("Incorrect username or password.")
                 
@@ -464,6 +460,93 @@ async def additem(request: Request,data: LockAccountSchema, SessionId: str = Coo
                 SET locked = %s
                 WHERE username = %s
             """, (lockAccount, username))
+
+            conn.commit()
+
+    return {"success": True}
+
+
+@app.post("/api/changePassword")
+@limiter.limit("50/minute")
+async def changepw(request: Request,data: ChangePasswordSchema, response: Response, SessionId: str = Cookie(None)):
+    currentpassword = data.currentpassword
+    newpassword = data.newpassword
+
+    if len(newpassword) < 8:
+        return JSONResponse({"success": False,"message": "Passwords must be atleast 8 characters long."})
+
+    with getPostgresConnection() as conn:
+        with conn.cursor() as cursor:
+            try:
+                SessionIdList = SessionId.split(":")
+                SessionId = SessionIdList[0]
+                SessionUsername = SessionIdList[1]
+                
+                cursor.execute("""
+                    SELECT locked, password 
+                    FROM accounts 
+                    WHERE username = %s
+                    FOR UPDATE
+                """, (SessionUsername,))
+                
+                result = cursor.fetchone()
+
+                if not result:
+                    return JSONResponse({"success": False, "message": "This session is invalid."})
+
+                locked = result[0]
+                passwordHash = result[1]
+
+                if locked:
+                    return JSONResponse({"success": False, "message": "This account is locked."})
+                
+                if not bcrypt.checkpw(currentpassword.encode("utf-8"),passwordHash.encode("utf-8")):
+                    return JSONResponse({"success": False, "message": "Incorrect password."})
+                
+                newPasswordHash = bcrypt.hashpw(newpassword.encode("utf-8"),bcrypt.gensalt(12)).decode("utf-8")
+
+                sessionId = secrets.token_urlsafe(32)
+                csrfToken = secrets.token_urlsafe(16)
+                sessionIdToken = sessionId + ":" + SessionUsername
+
+                cursor.execute("""
+                    UPDATE accounts 
+                    SET password = %s, sessionid = %s
+                    WHERE username = %s
+                """, (newPasswordHash, sessionIdToken, SessionUsername))
+
+                setSessionCookie(response,sessionId + ":" + SessionUsername)
+                redis.set(sessionIdToken,csrfToken)
+                conn.commit()
+            except Exception as error:
+                conn.rollback()
+                return JSONResponse({"success": False, "message": "Internal Server Error."})
+
+    return {"success": True}
+
+
+@app.post("/api/ChangeOrderEmail")
+@limiter.limit("50/minute")
+async def changeorderemail(request: Request,data: EnableOrderEmailsSchema, response: Response, SessionId: str = Cookie(None)):
+    enable = data.enable
+
+    if not isinstance(enable, bool):
+        return JSONResponse({"success": False, "message": "This change email order query is not valid."})
+
+    with getPostgresConnection() as conn:
+        with conn.cursor() as cursor:
+            SessionIdList = SessionId.split(":")
+            SessionId = SessionIdList[0]
+            SessionUsername = SessionIdList[1]
+                        
+            cursor.execute("""
+                UPDATE accounts
+                SET orderemails = %s
+                WHERE username = %s AND sessionid = %s
+            """, (enable, SessionUsername, SessionId))
+
+            if cursor.rowcount == 0:
+                return JSONResponse({"success": False, "message": "Invalid session or account not found."})
 
             conn.commit()
 

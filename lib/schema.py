@@ -20,3 +20,11 @@ class AddItemSchema(BaseModel):
 class LockAccountSchema(BaseModel):
     username: str
     lockaccount: str
+
+class ChangePasswordSchema(BaseModel):
+    currentpassword: str
+    newpassword: str
+
+class EnableOrderEmailsSchema(BaseModel):
+    enable: bool
+

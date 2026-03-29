@@ -23,9 +23,3 @@ export function showNotification(text, type = 'error') {
     }, 3000);
 }
 
-export function showError(text) {
-    errorMessage.innerText = text;
-    errorBox.style.display = 'block';
-    submitBtn.disabled = false;
-    submitBtn.innerText = "Create account";
-}

@@ -1,28 +1,29 @@
-import { showError } from './functions.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const signupForm = document.getElementById('signupForm');
     if (!signupForm) return;
 
-    document.getElementById('signupForm').addEventListener('submit', async (e) => {
+    signupForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        const submitBtn = document.getElementById('submit-btn');
-        const errorBox = document.getElementById('error-box');
-        const errorMessage = document.getElementById('error-message');
         const username = document.getElementById('username').value.trim();
         const email = document.getElementById('email').value.trim();
         const password = document.getElementById('password').value;
         const confirmPassword = document.getElementById('confirm_password').value;
-
-        if (!submitBtn) {
-            console.error("Critical Error: submit-btn not found in HTML.");
-            return;
-        }
+        const submitBtn = document.getElementById('submit-btn');
+        const errorBox = document.getElementById('error-box');
+        const errorMessage = document.getElementById('error-message');
 
         errorBox.style.display = 'none'
         submitBtn.disabled = true;
         submitBtn.innerText = "Creating account...";
+
+        function showError(text) {
+            errorMessage.innerText = text;
+            errorBox.style.display = 'block';
+            submitBtn.disabled = false;
+            submitBtn.innerText = "Create account";
+        }
 
         if (password !== confirmPassword) {
             showError("Passwords dont match.")

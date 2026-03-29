@@ -1,10 +1,9 @@
-import { showError } from './functions.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('loginForm');
     if (!loginForm) return;
 
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
         const submitBtn = document.getElementById('submit-btn');
@@ -13,14 +12,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const username = document.getElementById('username').value.trim();
         const password = document.getElementById('password').value;
 
-        if (!submitBtn) {
-            console.error("Critical Error: submit-btn not found in HTML.");
-            return;
-        }
-
         errorBox.style.display = 'none'
         submitBtn.disabled = true;
         submitBtn.innerText = "Logging in...";
+
+        function showError(text) {
+            errorMessage.innerText = text;
+            errorBox.style.display = 'block';
+            submitBtn.disabled = false;
+            submitBtn.innerText = "Create account";
+        }
 
         try {
             const response = await fetch("/login", {
