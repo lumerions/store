@@ -69,7 +69,7 @@ profileForm.addEventListener("submit", async (e) => {
     const newEmail = document.getElementById("settingsEmail").value
 
     try {
-        const response = await fetch("/ChangeAccountEmail",{
+        const response = await fetch("/api/ChangeAccountEmail",{
             method: "POST",
             headers: {
                 "Content-Type":"application/json",
