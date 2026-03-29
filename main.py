@@ -80,16 +80,21 @@ async def root(request: Request):
 
     items = []
 
+    print(rows)
+
     for row in rows:
         items.append({
             "name": row,
             "price": row,      
             "image": row,      
             "description": row,       
-            "offsale": row 
+            "offsale": row,
+            "desc": "" # for now
         })
 
     items = [r for r in items if not r["offsale"]]
+
+    print(items)
 
     return templates.TemplateResponse("index.html", {
         "request": request, 
