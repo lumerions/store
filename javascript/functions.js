@@ -24,7 +24,7 @@ export function showNotification(text, type = 'error') {
 }
 
 export function logout() {
-    const logoutBtn = document.getElementById('logout-btn')
+    const logoutBtn = document.getElementById('logout-btn') || document.querySelector('.login-btn')
     if (!logoutBtn) return
 
     logoutBtn.addEventListener('click', async function(event) {
