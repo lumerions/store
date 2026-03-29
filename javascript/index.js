@@ -152,3 +152,10 @@ if (loginBtn) {
         }
     })
 }
+
+window.toggleCart = toggleCart
+window.addToCart = addToCart
+window.removeItem = removeItem
+window.openCheckout = openCheckout
+window.closeCheckout = closeCheckout
+window.processPayment = processPayment
