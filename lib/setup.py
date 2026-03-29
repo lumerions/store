@@ -24,4 +24,13 @@ with getPostgresConnection() as conn:
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
         """)
+        cursor.execute("""CREATE TABLE IF NOT EXISTS orders (
+            id SERIAL PRIMARY KEY,
+            username VARCHAR(100) NOT NULL,
+            items TEXT NOT NULL,         
+            total VARCHAR(30) NOT NULL,  
+            delivered BOOLEAN DEFAULT FALSE,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+        """)
         conn.commit()

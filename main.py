@@ -216,6 +216,9 @@ async def pendingorders(request: Request, SessionId: str = Cookie(None)):
                 ]
             }
 
+            if rows:
+                return rows
+
             return {
                 "success": True, 
                 "orders": rows
