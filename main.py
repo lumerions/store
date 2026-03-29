@@ -9,6 +9,7 @@ sys.path.append(libPath)
 from slowapi import Limiter
 from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
+from psycopg2.extras import RealDictCursor
 from lib.config import Config
 from lib.postgres import getPostgresConnection
 from lib.redis import getRedisInstance
@@ -74,7 +75,7 @@ def trustCheckAdminUser(cursor,SessionId):
 async def root(request: Request):
 
     with getPostgresConnection() as conn:
-        with conn.cursor() as cursor:
+        with conn.cursor(cursor_factory=RealDictCursor) as cursor:
             cursor.execute("""SELECT * from storeitems""")
             rows = cursor.fetchall()
 
@@ -84,12 +85,12 @@ async def root(request: Request):
 
     for row in rows:
         items.append({
-            "name": row,        
-            "price": row,       
-            "image": row,       
-            "description": row, 
-            "offsale": row,     
-            "desc": ""     # for now    
+            "name": row['itemname'],    
+            "price": row['price'],       
+            "image": row['imageurl'],    
+            "description": row['description'], 
+            "offsale": row['offsale'],
+            "desc": ""                   # for now temporary
         })
 
     onsaleitems = [r for r in items if not r["offsale"]]
@@ -99,7 +100,7 @@ async def root(request: Request):
     return templates.TemplateResponse("index.html", {
         "request": request, 
         "store_name": cfg.StoreName,  
-        "products": items
+        "products": onsaleitems
     })
 
 @app.get("/ratelimited",response_class=HTMLResponse)
