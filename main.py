@@ -84,15 +84,15 @@ async def root(request: Request):
 
     for row in rows:
         items.append({
-            "name": row,
-            "price": row,      
-            "image": row,      
-            "description": row,       
-            "offsale": row,
-            "desc": "" # for now
+            "name": row,        
+            "price": row,       
+            "image": row,       
+            "description": row, 
+            "offsale": row,     
+            "desc": ""     # for now    
         })
 
-    items = [r for r in items if not r["offsale"]]
+    onsaleitems = [r for r in items if not r["offsale"]]
 
     print(items)
 
