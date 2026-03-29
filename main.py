@@ -72,15 +72,29 @@ def trustCheckAdminUser(cursor,SessionId):
 @app.get("/", response_class=HTMLResponse)
 @limiter.limit("50/minute")
 async def root(request: Request):
-    products = [
-        {"name": "Dont Tread On Me", "price": "$120.00", "desc": "Limited Edition","image":"https://patriotallianceusa.com/cdn/shop/files/DTOM_2.jpg?v=1762466745&width=700"},
-        {"name": "USA Tee", "price": "$120.00", "desc": "Limited Edition","image":"https://patriotallianceusa.com/cdn/shop/files/USAfaded2.jpg?v=1754936597&width=700"},
-    ]
-    
+
+    with getPostgresConnection() as conn:
+        with conn.cursor() as cursor:
+            cursor.execute("""SELECT * from storeitems""")
+            rows = cursor.fetchall()
+
+    items = []
+
+    for row in rows:
+        items.append({
+            "name": row,
+            "price": row,      
+            "image": row,      
+            "description": row,       
+            "offsale": row 
+        })
+
+    items = [r for r in items if not r["offsale"]]
+
     return templates.TemplateResponse("index.html", {
         "request": request, 
         "store_name": cfg.StoreName,  
-        "products": products
+        "products": items
     })
 
 @app.get("/ratelimited",response_class=HTMLResponse)
