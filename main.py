@@ -270,6 +270,7 @@ async def additem(request: Request,data: AddItemSchema, SessionId: str = Cookie(
 # hopefully 2 different admins dont run this at once
     with getPostgresConnection() as conn:
         with conn.cursor() as cursor:
+            print(SessionId)
             trustCheck = trustCheckAdminUser(cursor,SessionId)
 
             if trustCheck:
