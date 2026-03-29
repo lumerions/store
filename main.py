@@ -341,6 +341,13 @@ async def additem(request: Request,data: LockAccountSchema, SessionId: str = Coo
     username = data.itemname
     lockAccount = data.lockaccount
 
+    if lockAccount == "lock":
+        lockAccount = True
+    elif lockAccount == "unlock":
+        lockAccount = False
+    else:
+        return JSONResponse({"success": False, "message": "This lock account query is not valid."})
+
     if cfg.AdminUsername == username:
         return JSONResponse({"success": False, "message": "This account cannot be locked."})
 

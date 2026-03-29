@@ -42,14 +42,14 @@ document.getElementById('add-item-form').onsubmit = async (e) => {
         imageurl: document.getElementById('itemImage').value,
         description: document.getElementById('itemDesc').value
     }
-    if (await apiPost("/adminapi/newitem", data, "submitBtn")) e.target.reset()
+    if (await adminApi("/adminapi/newitem", data, "submitBtn")) e.target.reset()
 }
 
 document.getElementById('lock-account-form').onsubmit = async (e) => {
     e.preventDefault()
     const data = {
         username: document.getElementById('lockUsername').value,
-        action: document.getElementById('lockAction').value
+        lockaccount: document.getElementById('lockAction').value
     }
     await adminApi("/adminapi/lockAccount", data, "lockSubmitBtn")
 }

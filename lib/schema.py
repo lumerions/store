@@ -18,4 +18,4 @@ class AddItemSchema(BaseModel):
 
 class LockAccountSchema(BaseModel):
     username: str
-    lockaccount: bool
+    lockaccount: str
