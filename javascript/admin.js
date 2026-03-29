@@ -13,6 +13,7 @@ async function adminApi(url,payload,btnID) {
             headers: {
                 "Content-Type": "application/json"
             },
+            body: JSON.stringify(payload)
         })
 
         const apiData = await response.json()
