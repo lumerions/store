@@ -1,3 +1,5 @@
+import { showError } from './functions.js';
+
 document.addEventListener('DOMContentLoaded', () => {
     const signupForm = document.getElementById('signupForm');
     if (!signupForm) return;
@@ -19,14 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         errorBox.style.display = 'none'
-
-        function showError(text) {
-            errorMessage.innerText = text;
-            errorBox.style.display = 'block';
-            submitBtn.disabled = false;
-            submitBtn.innerText = "Create account";
-        }
-
         submitBtn.disabled = true;
         submitBtn.innerText = "Creating account...";
 

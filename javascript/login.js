@@ -1,3 +1,5 @@
+import { showError } from './functions.js';
+
 document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('loginForm');
     if (!loginForm) return;
@@ -17,14 +19,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         errorBox.style.display = 'none'
-
-        function showError(text) {
-            errorMessage.innerText = text;
-            errorBox.style.display = 'block';
-            submitBtn.disabled = false;
-            submitBtn.innerText = "Log In";
-        }
-
         submitBtn.disabled = true;
         submitBtn.innerText = "Logging in...";
 

@@ -2,7 +2,7 @@ from fastapi import FastAPI,Request,Response,Cookie
 from fastapi.responses import HTMLResponse,JSONResponse,RedirectResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-from fastapi.exceptions import HTTPException
+import resend
 import re,os,sys,bcrypt,secrets
 libPath = os.path.join(os.path.dirname(__file__), 'lib')
 sys.path.append(libPath)
@@ -17,6 +17,7 @@ from lib.schema import *
 
 templates = Jinja2Templates(directory="templates")
 cfg = Config()
+resend.api_key = cfg.ResendAPIKey
 
 app = FastAPI(
     title=cfg.StoreName,
@@ -127,6 +128,8 @@ async def login(request: Request):
         "store_name": cfg.StoreName,  
     })
 
+
+
 @app.get("/settings",response_class=HTMLResponse)
 @limiter.limit("50/minute")
 async def login(request: Request):
@@ -165,6 +168,11 @@ async def adminload(request: Request,SessionId: str = Cookie(None)):
             "request": request, 
             "store_name": cfg.StoreName,  
         })
+    else:
+        return templates.TemplateResponse("index.html", {
+            "request": request, 
+            "store_name": cfg.StoreName,  
+        })
 
 @app.get("/userloggedin",response_class=JSONResponse)
 @limiter.limit("50/minute")
@@ -182,7 +190,6 @@ async def userloggedin(request: Request, SessionId: str = Cookie(None)):
             return JSONResponse({"loggedin": sessionData,"isadmin":True})
 
     return JSONResponse({"loggedin": sessionData})
-
 
 @app.get("/adminapi/getPendingOrders")
 @limiter.limit("50/minute")

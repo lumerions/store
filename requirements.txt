@@ -8,3 +8,4 @@ slowapi
 pydantic
 pydantic-settings
 email-validator
+resend>=0.8.0
