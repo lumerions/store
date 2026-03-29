@@ -1,7 +1,11 @@
+import { showNotification } from './functions.js';
+import { logout } from './functions.js';
 const passwordForm = document.getElementById("password-form")
 const savePrefsBtn = document.getElementById("savePrefsBtn")
 const orderEmailsCheckBox = document.getElementById("notifyToggle")
-import { showNotification } from './functions.js';
+const emailModal = document.getElementById("emailModal")
+const profileForm = document.getElementById("profile-form")
+const verifyCodeBtn = document.getElementById("verifyCodeBtn")
 
 passwordForm.addEventListener("submit",async (e) => {
     e.preventDefault()
@@ -36,7 +40,7 @@ passwordForm.addEventListener("submit",async (e) => {
 savePrefsBtn.addEventListener("click", async () => {
     const Enabled = orderEmailsCheckBox.checked
     try {
-        const response = await fetch("ChangeOrderEmail",{
+        const response = await fetch("/api/ChangeOrderEmail",{
             method: "POST",
             headers: {
                 "Content-Type":"application/json",
@@ -53,7 +57,67 @@ savePrefsBtn.addEventListener("click", async () => {
         } else {
             showNotification(data.message)
         }
+
     } catch(error) {
         window.location.href = "/internalerror"
     }
 })
+
+profileForm.addEventListener("submit", async (e) => {
+    e.preventDefault()
+
+    const newEmail = document.getElementById("settingsEmail").value
+
+    try {
+        const response = await fetch("/ChangeAccountEmail",{
+            method: "POST",
+            headers: {
+                "Content-Type":"application/json",
+            },
+            body: JSON.stringify({
+                email: newEmail
+            })
+        })
+
+        const data = await response.json()
+
+        if (data.success) {
+            emailModal.style.display = "flex"
+        } else {
+            showNotification(data.message)
+        }
+
+    } catch {
+        window.location.href = "/internalerror"
+    }
+})
+
+verifyCodeBtn.addEventListener("click", async () => {
+    const code = verificationCodeInput.value
+    try {
+        const response = await fetch("/api/VerifyEmail", {
+            method: "POST",
+            headers: {
+                "Content-Type":"application/json",
+            },
+            body: JSON.stringify({
+               code: code,
+            })
+        })
+
+        const data = await response.json()
+
+        if (data.success) {
+            verificationCodeInput.value = ""
+            emailModal.style.display = "none"
+            showNotification("Email verified successfully!", "success")
+        } else {
+            showNotification(data.message)
+        }
+
+    } catch(error) {
+        window.location.href = "/internalerror"
+    }
+})
+
+logout()

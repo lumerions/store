@@ -7,3 +7,5 @@ class Config(BaseSettings):
     StoreName: str = "MODERN"
     AdminUsername: str = "Admin"
     ResendAPIKey: str = "re_Pwq37GMA_BbyuATLy4p5eQhUWE9FyRwjy"
+    EMAILLimit: int = 5
+    EMAILWindow: int = 15 * 60

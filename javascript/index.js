@@ -1,4 +1,5 @@
 import { showNotification } from './functions.js';
+import { logout } from './functions.js';
 let cart = JSON.parse(localStorage.getItem('store_cart')) || [];
 const loginBtn = document.querySelector('.login-btn'); 
 const loginBtnText = document.querySelector('button.login-btn'); 
@@ -128,28 +129,7 @@ async function CheckIfUserLoggedIn() {
 }
 
 CheckIfUserLoggedIn()
-
-if (loginBtn) {
-    loginBtn.addEventListener('click', async function(event) {
-        event.preventDefault(); 
-        if (loginBtnText.innerText === "Logout") {
-            try {
-                await fetch("/logout", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    credentials: "include"
-                })
-                window.location.reload()
-            } catch {
-                window.location.href = "/internalerror"
-            }
-        } else {
-            window.location.href = "/login"
-        }
-    })
-}
+logout()
 
 window.toggleCart = toggleCart
 window.addToCart = addToCart

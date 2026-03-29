@@ -28,3 +28,8 @@ class ChangePasswordSchema(BaseModel):
 class EnableOrderEmailsSchema(BaseModel):
     enable: bool
 
+class ChangeAccountEmailSchema(BaseModel):
+    email: EmailStr
+
+class ChangeAccountEmailSchema(BaseModel):
+    code: str

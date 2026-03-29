@@ -2,8 +2,8 @@ from fastapi import FastAPI,Request,Response,Cookie
 from fastapi.responses import HTMLResponse,JSONResponse,RedirectResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-import resend
-import re,os,sys,bcrypt,secrets
+from datetime import datetime
+import re,os,sys,bcrypt,secrets,resend
 libPath = os.path.join(os.path.dirname(__file__), 'lib')
 sys.path.append(libPath)
 from slowapi import Limiter
@@ -40,6 +40,22 @@ app.state.limiter = limiter
 async def ratelimited(request : Request,exc: RateLimitExceeded):
     return RedirectResponse(url="/ratelimited")
 
+def checkUserEmailLimit(Username):
+    rediskey = Username
+    emailCount = redis.get(rediskey)
+
+    if emailCount is None:
+        redis.set(rediskey,1,ex=cfg.EMAILWindow)
+        return True
+    
+    emailCount = int(emailCount)
+
+    if emailCount >= cfg.EMAILLimit:
+        return False
+
+    redis.incr(rediskey)
+    return True
+
 def setSessionCookie(response : Response,SessionId):
     response.set_cookie(
         key="SessionId", 
@@ -71,6 +87,19 @@ def trustCheckAdminUser(cursor,SessionId):
     
     return None
 
+def sendEmail(sender,reciever,subject,html):
+    try:
+        resend.Emails.send({
+            "from": sender,
+            "to": reciever,
+            "subject": subject,
+            "html": html
+        })
+        return {"success": True}
+    except resend.exceptions.ResendError as e:
+        return JSONResponse({"success": False, "message": str(e)})
+    except Exception as error:
+        return JSONResponse({"success": False, "message": str(error)})
 
 @app.get("/", response_class=HTMLResponse)
 @limiter.limit("50/minute")
@@ -153,11 +182,16 @@ async def login(request: Request):
 @app.get("/admin",response_class=JSONResponse)
 @limiter.limit("50/minute")
 async def adminload(request: Request,SessionId: str = Cookie(None)):
+
+    if not SessionId:
+        return templates.TemplateResponse("index.html", {
+            "request": request, 
+            "store_name": cfg.StoreName,  
+        })
+    
     SessionIdList = SessionId.split(":")
     SessionId = SessionIdList[0]
     SessionUsername = SessionIdList[1]
-
-    print(SessionIdList)
 
     if SessionUsername == cfg.AdminUsername:
         return templates.TemplateResponse("admin.html", {
@@ -179,8 +213,6 @@ async def userloggedin(request: Request, SessionId: str = Cookie(None)):
         SessionIdList = SessionId.split(":")
         SessionId = SessionIdList[0]
         SessionUsername = SessionIdList[1]
-
-        print(SessionIdList)
 
         if SessionUsername == cfg.AdminUsername:
             return JSONResponse({"loggedin": sessionData,"isadmin":True})
@@ -474,6 +506,9 @@ async def changepw(request: Request,data: ChangePasswordSchema, response: Respon
 
     if len(newpassword) < 8:
         return JSONResponse({"success": False,"message": "Passwords must be atleast 8 characters long."})
+    
+    if not SessionId:
+        return JSONResponse({"success": False,"message": "This session is invalid."})
 
     with getPostgresConnection() as conn:
         with conn.cursor() as cursor:
@@ -503,8 +538,10 @@ async def changepw(request: Request,data: ChangePasswordSchema, response: Respon
                 if not bcrypt.checkpw(currentpassword.encode("utf-8"),passwordHash.encode("utf-8")):
                     return JSONResponse({"success": False, "message": "Incorrect password."})
                 
-                newPasswordHash = bcrypt.hashpw(newpassword.encode("utf-8"),bcrypt.gensalt(12)).decode("utf-8")
+                if bcrypt.checkpw(newpassword.encode("utf-8"),passwordHash.encode("utf-8")):
+                    return JSONResponse({"success": False, "message": "The new password, can't be the same as the old one."})
 
+                newPasswordHash = bcrypt.hashpw(newpassword.encode("utf-8"),bcrypt.gensalt(12)).decode("utf-8")
                 sessionId = secrets.token_urlsafe(32)
                 csrfToken = secrets.token_urlsafe(16)
                 sessionIdToken = sessionId + ":" + SessionUsername
@@ -538,15 +575,103 @@ async def changeorderemail(request: Request,data: EnableOrderEmailsSchema, respo
             SessionIdList = SessionId.split(":")
             SessionId = SessionIdList[0]
             SessionUsername = SessionIdList[1]
-                        
+                                    
             cursor.execute("""
                 UPDATE accounts
                 SET orderemails = %s
                 WHERE username = %s AND sessionid = %s
+                RETURNING orderemails;
             """, (enable, SessionUsername, SessionId))
+
+            result = cursor.fetchone()
+
+            if not result:
+                return JSONResponse({"success": False, "message": "Invalid session or account not found."})
+
+            conn.commit()
+
+    return {"success": True}
+
+@app.post("/api/ChangeAccountEmail")
+@limiter.limit("50/minute")
+async def changeaccountemail(request: Request,data: EnableOrderEmailsSchema, response: Response, SessionId: str = Cookie(None)):
+    newEmail = data.email
+
+    if not SessionId:
+        return JSONResponse({"success": False,"message": "This session is invalid."})
+
+    SessionIdList = SessionId.split(":")
+    SessionId = SessionIdList[0]
+    SessionUsername = SessionIdList[1]
+
+    if not checkUserEmailLimit(SessionUsername):
+        return JSONResponse({"success": False,"message": "Email sending limit reached. Try again later."})
+
+    with getPostgresConnection() as conn:
+        with conn.cursor() as cursor:
+            EmailVerificationCode = secrets.token_urlsafe(10)
+            cursor.execute("""
+                UPDATE accounts
+                SET pendingnewemail = %s, emailcode = %s, emailcodetime = NOW()
+                WHERE username = %s AND sessionid = %s
+            """, (newEmail, EmailVerificationCode, SessionUsername, SessionId))
 
             if cursor.rowcount == 0:
                 return JSONResponse({"success": False, "message": "Invalid session or account not found."})
+            
+            HtmlContent = f"""
+            <html>
+            <body style="font-family: Arial, sans-serif; background-color: #f7f7f7; padding: 20px;">
+                <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 8px; padding: 30px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                <h2 style="color: #333;">Email Verification</h2>
+                <p style="font-size: 16px; color: #555;">Use the code below to verify your email address:</p>
+                <div style="margin: 20px 0;">
+                    <span style="font-size: 24px; font-weight: bold; color: #1a73e8; background-color: #e8f0fe; padding: 10px 20px; border-radius: 6px;">{EmailVerificationCode}</span>
+                </div>
+                <p style="font-size: 14px; color: #555;">This verification code will expire in 15 minutes.</p>
+                <p style="font-size: 14px; color: #888;">If you did not request this verification, you can ignore this email.</p>
+                <p style="font-size: 14px; color: #888;">&copy; {datetime.now().year} {cfg.StoreName}</p>
+                </div>
+            </body>
+            </html>
+            """
+
+            sendEmail("Email Verification <verification@syntaxrevival.store>",newEmail,"Email Verification",HtmlContent)
+            conn.commit()   
+
+    return {"success": True}
+
+
+@app.post("/api/VerifyEmail")
+@limiter.limit("50/minute")
+async def verifyemail(request: Request,data: EnableOrderEmailsSchema, response: Response, SessionId: str = Cookie(None)):
+    VerificationCode = data.code
+
+    if not SessionId:
+        return JSONResponse({"success": False,"message": "This session is invalid."})
+
+    SessionIdList = SessionId.split(":")
+    SessionId = SessionIdList[0]
+    SessionUsername = SessionIdList[1]
+
+    with getPostgresConnection() as conn:
+        with conn.cursor() as cursor:
+            cursor.execute("""
+                UPDATE accounts
+                SET email = pendingnewemail,
+                    pendingnewemail = NULL,
+                    emailcode = NULL,
+                    emailcodetime = NULL
+                WHERE username = %s
+                AND sessionid = %s
+                AND emailcode = %s
+                AND pendingnewemail IS NOT NULL
+                AND emailcodetime > NOW() - INTERVAL '15 minutes'
+            """, (SessionUsername, SessionId, VerificationCode))
+
+
+            if cursor.rowcount == 0:
+                return JSONResponse({"success": False, "message": "Invalid or expired verification code."})
 
             conn.commit()
 
