@@ -80,7 +80,7 @@
     <div class="container">
         <div class="grid">
             {% for item in products %}
-                <div class="card product-card-hover" onclick="window.location.href='/product/{{ item.id }}'">
+                <div class="card product-card-hover" onclick="window.location.href='/store/product/{{ item.id }}'">
                     {% if item.image %}
                     <img src="{{ item.image }}" alt="{{ item.name }}" class="product-img">
                     {% else %}

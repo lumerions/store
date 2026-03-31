@@ -325,6 +325,14 @@ async def getsettingsdata(request: Request, SessionId: str = Cookie(None)):
 
     return JSONResponse({"loggedin": sessionData})
 
+@app.get("/store/product/{itemid}")
+async def getproduct(itemid : int):
+    with getPostgresConnection() as conn:
+        with conn.cursor(row_factory=dict_row) as cursor:
+            cursor.execute("SELECT * FROM storeitems WHERE itemid = %s;", (itemid,))
+            dict = cursor.fetchone()
+            print(dict)
+
 @app.post("/signup",response_class=JSONResponse)
 @limiter.limit("60/minute")
 async def signuppost(request: Request,data: SignupSchema, response: Response):
