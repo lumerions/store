@@ -3,34 +3,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verify Your Account - {{ store_name }}</title>
+    <title>Login in to {{ store_name }}</title>
     <link rel="stylesheet" href="/css/style.css?v=999">
+    <style>
+        /* Simple modal styles */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .error-container {
+            color: red;
+            margin-bottom: 10px;
+        }
+
+        .submit-btn {
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body class="auth-wrapper">
     <div class="auth-card">
-        <h2>Verify Your Account</h2>
-        <p>Enter the one-time code sent to your email.</p>
+        <h2>Welcome back</h2>
+        <p>Enter your details to access your account.</p>
 
-        <div id="otp-error-box" class="error-container" style="display: none;">
-            <p id="otp-error-message"></p>
+        <div id="error-box" class="error-container" style="display: none;">
+            <p id="error-message"></p>
         </div>
 
-        <form id="otpForm">
+        <form id="loginForm">
 
             <div class="form-group">
-                <label for="otp">One-Time Code</label>
-                <input type="text" id="otp" name="otp" placeholder="Enter code" required maxlength="6">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" placeholder="johndoe123" required>
             </div>
 
-            <button type="submit" id="verify-btn" class="submit-btn">Verify</button>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="••••••••" required>
+            </div>
+
+            <button type="submit" id="submit-btn" class="submit-btn">Log In</button>
         </form>
         
         <div class="auth-footer">
-            <a href="/login" class="secondary-link">← Back to Login</a>
+            <a href="/signup" class="secondary-link">Don't have an account? Sign Up</a>
+            <a href="/" class="secondary-link">← Back to Store</a>
+        </div>
+    </div>
+
+    <!-- OTP Modal -->
+    <div id="otpModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeOtpModal">&times;</span>
+            <h3>Enter One-Time Code</h3>
+            <p>We've sent a one-time code to your email or phone.</p>
+
+            <div id="otp-error-box" class="error-container" style="display: none;">
+                <p id="otp-error-message"></p>
+            </div>
+
+            <form id="otpForm">
+                <div class="form-group">
+                    <label for="otp">One-Time Code</label>
+                    <input type="text" id="otp" name="otp" placeholder="Enter code" required maxlength="6">
+                </div>
+                <button type="submit" id="verify-btn" class="submit-btn">Verify</button>
+            </form>
             <a href="#" id="resend-code" class="secondary-link">Resend Code</a>
         </div>
     </div>
 
-    <script type="module" src="/javascript/otp.js"></script>
+    <script type="module" src="/javascript/login.js"></script>
+    <script>
+        // OTP Modal logic
+        const otpModal = document.getElementById('otpModal');
+        const closeOtpModal = document.getElementById('closeOtpModal');
+
+        // Close modal when clicking X
+        closeOtpModal.onclick = () => otpModal.style.display = 'none';
+
+        // Close modal when clicking outside content
+        window.onclick = (event) => {
+            if (event.target === otpModal) otpModal.style.display = 'none';
+        };
+
+        // Example: Open OTP modal after login form submission
+        const loginForm = document.getElementById('loginForm');
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Here you would send login data to your server
+            // For demo, assume credentials are valid and require OTP
+            otpModal.style.display = 'block';
+        });
+
+        // OTP form submission example
+        const otpForm = document.getElementById('otpForm');
+        otpForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const otpValue = document.getElementById('otp').value;
+
+            // Send OTP to server for verification
+            console.log('OTP submitted:', otpValue);
+            // After successful verification, redirect or close modal
+            // otpModal.style.display = 'none';
+        });
+
+        // Resend code example
+        document.getElementById('resend-code').addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log('Resend OTP requested');
+        });
+    </script>
 </body>
 </html>
