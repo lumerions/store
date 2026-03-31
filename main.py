@@ -105,7 +105,7 @@ def sendEmail(sender,reciever,subject,html):
         return JSONResponse({"success": False, "message": str(error)})
 
 @app.get("/", response_class=HTMLResponse)
-@limiter.limit("50/minute")
+@limiter.limit("60/minute")
 async def root(request: Request):
 
     CachedStoreData = redis.get("storedata")
@@ -146,7 +146,7 @@ async def root(request: Request):
     })
 
 @app.get("/ratelimited",response_class=HTMLResponse)
-@limiter.limit("50/minute")
+@limiter.limit("60/minute")
 async def login(request: Request):
     return templates.TemplateResponse("ratelimited.html", {
         "request": request, 
@@ -154,7 +154,7 @@ async def login(request: Request):
     })
 
 @app.get("/notfound",response_class=HTMLResponse)
-@limiter.limit("50/minute")
+@limiter.limit("60/minute")
 async def login(request: Request):
     return templates.TemplateResponse("notfound.html", {
         "request": request, 
@@ -162,7 +162,7 @@ async def login(request: Request):
     })
 
 @app.get("/internalerror",response_class=HTMLResponse)
-@limiter.limit("50/minute")
+@limiter.limit("60/minute")
 async def login(request: Request):
     return templates.TemplateResponse("internalerror.html", {
         "request": request, 
@@ -171,7 +171,7 @@ async def login(request: Request):
 
 
 @app.get("/settings",response_class=HTMLResponse)
-@limiter.limit("50/minute")
+@limiter.limit("60/minute")
 async def login(request: Request):
     return templates.TemplateResponse("settings.html", {
         "request": request, 
@@ -179,7 +179,7 @@ async def login(request: Request):
     })
 
 @app.get("/signup",response_class=HTMLResponse)
-@limiter.limit("50/minute")
+@limiter.limit("60/minute")
 async def signup(request: Request):
     return templates.TemplateResponse("signup.html", {
         "request": request, 
@@ -187,7 +187,7 @@ async def signup(request: Request):
     })
 
 @app.get("/login",response_class=HTMLResponse)
-@limiter.limit("50/minute")
+@limiter.limit("60/minute")
 async def login(request: Request):
     return templates.TemplateResponse("login.html", {
         "request": request, 
@@ -195,7 +195,7 @@ async def login(request: Request):
     })
 
 @app.get("/admin",response_class=JSONResponse)
-@limiter.limit("50/minute")
+@limiter.limit("60/minute")
 async def adminload(request: Request,SessionId: str = Cookie(None)):
 
     if not SessionId:
@@ -220,7 +220,7 @@ async def adminload(request: Request,SessionId: str = Cookie(None)):
         })
 
 @app.get("/userloggedin",response_class=JSONResponse)
-@limiter.limit("50/minute")
+@limiter.limit("60/minute")
 async def userloggedin(request: Request, SessionId: str = Cookie(None)):
     sessionData = None 
     if SessionId:
@@ -235,7 +235,7 @@ async def userloggedin(request: Request, SessionId: str = Cookie(None)):
     return JSONResponse({"loggedin": sessionData})
 
 @app.get("/adminapi/getPendingOrders")
-@limiter.limit("50/minute")
+@limiter.limit("60/minute")
 async def pendingorders(request: Request, SessionId: str = Cookie(None)):
     if SessionId:
         SessionIdList = SessionId.split(":")
@@ -283,7 +283,7 @@ async def pendingorders(request: Request, SessionId: str = Cookie(None)):
             }
         
 @app.get("/api/getSettingsData")
-@limiter.limit("50/minute")
+@limiter.limit("60/minute")
 async def getsettingsdata(request: Request, SessionId: str = Cookie(None)):
     sessionData = None 
     print(SessionId)
@@ -326,7 +326,7 @@ async def getsettingsdata(request: Request, SessionId: str = Cookie(None)):
     return JSONResponse({"loggedin": sessionData})
 
 @app.post("/signup",response_class=JSONResponse)
-@limiter.limit("50/minute")
+@limiter.limit("60/minute")
 async def signuppost(request: Request,data: SignupSchema, response: Response):
     username = data.username
     email = data.email
@@ -379,7 +379,7 @@ async def signuppost(request: Request,data: SignupSchema, response: Response):
       return JSONResponse({"success": False,"message": "Internal Server Error."})
 
 @app.post("/login",response_class=JSONResponse)
-@limiter.limit("50/minute")
+@limiter.limit("60/minute")
 async def loginpost(request : Request,data : LoginSchema, response: Response):
     username = data.username
     password = data.password
@@ -420,7 +420,7 @@ async def loginpost(request : Request,data : LoginSchema, response: Response):
     
 @app.post("/logout")
 @app.post("/logout/")
-@limiter.limit("50/minute")
+@limiter.limit("60/minute")
 async def logout(request : Request,response: Response):
     response.delete_cookie(
         key="SessionId",
@@ -431,7 +431,7 @@ async def logout(request : Request,response: Response):
     return {"success": True}
 
 @app.post("/adminapi/newitem")
-@limiter.limit("50/minute")
+@limiter.limit("60/minute")
 async def additem(request: Request,data: AddItemSchema, SessionId: str = Cookie(None)):
     itemname = data.itemname
     imageurl = data.imageurl
@@ -475,7 +475,7 @@ async def additem(request: Request,data: AddItemSchema, SessionId: str = Cookie(
 
 
 @app.post("/adminapi/changeItem")
-@limiter.limit("50/minute")
+@limiter.limit("60/minute")
 async def additem(request: Request,data: AddItemSchema, SessionId: str = Cookie(None)):
     itemname = data.itemname
     imageurl = data.imageurl
@@ -509,7 +509,7 @@ async def additem(request: Request,data: AddItemSchema, SessionId: str = Cookie(
     return {"success": True}
 
 @app.post("/adminapi/lockAccount")
-@limiter.limit("50/minute")
+@limiter.limit("60/minute")
 async def additem(request: Request,data: LockAccountSchema, SessionId: str = Cookie(None)):
     username = data.username
     lockAccount = data.lockaccount
@@ -557,7 +557,7 @@ async def additem(request: Request,data: LockAccountSchema, SessionId: str = Coo
 
 
 @app.post("/api/changePassword")
-@limiter.limit("50/minute")
+@limiter.limit("60/minute")
 async def changepw(request: Request,data: ChangePasswordSchema, response: Response, SessionId: str = Cookie(None)):
     currentpassword = data.currentpassword
     newpassword = data.newpassword
@@ -621,7 +621,7 @@ async def changepw(request: Request,data: ChangePasswordSchema, response: Respon
 
 
 @app.post("/api/ChangeOrderEmail")
-@limiter.limit("50/minute")
+@limiter.limit("60/minute")
 async def changeorderemail(request: Request,data: EnableOrderEmailsSchema, response: Response, SessionId: str = Cookie(None)):
     enable = data.enable
 
@@ -651,7 +651,7 @@ async def changeorderemail(request: Request,data: EnableOrderEmailsSchema, respo
     return {"success": True}
 
 @app.post("/api/ChangeAccountEmail")
-@limiter.limit("50/minute")
+@limiter.limit("60/minute")
 async def changeaccountemail(request: Request,data: ChangeAccountEmailSchema, response: Response, SessionId: str = Cookie(None)):
     newEmail = data.email
 
@@ -701,7 +701,7 @@ async def changeaccountemail(request: Request,data: ChangeAccountEmailSchema, re
 
 
 @app.post("/api/VerifyEmail")
-@limiter.limit("50/minute")
+@limiter.limit("60/minute")
 async def verifyemail(request: Request, data: VerifyAccountEmail, response: Response, SessionId: str = Cookie(None)):
     VerificationCode = data.code
 
@@ -736,7 +736,7 @@ async def verifyemail(request: Request, data: VerifyAccountEmail, response: Resp
     return {"success": True}
 
 @app.post("/api/OTP")
-@limiter.limit("50/minute")
+@limiter.limit("60/minute")
 async def otp(request: Request, data: OTP, response: Response, SessionId: str = Cookie(None)):
     InputUsername = data.username
 
@@ -786,7 +786,7 @@ async def otp(request: Request, data: OTP, response: Response, SessionId: str = 
     return {"success": True}
 
 @app.post("/api/VerifyOTP")
-@limiter.limit("50/minute")
+@limiter.limit("60/minute")
 async def verifyotp(request: Request, data: VerifyAccountEmail, response: Response, SessionIdToken: str = Cookie(None)):
     OPTCodeInput = data.code
 
@@ -818,7 +818,7 @@ async def verifyotp(request: Request, data: VerifyAccountEmail, response: Respon
 
 
 @app.get("/{path:path}", response_class=HTMLResponse)
-@limiter.limit("50/minute")
+@limiter.limit("60/minute")
 async def catchall(request: Request, path: str):
     return templates.TemplateResponse("notfound.html", {
         "request": request, 

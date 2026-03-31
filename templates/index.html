@@ -80,19 +80,23 @@
     <div class="container">
         <div class="grid">
             {% for item in products %}
-            <div class="card">
-                {% if item.image %}
-                <img src="{{ item.image }}" alt="{{ item.name }}" class="product-img">
-                {% else %}
-                <div class="product-img" style="display: flex; align-items: center; justify-content: center; background: #eee; color: #aaa;">No Image</div>
-                {% endif %}
-                
-                <h3>{{ item.name }}</h3>
-                <p class="price">{{ item.price }}</p>
-                <p style="font-size: 0.85rem; color: #888; margin-bottom: 15px;">{{ item.desc }}</p>
-                <button class="add-btn" onclick="addToCart('{{ item.name }}', '{{ item.price }}')">Add to Cart</button>
-            </div>
-            {% endfor %}
+                <div class="card product-card-hover" onclick="window.location.href='/product/{{ item.id }}'">
+                    {% if item.image %}
+                    <img src="{{ item.image }}" alt="{{ item.name }}" class="product-img">
+                    {% else %}
+                    <div class="product-img no-image">No Image</div>
+                    {% endif %}
+                    
+                    <div class="card-content">
+                        <h3>{{ item.name }}</h3>
+                        <p class="price">{{ item.price }}</p>
+                        <p class="product-desc">{{ item.desc }}</p>
+                        <button class="add-btn" onclick="event.stopPropagation(); addToCart('{{ item.name }}', '{{ item.price }}')">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
         </div>
     </div>
 
