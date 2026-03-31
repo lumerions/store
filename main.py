@@ -299,7 +299,7 @@ async def getsettingsdata(request: Request, SessionId: str = Cookie(None)):
         SessionId = SessionIdList[0]
         SessionUsername = SessionIdList[1]
 
-        if EmailCached and not OrderEmailsCached:
+        if EmailCached is None and OrderEmailsCached is None:
             with getPostgresConnection() as conn:
                 with conn.cursor() as cursor:
                     cursor.execute("""
