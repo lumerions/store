@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const OTPBtn = document.getElementById("send-otp-btn");
     const emailModal = document.getElementById("emailModal");
     const verifyCodeBtn = document.getElementById("verifyCodeBtn");
+    const username = document.getElementById('username').value.trim();
     if (!loginForm) return;
 
     loginForm.addEventListener('submit', async (e) => {
@@ -12,7 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const submitBtn = document.getElementById('submit-btn');
         const errorBox = document.getElementById('error-box');
         const errorMessage = document.getElementById('error-message');
-        const username = document.getElementById('username').value.trim();
         const password = document.getElementById('password').value;
 
         errorBox.style.display = 'none'
@@ -61,12 +61,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     OTPBtn.addEventListener("click", async () => {
         emailModal.style.display = "flex"
+
         try {
             const response = await fetch("/api/OTP", {
                 method: "POST",
                 headers: {
                     "Content-Type":"application/json",
                 },
+                body: JSON.stringify({
+                    username: username,
+                })
             })
 
             const data = await response.json()

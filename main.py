@@ -743,11 +743,9 @@ async def otp(request: Request, data: OTP, response: Response, SessionId: str = 
     if not SessionId:
         return JSONResponse({"success": False,"message": "This session is invalid."})
 
-    SessionIdList = SessionId.split(":")
-    SessionId = SessionIdList[0]
-    SessionUsername = SessionIdList[1]
+    InputUsername = data.username
 
-    if not checkUserEmailLimit(SessionUsername):
+    if not checkUserEmailLimit(InputUsername):
         return JSONResponse({"success": False,"message": "Email sending limit reached. Try again later."})
 
     with getPostgresConnection() as conn:
@@ -758,9 +756,9 @@ async def otp(request: Request, data: OTP, response: Response, SessionId: str = 
                 UPDATE accounts
                 SET otpcode = %s, 
                     otpcodetime = NOW()
-                WHERE username = %s AND sessionid = %s
+                WHERE username = %s
                 RETURNING email;
-            """, (optCode, SessionUsername, SessionId))
+            """, (optCode, InputUsername))
 
             result = cursor.fetchone()
 
@@ -801,23 +799,32 @@ async def verifyotp(request: Request, data: VerifyAccountEmail, response: Respon
 
     OPTCodeInput = data.code
 
-    with getPostgresConnection() as conn:
-        with conn.cursor() as cursor:
-            cursor.execute("""
-                UPDATE accounts
-                SET otpcode = NULL,
-                    otpcodetime = NULL
-                WHERE otpcode = %s
-                AND otpcodetime > NOW() - INTERVAL '15 minutes'
-                RETURNING username, sessionid;
-            """, (OPTCodeInput,)) 
+    try:
+        with getPostgresConnection() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute("""
+                    UPDATE accounts
+                    SET otpcode = NULL,
+                        otpcodetime = NULL
+                    WHERE otpcode = %s
+                    AND otpcodetime > NOW() - INTERVAL '15 minutes'
+                    RETURNING username, sessionid;
+                """, (OPTCodeInput,)) 
 
-            result = cursor.fetchone()
+                result = cursor.fetchone()
 
-            if result:
-                SessionUsername = result[0]
-                SessionId = result[1]
-                setSessionCookie(response,SessionId + ":" + SessionUsername)
+                if result:
+                    SessionUsername = result[0]
+                    SessionId = result[1]
+                    setSessionCookie(response,SessionId + ":" + SessionUsername)
+                    conn.commit()
+                    return {"success": True}
+                else:
+                    return JSONResponse({"success": False,"message": "This session is invalid."})
+
+    except Exception as e:
+        return JSONResponse({"success": False,"message": "Internal Server Error."})
+
 
 @app.get("/{path:path}", response_class=HTMLResponse)
 @limiter.limit("50/minute")

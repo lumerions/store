@@ -10,10 +10,12 @@ with getPostgresConnection() as conn:
                 email VARCHAR(50) NOT NULL,
                 password VARCHAR(100) NOT NULL,
                 emailcode VARCHAR(20),
+                otpcode VARCHAR(20),
                 pendingnewemail VARCHAR(50),
                 locked BOOLEAN NOT NULL,
                 orderemails BOOLEAN NOT NULL,
-                emailcodetime TIMESTAMP,
+                emailcodetime TIMESTAMP WITH TIME ZONE,
+                otpcodetime TIMESTAMP WITH TIME ZONE,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
         """)
