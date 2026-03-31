@@ -127,6 +127,7 @@ async def root(request: Request):
 
     for row in rows:
         items.append({
+            "id":row['itemid'],
             "name": row['itemname'],    
             "price": row['price'],       
             "image": row['imageurl'],    
