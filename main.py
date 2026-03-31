@@ -67,8 +67,11 @@ def setSessionCookie(response : Response,SessionId):
     )
 
 def trustCheckAdminUser(cursor,SessionId):
+    SessionIdList = SessionId.split(":")
+    SessionId = SessionIdList[0]
+    
     cursor.execute("""
-        SELECT locked,username FROM accounts WHERE SessionId = %s;
+        SELECT locked,username FROM accounts WHERE sessionid = %s;
     """, (SessionId,))
 
     result = cursor.fetchone()

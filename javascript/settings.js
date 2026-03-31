@@ -85,7 +85,7 @@ profileForm.addEventListener("submit", async (e) => {
         if (data.success) {
             emailModal.style.display = "flex"
         } else {
-            showNotification(data.message)
+            showNotification(data.message || data.detail[0].msg)
         }
 
     } catch {
@@ -126,4 +126,3 @@ closeModalBtn.addEventListener("click", async () => {
     emailModal.style.display = "none"
 })
 
-logout()
