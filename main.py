@@ -761,7 +761,7 @@ async def otp(request: Request, data: OTP, response: Response, SessionId: str = 
             if not result:
                 return JSONResponse({"success": False, "message": "Invalid session or account not found."})
             
-            UserEmail = result["email"]
+            UserEmail = result[0]
             
             HtmlContent = f"""
             <html>
