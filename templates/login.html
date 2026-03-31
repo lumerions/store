@@ -8,11 +8,31 @@
     <style>
         .divider {
             border: 0;
-            border-top: 1px solid #eee;
-            margin: 20px 0;
+            border-top: 2px solid #d1d5db; 
+            margin: 25px 0;
         }
+
         .otp-link-wrapper {
             text-align: center;
+            margin-bottom: 5px;
+        }
+
+        .otp-pill-link {
+            display: inline-block;
+            padding: 10px 20px;
+            border: 1.5px solid #d1d5db;
+            border-radius: 50px; 
+            text-decoration: none;
+            color: #374151;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .otp-pill-link:hover {
+            background-color: #f9fafb;
+            border-color: #9ca3af;
+            color: #000;
         }
     </style>
 </head>
@@ -40,7 +60,7 @@
             <hr class="divider">
 
             <div class="otp-link-wrapper">
-                <a href="/send-otp" class="secondary-link">Sign in with a one-time code</a>
+                <a href="/send-otp" class="otp-pill-link">Sign in with a one-time code</a>
             </div>
         </form>
 
