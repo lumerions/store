@@ -6,44 +6,26 @@
     <title>Login in to {{ store_name }}</title>
     <link rel="stylesheet" href="/css/style.css?v=999">
     <style>
-        /* Simple modal styles */
-        .modal {
+        /* OTP input styling */
+        #otp-container {
             display: none; /* Hidden by default */
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
+            margin-top: 15px;
+        }
+
+        #otp-container input {
             width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.5);
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
         }
 
-        .modal-content {
-            background-color: #fff;
-            margin: 10% auto;
-            padding: 20px;
-            border-radius: 8px;
-            width: 90%;
-            max-width: 400px;
-            text-align: center;
-            position: relative;
-        }
-
-        .close-modal {
-            position: absolute;
-            right: 10px;
-            top: 10px;
-            font-size: 20px;
-            cursor: pointer;
+        #otp-container .submit-btn {
+            width: 100%;
         }
 
         .error-container {
             color: red;
-            margin-bottom: 10px;
-        }
-
-        .submit-btn {
             margin-top: 10px;
         }
     </style>
@@ -70,6 +52,17 @@
             </div>
 
             <button type="submit" id="submit-btn" class="submit-btn">Log In</button>
+
+            <!-- OTP input appears here -->
+            <div id="otp-container">
+                <input type="text" id="otp" name="otp" placeholder="Enter One-Time Code" maxlength="6" required>
+                <button type="submit" id="verify-btn" class="submit-btn">Verify OTP</button>
+                <a href="#" id="resend-code" class="secondary-link" style="display:block; margin-top:5px;">Resend Code</a>
+                <div id="otp-error-box" class="error-container" style="display:none;">
+                    <p id="otp-error-message"></p>
+                </div>
+            </div>
+
         </form>
         
         <div class="auth-footer">
@@ -78,68 +71,41 @@
         </div>
     </div>
 
-    <!-- OTP Modal -->
-    <div id="otpModal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal" id="closeOtpModal">&times;</span>
-            <h3>Enter One-Time Code</h3>
-            <p>We've sent a one-time code to your email or phone.</p>
-
-            <div id="otp-error-box" class="error-container" style="display: none;">
-                <p id="otp-error-message"></p>
-            </div>
-
-            <form id="otpForm">
-                <div class="form-group">
-                    <label for="otp">One-Time Code</label>
-                    <input type="text" id="otp" name="otp" placeholder="Enter code" required maxlength="6">
-                </div>
-                <button type="submit" id="verify-btn" class="submit-btn">Verify</button>
-            </form>
-            <a href="#" id="resend-code" class="secondary-link">Resend Code</a>
-        </div>
-    </div>
-
-    <script type="module" src="/javascript/login.js"></script>
-    <script>
-        // OTP Modal logic
-        const otpModal = document.getElementById('otpModal');
-        const closeOtpModal = document.getElementById('closeOtpModal');
-
-        // Close modal when clicking X
-        closeOtpModal.onclick = () => otpModal.style.display = 'none';
-
-        // Close modal when clicking outside content
-        window.onclick = (event) => {
-            if (event.target === otpModal) otpModal.style.display = 'none';
-        };
-
-        // Example: Open OTP modal after login form submission
+    <script type="module">
         const loginForm = document.getElementById('loginForm');
+        const otpContainer = document.getElementById('otp-container');
+        const otpInput = document.getElementById('otp');
+        const otpErrorBox = document.getElementById('otp-error-box');
+        const otpErrorMessage = document.getElementById('otp-error-message');
+        const resendCode = document.getElementById('resend-code');
+
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            // Here you would send login data to your server
-            // For demo, assume credentials are valid and require OTP
-            otpModal.style.display = 'block';
+            // Only show OTP input after login submission
+            if (otpContainer.style.display === 'none') {
+                // Here, you would normally validate credentials via server
+                console.log('Login submitted. Showing OTP input...');
+                otpContainer.style.display = 'block';
+                otpInput.focus();
+            } else {
+                // Submit OTP
+                const otpValue = otpInput.value.trim();
+                if (!otpValue) {
+                    otpErrorBox.style.display = 'block';
+                    otpErrorMessage.textContent = 'Please enter the OTP.';
+                    return;
+                }
+                console.log('OTP submitted:', otpValue);
+                // TODO: Send OTP to server for verification
+                // On success, redirect or show success message
+            }
         });
 
-        // OTP form submission example
-        const otpForm = document.getElementById('otpForm');
-        otpForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const otpValue = document.getElementById('otp').value;
-
-            // Send OTP to server for verification
-            console.log('OTP submitted:', otpValue);
-            // After successful verification, redirect or close modal
-            // otpModal.style.display = 'none';
-        });
-
-        // Resend code example
-        document.getElementById('resend-code').addEventListener('click', (e) => {
+        resendCode.addEventListener('click', (e) => {
             e.preventDefault();
             console.log('Resend OTP requested');
+            // TODO: Call server API to resend OTP
         });
     </script>
 </body>
