@@ -1,4 +1,5 @@
 
+import { promise } from 'zod/mini';
 import { showNotification } from './functions.js';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -8,6 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const verifyCodeBtn = document.getElementById("verifyCodeBtn");
     const verificationCodeInput = document.getElementById("verificationCode");
     const closeModalBtn = document.getElementById("closeModalBtn");
+    const delay = (ms) => new Promise(res => setTimeout(res,ms))
+
     let username = null;
     if (!loginForm) return;
 
@@ -111,6 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 verificationCodeInput.value = ""
                 emailModal.style.display = "none"
                 showNotification("Successfully logged in via OTP.", "success")
+                await delay(3000)
                 window.location.href = "/"
             } else {
                 showNotification(data.message)
