@@ -82,9 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json()
     
             if (data.success) {
-                verificationCodeInput.value = ""
-                emailModal.style.display = "none"
-                showNotification("Successfully logged in via OTP.", "success")
+                showNotification("Sent verification email to the email linked to your account.", "success")
             } else {
                 showNotification(data.message)
             }
