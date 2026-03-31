@@ -91,7 +91,7 @@
                         <h3>{{ item.name }}</h3>
                         <p class="price">{{ item.price }}</p>
                         <p class="product-desc">{{ item.desc }}</p>
-                        <button class="add-btn" onclick="event.stopPropagation(); addToCart('{{ item.name }}', '{{ item.price }}')">
+                        <button class="add-btn" onclick="event.stopPropagation(); addToCart('{{ item.name }}', '{{ item.price }}', '{{ item.image }}')">
                             Add to Cart
                         </button>
                     </div>

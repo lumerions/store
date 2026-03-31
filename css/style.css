@@ -318,6 +318,8 @@ textarea:focus {
     display: flex;
     align-items: center;
     gap: 12px;
+    flex: 1; 
+    justify-content: space-between; 
 }
 
 .cart-item-details {
@@ -365,4 +367,19 @@ textarea:focus {
     color: #999;
     margin-top: 10px;
     font-size: 0.9rem;
+}
+
+.cart-item-img-container {
+    width: 65px;
+    height: 65px;
+    flex-shrink: 0;
+    margin-left: 15px;
+}
+
+.cart-item-thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
+    border-radius: 8px;
+    border: 1px solid #f0f0f0;
 }
