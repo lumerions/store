@@ -93,7 +93,6 @@ document.addEventListener('DOMContentLoaded', () => {
     })
 
     verifyCodeBtn.addEventListener("click",async () => {
-        const verificationCodeInput = document.getElementById("verificationCode")
         const code = verificationCodeInput.value
 
         try {
@@ -110,9 +109,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json()
     
             if (data.success) {
+                const verificationCodeInput = document.getElementById("verificationCode")
                 verificationCodeInput.value = ""
                 emailModal.style.display = "none"
                 showNotification("Successfully logged in via OTP.", "success")
+                window.location.href = "/"
             } else {
                 showNotification(data.message)
             }
