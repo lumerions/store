@@ -141,8 +141,7 @@ async function CheckIfUserLoggedIn() {
         }
 
     } catch(error) {
-        console.log(error)
-       // window.location.href = "/internalerror"
+        window.location.href = "/internalerror"
     }
 }
 

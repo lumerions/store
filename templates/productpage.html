@@ -4,35 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ product.name }} | {{ store_name }}</title>
-    <link rel="stylesheet" href="/css/style.css?v=1.1">
+    <link rel="stylesheet" href="/css/style.css?v=999">
     <style>
-        /* Specific Marketplace Theme Overrides */
-        body {
-            background-color: #191919;
-            color: #ffffff;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-
-        .product-page-wrapper {
-            display: flex;
-            justify-content: center;
-            padding: 80px 20px;
-            min-height: 100vh;
-        }
-
-        .product-layout {
+        /* Marketplace Layout Extensions */
+        .item-page-container {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 20px;
             display: grid;
             grid-template-columns: 450px 1fr;
-            gap: 50px;
-            width: 100%;
-            max-width: 1100px;
+            gap: 40px;
         }
 
-        /* Left Column: Image Box */
-        .item-preview-box {
-            background-color: #232527;
+        /* Left side: Preview Box */
+        .item-preview-card {
+            background-color: #232527; /* Darker box for item contrast */
             aspect-ratio: 1 / 1;
             border-radius: 4px;
             position: relative;
@@ -42,13 +28,13 @@
             border: 1px solid #333;
         }
 
-        .item-preview-box img {
-            max-width: 80%;
-            max-height: 80%;
+        .item-preview-card img {
+            max-width: 85%;
+            max-height: 85%;
             object-fit: contain;
         }
 
-        .preview-controls {
+        .item-controls {
             position: absolute;
             bottom: 15px;
             right: 15px;
@@ -56,234 +42,175 @@
             gap: 8px;
         }
 
-        .control-btn {
+        .control-pill {
             background: rgba(57, 59, 61, 0.9);
             border: none;
             color: white;
-            padding: 6px 14px;
+            padding: 6px 12px;
             border-radius: 4px;
             font-size: 13px;
             font-weight: 600;
             cursor: pointer;
         }
 
-        .favorite-star {
-            position: absolute;
-            bottom: 12px;
-            left: 15px;
-            font-size: 30px;
-            color: #ffffff;
-            cursor: pointer;
-            line-height: 1;
+        /* Right side: Info */
+        .item-details-panel {
+            display: flex;
+            flex-direction: column;
         }
 
-        /* Right Column: Content */
-        .item-header {
+        .item-title-row {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 5px;
         }
 
-        .item-title {
+        .item-main-title {
             font-size: 32px;
             margin: 0;
             font-weight: 700;
             color: #fff;
         }
 
-        .cart-status-icon {
-            position: relative;
-            cursor: pointer;
-            color: #fff;
-        }
-
-        .cart-badge {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            background: #191919;
-            border: 2px solid #0074ff;
-            color: white;
-            font-size: 10px;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .creator-tag {
+        .attribution-text {
             font-size: 16px;
-            color: #fff;
-            margin-bottom: 20px;
+            color: #ccc;
+            margin: 10px 0;
         }
 
-        .v-check {
-            color: #0074ff;
-            margin-left: 4px;
-            font-weight: bold;
-        }
+        .v-badge { color: #0074ff; font-weight: bold; margin-left: 4px; }
 
-        .divider {
+        .item-hr {
             height: 1px;
-            background-color: #393b3d;
-            margin-bottom: 25px;
+            background: #393b3d;
+            border: none;
+            margin: 20px 0;
         }
 
-        /* Price and Buttons */
-        .price-row {
+        .price-display-row {
             display: flex;
             align-items: center;
             margin-bottom: 25px;
         }
 
-        .label-text {
-            width: 120px;
-            color: #bdbebf;
-            font-size: 16px;
-        }
+        .label-gray { width: 120px; color: #999; font-size: 15px; }
 
-        .price-val {
+        .price-bold {
             font-size: 20px;
             font-weight: 700;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
+            color: #fff;
         }
 
-        .action-stack {
+        /* Action Buttons - Matching your reference */
+        .action-group {
             display: flex;
             flex-direction: column;
             gap: 12px;
             max-width: 400px;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
         }
 
-        .btn {
+        .btn-market {
             padding: 14px;
             border-radius: 8px;
             font-size: 18px;
             font-weight: 600;
             border: none;
             cursor: pointer;
-            transition: opacity 0.2s;
+            text-align: center;
         }
 
-        .btn-blue { background-color: #0074ff; color: white; }
-        .btn-white { background-color: #ffffff; color: #191919; }
+        .btn-buy-primary { background-color: #0074ff; color: white; }
+        .btn-add-secondary { background-color: #ffffff; color: #111; }
         .btn-disabled { background-color: #393b3d; color: #777; cursor: not-allowed; }
 
-        .btn:hover:not(:disabled) { opacity: 0.9; }
-
-        /* Meta Grid */
-        .meta-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .meta-row {
-            display: flex;
-            font-size: 15px;
-        }
-
-        .meta-value {
-            color: #ffffff;
-            flex: 1;
-        }
-
-        .desc-row {
-            margin-top: 10px;
-            align-items: flex-start;
-        }
-
-        .desc-row .meta-value {
-            line-height: 1.6;
-            color: #efefef;
-        }
+        /* Meta Data Grid */
+        .meta-list { display: flex; flex-direction: column; gap: 10px; }
+        .meta-row { display: flex; font-size: 15px; }
+        .meta-val { color: #fff; flex: 1; }
 
         @media (max-width: 850px) {
-            .product-layout { grid-template-columns: 1fr; }
-            .item-preview-box { max-width: 100%; }
+            .item-page-container { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
-    <div class="product-page-wrapper">
-        <div class="product-layout">
-            
-            <div class="item-preview-box">
-                <img src="{{ product.image }}" alt="{{ product.name }}">
-                <div class="preview-controls">
-                    <button class="control-btn">Try On</button>
-                    <button class="control-btn">2D</button>
-                </div>
-                <div class="favorite-star">☆</div>
+    <div id="cart-overlay" onclick="toggleCart()"></div>
+    <div id="modal-overlay" onclick="closeCheckout()"></div>
+
+    <div id="cart-panel">
+        <div class="cart-header">
+            <h3>Your Cart</h3>
+            <button class="close-x" onclick="toggleCart()">&times;</button>
+        </div>
+        <div id="cart-items"></div>
+        <div class="cart-footer">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                <strong>Total:</strong>
+                <strong id="cart-total">$0.00</strong>
             </div>
-
-            <div class="item-details-box">
-                <div class="item-header">
-                    <h1 class="item-title">{{ product.name }}</h1>
-                    <div class="cart-status-icon" onclick="toggleCart()">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
-                        <span class="cart-badge" id="cart-count">0</span>
-                    </div>
-                </div>
-
-                <p class="creator-tag">By <strong>{{ store_name }}</strong> <span class="v-check">✓</span></p>
-
-                <div class="divider"></div>
-
-                <div class="price-row">
-                    <span class="label-text">Price</span>
-                    <div class="price-val">
-                        <span>⏣</span> {{ product.price }}
-                    </div>
-                </div>
-
-                <div class="action-stack">
-                    {% if not product.offsale %}
-                        <button class="btn btn-blue" onclick="openCheckout()">Buy</button>
-                        <button class="btn btn-white" onclick="addToCart('{{ product.name }}', '{{ product.price }}', '{{ product.image }}')">Add to cart</button>
-                    {% else %}
-                        <button class="btn btn-disabled" disabled>Offsale</button>
-                    {% endif %}
-                </div>
-
-                <div class="meta-grid">
-                    <div class="meta-row">
-                        <span class="label-text">Tradable</span>
-                        <span class="meta-value">No</span>
-                    </div>
-                    <div class="meta-row">
-                        <span class="label-text">Type</span>
-                        <span class="meta-value">Head Accessories</span>
-                    </div>
-                    <div class="meta-row">
-                        <span class="label-text">Placement</span>
-                        <span class="meta-value">Accessories | Head</span>
-                    </div>
-                    <div class="meta-row">
-                        <span class="label-text">Materials</span>
-                        <span class="meta-value">Basic</span>
-                    </div>
-                    <div class="meta-row">
-                        <span class="label-text">Created</span>
-                        <span class="meta-value">{{ product.created_at }}</span>
-                    </div>
-                    <div class="meta-row desc-row">
-                        <span class="label-text">Description</span>
-                        <span class="meta-value">{{ product.description }}</span>
-                    </div>
-                </div>
-            </div>
-
+            <button class="checkout-btn" onclick="openCheckout()">Go to Checkout</button>
         </div>
     </div>
 
-    <script type="module" src="/javascript/index.js"></script>
+    <nav>
+        <a href="/" class="logo">{{ store_name }}</a>
+        <div class="nav-right">
+            <div class="cart-link" onclick="toggleCart()">
+                Cart <span id="cart-count">0</span>
+            </div>
+            <button type="button" id="login-link" class="login-btn">Login</button>
+        </div>
+    </nav>
+
+    <div class="item-page-container">
+        
+        <div class="item-preview-card">
+            <img src="{{ product.image }}" alt="{{ product.name }}">
+            <div class="item-controls">
+                <button class="control-pill">Try On</button>
+                <button class="control-pill">2D</button>
+            </div>
+        </div>
+
+        <div class="item-details-panel">
+            <div class="item-title-row">
+                <h1 class="item-main-title">{{ product.name }}</h1>
+            </div>
+            <p class="attribution-text">By <strong>Roblox</strong> <span class="v-badge">✓</span></p>
+            
+            <hr class="item-hr">
+
+            <div class="price-display-row">
+                <span class="label-gray">Price</span>
+                <div class="price-bold">
+                    <span>⏣</span> {{ product.price }}
+                </div>
+            </div>
+
+            <div class="action-group">
+                {% if not product.offsale %}
+                    <button class="btn-market btn-buy-primary" onclick="openCheckout()">Buy</button>
+                    <button class="btn-market btn-add-secondary" onclick="addToCart('{{ product.name }}', '{{ product.price }}', '{{ product.image }}')">Add to cart</button>
+                {% else %}
+                    <button class="btn-market btn-disabled" disabled>Offsale</button>
+                {% endif %}
+            </div>
+
+            <div class="meta-list">
+                <div class="meta-row"><span class="label-gray">Tradable</span><span class="meta-val">No</span></div>
+                <div class="meta-row"><span class="label-gray">Type</span><span class="meta-val">Head Accessories</span></div>
+                <div class="meta-row"><span class="label-gray">Created</span><span class="meta-val">{{ product.created_at }}</span></div>
+                <div class="meta-row" style="margin-top:10px; align-items:flex-start;">
+                    <span class="label-gray">Description</span>
+                    <span class="meta-val">{{ product.description }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
