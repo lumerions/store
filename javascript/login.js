@@ -1,5 +1,4 @@
 
-import { promise } from 'zod/mini';
 import { showNotification } from './functions.js';
 
 document.addEventListener('DOMContentLoaded', () => {
