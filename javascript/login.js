@@ -6,6 +6,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const OTPBtn = document.getElementById("send-otp-btn");
     const emailModal = document.getElementById("emailModal");
     const verifyCodeBtn = document.getElementById("verifyCodeBtn");
+    const verificationCodeInput = document.getElementById("verificationCode");
+    const closeModalBtn = document.getElementById("closeModalBtn");
     let username = null;
     if (!loginForm) return;
 
@@ -87,8 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 showNotification(data.message)
             }
         } catch(error) {
-            console.log(error)
-           // window.location.href = "/internalerror"
+            window.location.href = "/internalerror"
         }
     })
 
@@ -109,7 +110,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json()
     
             if (data.success) {
-                const verificationCodeInput = document.getElementById("verificationCode")
                 verificationCodeInput.value = ""
                 emailModal.style.display = "none"
                 showNotification("Successfully logged in via OTP.", "success")
@@ -118,9 +118,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 showNotification(data.message)
             }
         } catch(error) {
-                        console.log(error)
-
-           // window.location.href = "/internalerror"
+            window.location.href = "/internalerror"
         }
+    })
+
+    closeModalBtn.addEventListener("click", async () => {
+        emailModal.style.display = "none"
     })
 })
