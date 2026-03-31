@@ -3,34 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login in to {{ store_name }}</title>
+    <title>Login to {{ store_name }}</title>
     <link rel="stylesheet" href="/css/style.css?v=999">
-    <style>
-        /* OTP input styling */
-        #otp-container {
-            display: none; /* Hidden by default */
-            margin-top: 15px;
-        }
-
-        #otp-container input {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-        }
-
-        #otp-container .submit-btn {
-            width: 100%;
-        }
-
-        .error-container {
-            color: red;
-            margin-top: 10px;
-        }
-    </style>
 </head>
 <body class="auth-wrapper">
+
     <div class="auth-card">
         <h2>Welcome back</h2>
         <p>Enter your details to access your account.</p>
@@ -40,7 +17,6 @@
         </div>
 
         <form id="loginForm">
-
             <div class="form-group">
                 <label for="username">Username</label>
                 <input type="text" id="username" name="username" placeholder="johndoe123" required>
@@ -53,60 +29,38 @@
 
             <button type="submit" id="submit-btn" class="submit-btn">Log In</button>
 
-            <!-- OTP input appears here -->
-            <div id="otp-container">
-                <input type="text" id="otp" name="otp" placeholder="Enter One-Time Code" maxlength="6" required>
-                <button type="submit" id="verify-btn" class="submit-btn">Verify OTP</button>
-                <a href="#" id="resend-code" class="secondary-link" style="display:block; margin-top:5px;">Resend Code</a>
-                <div id="otp-error-box" class="error-container" style="display:none;">
-                    <p id="otp-error-message"></p>
+            <div id="otp-section" class="otp-container">
+                <div class="form-group">
+                    <label for="otp-code">One-Time Code</label>
+                    <input type="text" 
+                           id="otp-code" 
+                           name="otp_code" 
+                           placeholder="000000" 
+                           inputmode="numeric" 
+                           pattern="[0-9]*" 
+                           autocomplete="one-time-code">
+                    <p style="font-size: 0.8rem; color: #666; margin-top: 8px;">
+                        Please enter the 6-digit verification code sent to your device.
+                    </p>
                 </div>
+                
+                <button type="button" id="verify-btn" class="submit-btn" style="background-color: #28a745;">
+                    Verify & Sign In
+                </button>
+                
+                <button type="button" id="resend-btn" class="resend-link">
+                    Didn't get a code? Resend
+                </button>
             </div>
-
         </form>
-        
+
         <div class="auth-footer">
             <a href="/signup" class="secondary-link">Don't have an account? Sign Up</a>
             <a href="/" class="secondary-link">← Back to Store</a>
         </div>
     </div>
 
-    <script type="module">
-        const loginForm = document.getElementById('loginForm');
-        const otpContainer = document.getElementById('otp-container');
-        const otpInput = document.getElementById('otp');
-        const otpErrorBox = document.getElementById('otp-error-box');
-        const otpErrorMessage = document.getElementById('otp-error-message');
-        const resendCode = document.getElementById('resend-code');
-
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            // Only show OTP input after login submission
-            if (otpContainer.style.display === 'none') {
-                // Here, you would normally validate credentials via server
-                console.log('Login submitted. Showing OTP input...');
-                otpContainer.style.display = 'block';
-                otpInput.focus();
-            } else {
-                // Submit OTP
-                const otpValue = otpInput.value.trim();
-                if (!otpValue) {
-                    otpErrorBox.style.display = 'block';
-                    otpErrorMessage.textContent = 'Please enter the OTP.';
-                    return;
-                }
-                console.log('OTP submitted:', otpValue);
-                // TODO: Send OTP to server for verification
-                // On success, redirect or show success message
-            }
-        });
-
-        resendCode.addEventListener('click', (e) => {
-            e.preventDefault();
-            console.log('Resend OTP requested');
-            // TODO: Call server API to resend OTP
-        });
-    </script>
+    <script type="module" src="/javascript/login.js"></script>
+    
 </body>
 </html>
