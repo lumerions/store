@@ -141,8 +141,9 @@ async function CheckIfUserLoggedIn() {
             adminBtn.style.display = "flex"
         }
 
-    } catch(error) {
-        window.location.href = "/internalerror"
+    } catch(error) { 
+        console.log(error)
+        //window.location.href = "/internalerror"
     }
 }
 
