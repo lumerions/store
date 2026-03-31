@@ -739,10 +739,6 @@ async def verifyemail(request: Request, data: VerifyAccountEmail, response: Resp
 @app.post("/api/OTP")
 @limiter.limit("50/minute")
 async def otp(request: Request, data: OTP, response: Response, SessionId: str = Cookie(None)):
-
-    if not SessionId:
-        return JSONResponse({"success": False,"message": "This session is invalid."})
-
     InputUsername = data.username
 
     if not checkUserEmailLimit(InputUsername):
@@ -793,10 +789,6 @@ async def otp(request: Request, data: OTP, response: Response, SessionId: str = 
 @app.post("/api/VerifyOTP")
 @limiter.limit("50/minute")
 async def verifyotp(request: Request, data: VerifyAccountEmail, response: Response, SessionIdToken: str = Cookie(None)):
-
-    if not SessionIdToken:
-        return JSONResponse({"success": False,"message": "This session is invalid."})
-
     OPTCodeInput = data.code
 
     try:
