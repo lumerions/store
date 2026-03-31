@@ -128,6 +128,10 @@ async function CheckIfUserLoggedIn() {
 
         const data = await response.json()
 
+        if (!loginBtnText || !loginBtn) {
+            return
+        }
+
         if (!data.loggedin) {
             loginBtnText.innerText = "Login"
             loginBtn.style.display = "flex"
@@ -143,7 +147,7 @@ async function CheckIfUserLoggedIn() {
 
     } catch(error) { 
         console.log(error)
-        //window.location.href = "/internalerror"
+        window.location.href = "/internalerror"
     }
 }
 

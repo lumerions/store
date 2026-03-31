@@ -81,17 +81,22 @@
     <div id="modal-overlay" onclick="closeCheckout()"></div>
 
     <div id="cart-panel">
-        <div class="cart-header">
-            <h3>Your Cart</h3>
-            <button class="close-x" onclick="toggleCart()">&times;</button>
         </div>
-        <div id="cart-items"></div>
-        <div class="cart-footer">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
-                <strong>Total:</strong>
-                <strong id="cart-total">$0.00</strong>
-            </div>
-            <button class="checkout-btn" onclick="openCheckout()">Go to Checkout</button>
+
+    <div id="checkout-modal">
+        <div class="modal-header">
+            <h3>Checkout</h3>
+            <button class="close-x" onclick="closeCheckout()">&times;</button>
+        </div>
+        <p style="margin-bottom: 10px;">Total Due: <span id="modal-total-display" style="font-weight: 800; color: var(--accent);"></span></p>
+        
+        <div class="payment-method" onclick="processPayment('Credit Card')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+            Pay with Card
+        </div>
+
+        <div class="payment-method" onclick="processPayment('Solana')">
+            Pay with Solana
         </div>
     </div>
 
