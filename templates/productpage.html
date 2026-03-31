@@ -4,116 +4,286 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ product.name }} | {{ store_name }}</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/style.css?v=1.1">
     <style>
-        .product-page-container {
-            max-width: 1000px;
-            margin: 50px auto;
-            padding: 20px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
-            align-items: start;
+        /* Specific Marketplace Theme Overrides */
+        body {
+            background-color: #191919;
+            color: #ffffff;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
         }
 
-        .product-image-section img {
-            width: 100%;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-        }
-
-        .product-info-section {
+        .product-page-wrapper {
             display: flex;
-            flex-direction: column;
-            gap: 20px;
+            justify-content: center;
+            padding: 80px 20px;
+            min-height: 100vh;
         }
 
-        .status-badge {
-            display: inline-block;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            text-transform: uppercase;
+        .product-layout {
+            display: grid;
+            grid-template-columns: 450px 1fr;
+            gap: 50px;
+            width: 100%;
+            max-width: 1100px;
         }
 
-        .status-onsale { background: #e6fcf5; color: #0ca678; }
-        .status-offsale { background: #fff5f5; color: #fa5252; }
-
-        .product-name { font-size: 2.5rem; margin: 0; color: #111; }
-        .product-price { font-size: 1.5rem; font-weight: 600; color: #444; }
-        .product-description { line-height: 1.6; color: #666; font-size: 1.05rem; }
-        
-        .meta-info {
-            font-size: 0.85rem;
-            color: #999;
-            border-top: 1px solid #eee;
-            padding-top: 20px;
-            margin-top: 10px;
+        /* Left Column: Image Box */
+        .item-preview-box {
+            background-color: #232527;
+            aspect-ratio: 1 / 1;
+            border-radius: 4px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #333;
         }
 
-        .add-to-cart-large {
-            padding: 16px 32px;
-            background: #000;
-            color: white;
+        .item-preview-box img {
+            max-width: 80%;
+            max-height: 80%;
+            object-fit: contain;
+        }
+
+        .preview-controls {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .control-btn {
+            background: rgba(57, 59, 61, 0.9);
             border: none;
-            border-radius: 8px;
-            font-size: 1.1rem;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 4px;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
-            transition: transform 0.2s;
         }
 
-        .add-to-cart-large:disabled {
-            background: #ccc;
-            cursor: not-allowed;
+        .favorite-star {
+            position: absolute;
+            bottom: 12px;
+            left: 15px;
+            font-size: 30px;
+            color: #ffffff;
+            cursor: pointer;
+            line-height: 1;
         }
 
-        @media (max-width: 768px) {
-            .product-page-container { grid-template-columns: 1fr; }
+        /* Right Column: Content */
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 5px;
+        }
+
+        .item-title {
+            font-size: 32px;
+            margin: 0;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .cart-status-icon {
+            position: relative;
+            cursor: pointer;
+            color: #fff;
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #191919;
+            border: 2px solid #0074ff;
+            color: white;
+            font-size: 10px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .creator-tag {
+            font-size: 16px;
+            color: #fff;
+            margin-bottom: 20px;
+        }
+
+        .v-check {
+            color: #0074ff;
+            margin-left: 4px;
+            font-weight: bold;
+        }
+
+        .divider {
+            height: 1px;
+            background-color: #393b3d;
+            margin-bottom: 25px;
+        }
+
+        /* Price and Buttons */
+        .price-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .label-text {
+            width: 120px;
+            color: #bdbebf;
+            font-size: 16px;
+        }
+
+        .price-val {
+            font-size: 20px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .action-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-width: 400px;
+            margin-bottom: 40px;
+        }
+
+        .btn {
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .btn-blue { background-color: #0074ff; color: white; }
+        .btn-white { background-color: #ffffff; color: #191919; }
+        .btn-disabled { background-color: #393b3d; color: #777; cursor: not-allowed; }
+
+        .btn:hover:not(:disabled) { opacity: 0.9; }
+
+        /* Meta Grid */
+        .meta-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .meta-row {
+            display: flex;
+            font-size: 15px;
+        }
+
+        .meta-value {
+            color: #ffffff;
+            flex: 1;
+        }
+
+        .desc-row {
+            margin-top: 10px;
+            align-items: flex-start;
+        }
+
+        .desc-row .meta-value {
+            line-height: 1.6;
+            color: #efefef;
+        }
+
+        @media (max-width: 850px) {
+            .product-layout { grid-template-columns: 1fr; }
+            .item-preview-box { max-width: 100%; }
         }
     </style>
 </head>
 <body>
 
-    <nav>
-        <a href="/" class="logo">← Back to Store</a>
-    </nav>
-
-    <div class="product-page-container">
-        <div class="product-image-section">
-            <img src="{{ product.image }}" alt="{{ product.name }}">
-        </div>
-
-        <div class="product-info-section">
-            <div>
-                {% if product.offsale %}
-                <span class="status-badge status-offsale">Offsale</span>
-                {% else %}
-                <span class="status-badge status-onsale">In Stock</span>
-                {% endif %}
-            </div>
-
-            <h1 class="product-name">{{ product.name }}</h1>
-            <p class="product-price">{{ product.price }}</p>
+    <div class="product-page-wrapper">
+        <div class="product-layout">
             
-            <div class="product-description">
-                {{ product.description }}
+            <div class="item-preview-box">
+                <img src="{{ product.image }}" alt="{{ product.name }}">
+                <div class="preview-controls">
+                    <button class="control-btn">Try On</button>
+                    <button class="control-btn">2D</button>
+                </div>
+                <div class="favorite-star">☆</div>
             </div>
 
-            <button class="add-to-cart-large" 
-                    {% if product.offsale %} disabled {% endif %}
-                    onclick="addToCart('{{ product.name }}', '{{ product.price }}', '{{ product.image }}')">
-                {% if product.offsale %} Currently Unavailable {% else %} Add to Cart {% endif %}
-            </button>
+            <div class="item-details-box">
+                <div class="item-header">
+                    <h1 class="item-title">{{ product.name }}</h1>
+                    <div class="cart-status-icon" onclick="toggleCart()">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                        <span class="cart-badge" id="cart-count">0</span>
+                    </div>
+                </div>
 
-            <div class="meta-info">
-                <p>Item ID: {{ product.id }}</p>
-                <p>Listed on: {{ product.created_at }}</p>
+                <p class="creator-tag">By <strong>{{ store_name }}</strong> <span class="v-check">✓</span></p>
+
+                <div class="divider"></div>
+
+                <div class="price-row">
+                    <span class="label-text">Price</span>
+                    <div class="price-val">
+                        <span>⏣</span> {{ product.price }}
+                    </div>
+                </div>
+
+                <div class="action-stack">
+                    {% if not product.offsale %}
+                        <button class="btn btn-blue" onclick="openCheckout()">Buy</button>
+                        <button class="btn btn-white" onclick="addToCart('{{ product.name }}', '{{ product.price }}', '{{ product.image }}')">Add to cart</button>
+                    {% else %}
+                        <button class="btn btn-disabled" disabled>Offsale</button>
+                    {% endif %}
+                </div>
+
+                <div class="meta-grid">
+                    <div class="meta-row">
+                        <span class="label-text">Tradable</span>
+                        <span class="meta-value">No</span>
+                    </div>
+                    <div class="meta-row">
+                        <span class="label-text">Type</span>
+                        <span class="meta-value">Head Accessories</span>
+                    </div>
+                    <div class="meta-row">
+                        <span class="label-text">Placement</span>
+                        <span class="meta-value">Accessories | Head</span>
+                    </div>
+                    <div class="meta-row">
+                        <span class="label-text">Materials</span>
+                        <span class="meta-value">Basic</span>
+                    </div>
+                    <div class="meta-row">
+                        <span class="label-text">Created</span>
+                        <span class="meta-value">{{ product.created_at }}</span>
+                    </div>
+                    <div class="meta-row desc-row">
+                        <span class="label-text">Description</span>
+                        <span class="meta-value">{{ product.description }}</span>
+                    </div>
+                </div>
             </div>
+
         </div>
     </div>
 
-    <script src="/javascript/index.js"></script>
+    <script type="module" src="/javascript/index.js"></script>
 </body>
 </html>
