@@ -1,5 +1,4 @@
 import { showNotification } from './functions.js';
-import { logout } from './functions.js';
 const passwordForm = document.getElementById("password-form")
 const savePrefsBtn = document.getElementById("savePrefsBtn")
 const orderEmailsCheckBox = document.getElementById("notifyToggle")

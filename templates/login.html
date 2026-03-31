@@ -5,36 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login to {{ store_name }}</title>
     <link rel="stylesheet" href="/css/style.css?v=999">
-    <style>
-        .divider {
-            border: 0;
-            border-top: 2px solid #d1d5db; 
-            margin: 25px 0;
-        }
-
-        .otp-link-wrapper {
-            text-align: center;
-            margin-bottom: 5px;
-        }
-
-        .otp-pill-link {
-            display: inline-block;
-            padding: 10px 20px;
-            border: 1.5px solid #d1d5db;
-            border-radius: 50px; 
-            text-decoration: none;
-            color: #374151;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: all 0.2s ease;
-        }
-
-        .otp-pill-link:hover {
-            background-color: #f9fafb;
-            border-color: #9ca3af;
-            color: #000;
-        }
-    </style>
 </head>
 <body class="auth-wrapper">
     <div class="auth-card">
@@ -60,7 +30,7 @@
             <hr class="divider">
 
             <div class="otp-link-wrapper">
-                <a href="/send-otp" class="otp-pill-link">Sign in with a one-time code</a>
+                <button type="button" id="send-otp-btn" class="otp-pill-link">Sign in with a one-time code</button>
             </div>
         </form>
 
@@ -69,6 +39,23 @@
             <a href="/" class="secondary-link">← Back to Store</a>
         </div>
     </div>
+
+    <div id="emailModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:1000;">
+        <div style="background:#fff; padding:25px; border-radius:10px; width:90%; max-width:400px; text-align:center; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+            <h3 style="margin-bottom:10px;">Verify Your Email</h3>
+            <p style="font-size:14px; color:#666;">Enter the verification code sent to your email.</p>
+            
+            <p style="font-size:11px; color:#999; margin-top:5px;">Note: Requesting a new code expires all previous ones.</p>
+
+            <input type="text" id="verificationCode" placeholder="Enter code" 
+                   inputmode="numeric" 
+                   style="width:100%; padding:12px; margin:15px 0; border:1px solid #ddd; border-radius:8px; box-sizing: border-box;">
+
+            <button id="verifyCodeBtn" class="submit-btn" style="width:100%;">Verify</button>
+            <button id="closeModalBtn" style="margin-top:15px; background:none; border:none; color:#888; cursor:pointer; font-size: 0.9rem;">Cancel</button>
+        </div>
+    </div>
+    
     <script type="module" src="/javascript/login.js"></script>
 </body>
 </html>

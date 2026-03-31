@@ -241,3 +241,34 @@ textarea:focus {
         transform: translateX(0) scale(1);
     }
 }
+
+.divider {
+    border: 0;
+    border-top: 2px solid #d1d5db;
+    margin: 25px 0;
+}
+
+.otp-link-wrapper {
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+.otp-pill-link {
+    display: inline-block;
+    padding: 10px 20px;
+    border: 1.5px solid #d1d5db;
+    border-radius: 50px;
+    background: transparent;
+    color: #374151;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit; 
+}
+
+.otp-pill-link:hover {
+    background-color: #f9fafb;
+    border-color: #9ca3af;
+    color: #000;
+}

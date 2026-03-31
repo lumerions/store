@@ -1,6 +1,9 @@
 
 document.addEventListener('DOMContentLoaded', () => {
-    const loginForm = document.getElementById('loginForm');
+    const loginForm = document.getElementById("loginForm");
+    const OTPBtn = document.getElementById("send-otp-btn");
+    const emailModal = document.getElementById("emailModal");
+    const verifyCodeBtn = document.getElementById("verifyCodeBtn");
     if (!loginForm) return;
 
     loginForm.addEventListener('submit', async (e) => {
@@ -53,6 +56,39 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 showError(String(error))
             }
+        }
+    })
+
+    OTPBtn.addEventListener("click", async () => {
+        emailModal.style.display = "flex"
+    })
+
+    verifyCodeBtn.addEventListener("click",async () => {
+        const verificationCodeInput = document.getElementById("verificationCode")
+        const code = verificationCodeInput.value
+
+        try {
+            const response = await fetch("/api/OTP", {
+                method: "POST",
+                headers: {
+                    "Content-Type":"application/json",
+                },
+                body: JSON.stringify({
+                    code: code,
+                })
+            })
+
+            const data = await response.json()
+    
+            if (data.success) {
+                verificationCodeInput.value = ""
+                emailModal.style.display = "none"
+                showNotification("Successfully logged in via OTP.", "success")
+            } else {
+                showNotification(data.message)
+            }
+        } catch {
+            window.location.href = "/internalerror"
         }
     })
 })

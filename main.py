@@ -3,7 +3,7 @@ from fastapi.responses import HTMLResponse,JSONResponse,RedirectResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from datetime import datetime
-import re,os,sys,bcrypt,secrets,resend
+import re,os,sys,bcrypt,secrets,resend,json
 libPath = os.path.join(os.path.dirname(__file__), 'lib')
 sys.path.append(libPath)
 from slowapi import Limiter
@@ -108,10 +108,20 @@ def sendEmail(sender,reciever,subject,html):
 @limiter.limit("50/minute")
 async def root(request: Request):
 
-    with getPostgresConnection() as conn:
-        with conn.cursor(row_factory=dict_row) as cursor:
-            cursor.execute("""SELECT * from storeitems""")
-            rows = cursor.fetchall()
+    CachedStoreData = redis.get("storedata")
+
+    if CachedStoreData is None:
+        with getPostgresConnection() as conn:
+            with conn.cursor(row_factory=dict_row) as cursor:
+                cursor.execute("""SELECT * from storeitems""")
+                rows = cursor.fetchall()
+    else: 
+        print("cache hit")
+        return templates.TemplateResponse("index.html", {
+            "request": request, 
+            "store_name": cfg.StoreName,  
+            "products": json.loads(CachedStoreData)
+        })
 
     items = []
 
@@ -126,6 +136,8 @@ async def root(request: Request):
         })
 
     onsaleitems = [r for r in items if not r["offsale"]]
+
+    redis.set("storedata", json.dumps(onsaleitems), ex=3600)
 
     return templates.TemplateResponse("index.html", {
         "request": request, 
@@ -675,7 +687,7 @@ async def changeaccountemail(request: Request,data: ChangeAccountEmailSchema, re
                 <div style="margin: 20px 0;">
                     <span style="font-size: 24px; font-weight: bold; color: #1a73e8; background-color: #e8f0fe; padding: 10px 20px; border-radius: 6px;">{EmailVerificationCode}</span>
                 </div>
-                <p style="font-size: 14px; color: #555;">This verification code will expire in 15 minutes.</p>
+                <p style="font-size: 14px; color: #555;">This verification code will expire in 15 minutes. Requesting a new code will expire the previous one.</p>
                 <p style="font-size: 14px; color: #888;">If you did not request this verification, you can ignore this email.</p>
                 <p style="font-size: 14px; color: #888;">&copy; {datetime.now().year} {cfg.StoreName}</p>
                 </div>
@@ -721,6 +733,21 @@ async def verifyemail(request: Request, data: VerifyAccountEmail, response: Resp
                 return JSONResponse({"success": False, "message": "Invalid or expired verification code."})
 
             conn.commit()
+
+    return {"success": True}
+
+@app.post("/api/OTP")
+@limiter.limit("50/minute")
+async def otp(request: Request, data: VerifyAccountEmail, response: Response, SessionId: str = Cookie(None)):
+    VerificationCode = data.code
+
+    if not SessionId:
+        return JSONResponse({"success": False,"message": "This session is invalid."})
+
+    SessionIdList = SessionId.split(":")
+    SessionId = SessionIdList[0]
+    SessionUsername = SessionIdList[1]
+
 
     return {"success": True}
 
