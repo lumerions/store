@@ -61,6 +61,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
     OTPBtn.addEventListener("click", async () => {
         emailModal.style.display = "flex"
+        try {
+            const response = await fetch("/api/OTP", {
+                method: "POST",
+                headers: {
+                    "Content-Type":"application/json",
+                },
+            })
+
+            const data = await response.json()
+    
+            if (data.success) {
+                verificationCodeInput.value = ""
+                emailModal.style.display = "none"
+                showNotification("Successfully logged in via OTP.", "success")
+            } else {
+                showNotification(data.message)
+            }
+        } catch {
+            window.location.href = "/internalerror"
+        }
     })
 
     verifyCodeBtn.addEventListener("click",async () => {
@@ -68,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const code = verificationCodeInput.value
 
         try {
-            const response = await fetch("/api/OTP", {
+            const response = await fetch("/api/VerifyOTP", {
                 method: "POST",
                 headers: {
                     "Content-Type":"application/json",
