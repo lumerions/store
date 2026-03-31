@@ -738,8 +738,7 @@ async def verifyemail(request: Request, data: VerifyAccountEmail, response: Resp
 
 @app.post("/api/OTP")
 @limiter.limit("50/minute")
-async def otp(request: Request, data: VerifyAccountEmail, response: Response, SessionId: str = Cookie(None)):
-    VerificationCode = data.code
+async def otp(request: Request, data: OTP, response: Response, SessionId: str = Cookie(None)):
 
     if not SessionId:
         return JSONResponse({"success": False,"message": "This session is invalid."})
@@ -748,8 +747,77 @@ async def otp(request: Request, data: VerifyAccountEmail, response: Response, Se
     SessionId = SessionIdList[0]
     SessionUsername = SessionIdList[1]
 
+    if not checkUserEmailLimit(SessionUsername):
+        return JSONResponse({"success": False,"message": "Email sending limit reached. Try again later."})
+
+    with getPostgresConnection() as conn:
+        with conn.cursor() as cursor:
+            optCode = secrets.token_urlsafe(10)
+
+            cursor.execute("""
+                UPDATE accounts
+                SET otpcode = %s, 
+                    otpcodetime = NOW()
+                WHERE username = %s AND sessionid = %s
+                RETURNING email;
+            """, (optCode, SessionUsername, SessionId))
+
+            result = cursor.fetchone()
+
+            if not result:
+                return JSONResponse({"success": False, "message": "Invalid session or account not found."})
+            
+            UserEmail = result["email"]
+            
+            HtmlContent = f"""
+            <html>
+            <body style="font-family: Arial, sans-serif; background-color: #f7f7f7; padding: 20px;">
+                <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 8px; padding: 30px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                <h2 style="color: #333;">One Time Login Code</h2>
+                <p style="font-size: 16px; color: #555;">Use the one time code to log into your account:</p>
+                <div style="margin: 20px 0;">
+                    <span style="font-size: 24px; font-weight: bold; color: #1a73e8; background-color: #e8f0fe; padding: 10px 20px; border-radius: 6px;">{optCode}</span>
+                </div>
+                <p style="font-size: 14px; color: #555;">This verification code will expire in 15 minutes. Requesting a new code will expire the previous one.</p>
+                <p style="font-size: 14px; color: #888;">If you did not request this one time code, you can ignore this email.</p>
+                <p style="font-size: 14px; color: #888;">&copy; {datetime.now().year} {cfg.StoreName}</p>
+                </div>
+            </body>
+            </html>
+            """
+
+            sendEmail("One Time Code <otp@syntaxrevival.store>",UserEmail,"One Time Code",HtmlContent)
+            conn.commit()   
+
 
     return {"success": True}
+
+@app.post("/api/VerifyOTP")
+@limiter.limit("50/minute")
+async def verifyotp(request: Request, data: VerifyAccountEmail, response: Response, SessionIdToken: str = Cookie(None)):
+
+    if not SessionIdToken:
+        return JSONResponse({"success": False,"message": "This session is invalid."})
+
+    OPTCodeInput = data.code
+
+    with getPostgresConnection() as conn:
+        with conn.cursor() as cursor:
+            cursor.execute("""
+                UPDATE accounts
+                SET otpcode = NULL,
+                    otpcodetime = NULL
+                WHERE otpcode = %s
+                AND otpcodetime > NOW() - INTERVAL '15 minutes'
+                RETURNING username, sessionid;
+            """, (OPTCodeInput,)) 
+
+            result = cursor.fetchone()
+
+            if result:
+                SessionUsername = result[0]
+                SessionId = result[1]
+                setSessionCookie(response,SessionId + ":" + SessionUsername)
 
 @app.get("/{path:path}", response_class=HTMLResponse)
 @limiter.limit("50/minute")

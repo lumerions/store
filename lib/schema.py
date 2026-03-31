@@ -33,3 +33,6 @@ class ChangeAccountEmailSchema(BaseModel):
 
 class VerifyAccountEmail(BaseModel):
     code: str
+
+class OTP(BaseModel):
+    pass 
