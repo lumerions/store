@@ -282,7 +282,6 @@ async def pendingorders(request: Request, SessionId: str = Cookie(None)):
                 "orders": rows
             }
         
-    
 @app.get("/api/getSettingsData")
 @limiter.limit("50/minute")
 async def getsettingsdata(request: Request, SessionId: str = Cookie(None)):
