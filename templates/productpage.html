@@ -81,7 +81,19 @@
     <div id="modal-overlay" onclick="closeCheckout()"></div>
 
     <div id="cart-panel">
+        <div class="cart-header">
+            <h3>Your Cart</h3>
+            <button class="close-x" onclick="toggleCart()">&times;</button>
         </div>
+        <div id="cart-items"></div>
+        <div class="cart-footer">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                <strong>Total:</strong>
+                <strong id="cart-total">$0.00</strong>
+            </div>
+            <button class="checkout-btn" onclick="openCheckout()">Go to Checkout</button>
+        </div>
+    </div>
 
     <div id="checkout-modal">
         <div class="modal-header">
@@ -96,6 +108,11 @@
         </div>
 
         <div class="payment-method" onclick="processPayment('Solana')">
+            <svg role="img" viewBox="0 0 397.7 311.7" xmlns="http://www.w3.org/2000/svg" style="color: #14F195;">
+                <path fill="currentColor" d="M64.6,237.9c2.4-2.4,5.7-3.8,9.2-3.8h317.4c5.8,0,8.7,7,4.6,11.1l-62.7,62.7c-2.4,2.4-5.7,3.8-9.2,3.8H6.5c-5.8,0-8.7-7-4.6-11.1L64.6,237.9z"></path>
+                <path fill="currentColor" d="M64.6,3.8C67.1,1.4,70.4,0,73.8,0h317.4c5.8,0,8.7,7,4.6,11.1l-62.7,62.7c-2.4,2.4-5.7,3.8-9.2,3.8H6.5c-5.8,0-8.7-7-4.6-11.1L64.6,3.8z"></path>
+                <path fill="currentColor" d="M333.1,120.1c-2.4-2.4-5.7-3.8-9.2-3.8H6.5c-5.8,0-8.7,7-4.6,11.1l62.7,62.7c2.4,2.4,5.7,3.8,9.2,3.8h317.4c5.8,0,8.7-7,4.6-11.1L333.1,120.1z"></path>
+            </svg>
             Pay with Solana
         </div>
     </div>
