@@ -140,8 +140,8 @@ async function LoadSettingsData() {
             notifyToggle.checked = data.orderEmails
         }
 
-    } catch {
-        window.location.href = "/internalerror"
+    } catch(error) {
+        console.log(error)
     }
 }
 
