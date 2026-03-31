@@ -308,23 +308,23 @@ textarea:focus {
 .cart-item-row {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 16px 0;
+    justify-content: space-between; 
+    padding: 16px 20px;
     border-bottom: 1px solid #eee;
-    transition: background 0.2s ease;
 }
 
 .cart-item-info {
     display: flex;
     align-items: center;
     justify-content: flex-start; 
-    gap: 10px; 
+    gap: 12px; 
     flex: 1;
 }
 
 .cart-item-details {
-    flex: 0 1 auto; 
-    max-width: 180px; 
+    display: flex;
+    flex-direction: column;
+    min-width: 120px; 
 }
 
 .cart-item-name {
@@ -343,19 +343,21 @@ textarea:focus {
 .cart-item-remove {
     background: none;
     border: none;
-    color: #ff4d4d;
+    color: #ff4d4d; 
     cursor: pointer;
-    padding: 8px;
-    border-radius: 6px;
+    padding: 10px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.2s ease;
+    margin-left: 10px;
 }
 
 .cart-item-remove:hover {
-    background: #fff0f0;
+    background-color: #fff0f0;
     color: #d32f2f;
+    transform: scale(1.1);
 }
 
 .empty-cart-state {
@@ -373,13 +375,13 @@ textarea:focus {
     width: 60px;
     height: 60px;
     flex-shrink: 0;
-    margin-left: 8px; 
+    margin-left: -5px; 
 }
 
 .cart-item-thumb {
     width: 100%;
     height: 100%;
-    object-fit: cover; 
+    object-fit: cover;
     border-radius: 8px;
     border: 1px solid #f0f0f0;
 }
