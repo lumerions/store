@@ -5,6 +5,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login to {{ store_name }}</title>
     <link rel="stylesheet" href="/css/style.css?v=999">
+    <style>
+        /* Modern Separator Line */
+        .separator {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 20px 0;
+            color: #888;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .separator::before,
+        .separator::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #eee;
+        }
+
+        .separator:not(:empty)::before { margin-right: .5em; }
+        .separator:not(:empty)::after { margin-left: .5em; }
+
+        .otp-link-wrapper {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .otp-link-wrapper .secondary-link {
+            font-weight: 500;
+            color: #555;
+            transition: color 0.2s;
+        }
+
+        .otp-link-wrapper .secondary-link:hover {
+            color: #000;
+        }
+    </style>
 </head>
 <body class="auth-wrapper">
 
@@ -29,8 +67,10 @@
 
             <button type="submit" id="submit-btn" class="submit-btn">Log In</button>
             
-            <div style="margin-top: 15px; text-align: center;">
-                <a href="/send-otp" class="secondary-link">Send one-time code to email</a>
+            <div class="separator">or</div>
+
+            <div class="otp-link-wrapper">
+                <a href="/send-otp" class="secondary-link">Sign in with a one-time code</a>
             </div>
         </form>
 
