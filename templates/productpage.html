@@ -8,86 +8,73 @@
     <style>
         .product-view {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 50px;
-            margin-top: 60px;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 60px;
+            margin: 60px auto;
             align-items: start;
-        }
-
-        .product-image-container {
-            border-radius: 16px;
-            overflow: hidden;
-            background: #fdfdfd;
-            border: 1px solid #eee;
         }
 
         .product-image-container img {
             width: 100%;
-            display: block;
-            object-fit: cover;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
         }
 
-        /* Status & Titles */
+        .product-title { 
+            font-size: 2.5rem; 
+            margin: 10px 0 25px 0; 
+            font-weight: 800; 
+        }
+
+        /* Reverting Badge Style */
         .status-badge {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            margin-bottom: 12px;
+            font-weight: 600;
+            color: var(--accent, #14F195);
+            font-size: 0.9rem;
         }
-        .status-available { background: #14F19522; color: #14F195; }
-        .status-offsale { background: #ff4d4d22; color: #ff4d4d; }
 
-        .product-title { font-size: 2.8rem; margin: 0 0 20px 0; font-weight: 800; }
-
-        /* Buy Section (Above the line) */
+        /* Above the line */
         .action-area {
             margin-bottom: 30px;
         }
 
-        .add-btn-large {
-            width: 100%;
-            padding: 20px;
-            font-size: 1.2rem;
-            font-weight: 700;
-            background: #000;
-            color: #fff;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: transform 0.1s;
+        /* Below the line - Label/Value Layout */
+        .info-row {
+            display: flex;
+            margin-bottom: 15px;
+            align-items: flex-start;
         }
-        .add-btn-large:active { transform: scale(0.98); }
-        .add-btn-large:disabled { background: #ccc; cursor: not-allowed; }
 
-        /* Separator Line */
+        .info-label {
+            width: 120px; /* Fixed width for the "Label" side */
+            font-weight: 700;
+            color: #888;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            flex-shrink: 0;
+        }
+
+        .info-value {
+            flex-grow: 1;
+            line-height: 1.6;
+            color: var(--text);
+        }
+
+        .price-highlight {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--text);
+        }
+
         hr {
             border: 0;
             border-top: 1px solid #eee;
             margin: 30px 0;
         }
 
-        /* Description & Details (Below the line) */
-        .details-area {
-            color: #666;
-        }
-        .price-tag {
-            font-size: 1.5rem;
-            color: var(--text);
-            font-weight: 700;
-            margin-bottom: 15px;
-            display: block;
-        }
-        .desc-text {
-            line-height: 1.8;
-            font-size: 1rem;
-        }
-
         @media (max-width: 768px) {
-            .product-view { grid-template-columns: 1fr; gap: 30px; }
-            .product-title { font-size: 2rem; }
+            .product-view { grid-template-columns: 1fr; }
+            .info-label { width: 100px; }
         }
     </style>
 </head>
@@ -96,7 +83,7 @@
     <nav>
         <a href="/" class="logo">{{ store_name }}</a>
         <div class="nav-right">
-            <a href="/" style="text-decoration: none; color: inherit; font-weight: 500;">&larr; Return to Shop</a>
+            <a href="/" style="text-decoration: none; color: inherit; font-weight: 500;">&larr; Back</a>
         </div>
     </nav>
 
@@ -106,43 +93,47 @@
                 {% if product.image %}
                     <img src="{{ product.image }}" alt="{{ product.name }}">
                 {% else %}
-                    <div style="padding: 100px; text-align: center; color: #ccc;">No Image</div>
+                    <div class="no-image">No Image</div>
                 {% endif %}
             </div>
 
             <div class="product-content">
-                {% if product.offsale %}
-                    <span class="status-badge status-offsale">Offsale</span>
-                {% else %}
-                    <span class="status-badge status-available">In Stock</span>
-                {% endif %}
+                <div class="status-badge">
+                    {% if product.offsale %} [ OFF-SALE ] {% else %} [ IN-STOCK ] {% endif %}
+                </div>
 
                 <h1 class="product-title">{{ product.name }}</h1>
 
                 <div class="action-area">
                     {% if not product.offsale %}
-                        <button class="add-btn-large" onclick="addToCart('{{ product.name }}', '{{ product.price }}', '{{ product.image }}')">
+                        <button class="add-btn" style="width: 100%; padding: 18px;" 
+                                onclick="addToCart('{{ product.name }}', '{{ product.price }}', '{{ product.image }}')">
                             Add to Cart
                         </button>
                     {% else %}
-                        <button class="add-btn-large" disabled>Item Unavailable</button>
+                        <button class="add-btn" style="width: 100%; background: #444; opacity: 0.5;" disabled>Unavailable</button>
                     {% endif %}
                 </div>
 
                 <hr>
 
                 <div class="details-area">
-                    <strong class="price-tag">{{ product.price }}</strong>
                     
-                    <div class="desc-text">
-                        <h4 style="color: #000; margin-bottom: 8px;">Product Description</h4>
-                        <p>{{ product.description }}</p>
+                    <div class="info-row">
+                        <div class="info-label">Price</div>
+                        <div class="info-value price-highlight">{{ product.price }}</div>
                     </div>
 
-                    <p style="margin-top: 30px; font-size: 0.8rem; color: #bbb;">
-                        Product ID: {{ product.id }} <br>
-                        Listed: {{ product.created_at }}
-                    </p>
+                    <div class="info-row">
+                        <div class="info-label">Description</div>
+                        <div class="info-value">{{ product.description }}</div>
+                    </div>
+
+                    <div class="info-row" style="margin-top: 40px; opacity: 0.5;">
+                        <div class="info-label">Product ID</div>
+                        <div class="info-value">{{ product.id }}</div>
+                    </div>
+
                 </div>
             </div>
         </main>
