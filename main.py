@@ -326,7 +326,6 @@ async def getsettingsdata(request: Request, SessionId: str = Cookie(None)):
 
     return JSONResponse({"loggedin": sessionData})
 
-
 @app.post("/signup",response_class=JSONResponse)
 @limiter.limit("50/minute")
 async def signuppost(request: Request,data: SignupSchema, response: Response):
