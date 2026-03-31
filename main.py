@@ -127,7 +127,7 @@ async def root(request: Request):
 
     for row in rows:
         items.append({
-            "id":row['itemid'],
+            "id": row['itemid'],
             "name": row['itemname'],    
             "price": row['price'],       
             "image": row['imageurl'],    
@@ -327,12 +327,33 @@ async def getsettingsdata(request: Request, SessionId: str = Cookie(None)):
     return JSONResponse({"loggedin": sessionData})
 
 @app.get("/store/product/{itemid}")
-async def getproduct(itemid : int):
+async def getproduct(request: Request,itemid : int):
     with getPostgresConnection() as conn:
         with conn.cursor(row_factory=dict_row) as cursor:
             cursor.execute("SELECT * FROM storeitems WHERE itemid = %s;", (itemid,))
-            dict = cursor.fetchone()
-            print(dict)
+            row = cursor.fetchone()
+
+    if not row:
+        return templates.TemplateResponse("notfound.html", {
+            "request": request, 
+            "store_name": cfg.StoreName,  
+        })
+    
+    ProductData = {
+        "id": row["itemid"],
+        "name": row["itemname"],
+        "price": row["price"],
+        "image": row["imageurl"],
+        "description": row.get("description", "No description provided."),
+        "offsale": row["offsale"],
+        "created_at": row["created_at"]
+    }
+
+    return templates.TemplateResponse("productpage.html", {
+        "request": request,
+        "store_name": cfg.StoreName,
+        "product": ProductData
+    })
 
 @app.post("/signup",response_class=JSONResponse)
 @limiter.limit("60/minute")
