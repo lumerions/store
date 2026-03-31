@@ -131,9 +131,10 @@ async function LoadSettingsData() {
         const response = await fetch("/api/getSettingsData")
         const data = await response.json()
 
+        console.log(data)
+
         if (data.currentemailaddress && data.orderEmails) {
             const notifyToggle = document.getElementById("notifyToggle")
-            console.log(data)
             originalPageLoadEmail = data.currentemailaddress.trim()
             document.getElementById("settingsEmail").value = data.currentemailaddress.trim()
             notifyToggle.checked = data.orderEmails

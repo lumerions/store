@@ -287,6 +287,7 @@ async def pendingorders(request: Request, SessionId: str = Cookie(None)):
 @limiter.limit("50/minute")
 async def getsettingsdata(request: Request, SessionId: str = Cookie(None)):
     sessionData = None 
+    print(SessionId)
     if SessionId:
         keys = [
             SessionId,
