@@ -6,55 +6,88 @@
     <title>{{ product.name }} | {{ store_name }}</title>
     <link rel="stylesheet" href="/css/style.css?v=999">
     <style>
-        /* Specific Styles for Product Page Layout */
         .product-view {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 40px;
-            margin-top: 50px;
+            gap: 50px;
+            margin-top: 60px;
             align-items: start;
         }
 
         .product-image-container {
-            background: #f9f9f9;
-            border-radius: 12px;
+            border-radius: 16px;
             overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 400px;
+            background: #fdfdfd;
+            border: 1px solid #eee;
         }
 
         .product-image-container img {
             width: 100%;
-            height: auto;
+            display: block;
             object-fit: cover;
         }
 
-        .product-details {
-            padding: 20px 0;
-        }
-
+        /* Status & Titles */
         .status-badge {
             display: inline-block;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            margin-bottom: 15px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+        .status-available { background: #14F19522; color: #14F195; }
+        .status-offsale { background: #ff4d4d22; color: #ff4d4d; }
+
+        .product-title { font-size: 2.8rem; margin: 0 0 20px 0; font-weight: 800; }
+
+        /* Buy Section (Above the line) */
+        .action-area {
+            margin-bottom: 30px;
         }
 
-        .status-available { background: #e6fffa; color: #008080; }
-        .status-offsale { background: #fff5f5; color: #c53030; }
+        .add-btn-large {
+            width: 100%;
+            padding: 20px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            background: #000;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        .add-btn-large:active { transform: scale(0.98); }
+        .add-btn-large:disabled { background: #ccc; cursor: not-allowed; }
 
-        .product-title { font-size: 2.5rem; margin: 0 0 10px 0; }
-        .product-price { font-size: 1.8rem; color: var(--accent, #14F195); font-weight: 800; margin-bottom: 25px; }
-        .product-desc { line-height: 1.6; color: #555; margin-bottom: 30px; }
-        
-        .buy-section { border-top: 1px solid #eee; padding-top: 25px; }
+        /* Separator Line */
+        hr {
+            border: 0;
+            border-top: 1px solid #eee;
+            margin: 30px 0;
+        }
+
+        /* Description & Details (Below the line) */
+        .details-area {
+            color: #666;
+        }
+        .price-tag {
+            font-size: 1.5rem;
+            color: var(--text);
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: block;
+        }
+        .desc-text {
+            line-height: 1.8;
+            font-size: 1rem;
+        }
 
         @media (max-width: 768px) {
-            .product-view { grid-template-columns: 1fr; }
+            .product-view { grid-template-columns: 1fr; gap: 30px; }
+            .product-title { font-size: 2rem; }
         }
     </style>
 </head>
@@ -63,10 +96,7 @@
     <nav>
         <a href="/" class="logo">{{ store_name }}</a>
         <div class="nav-right">
-            <a href="/" style="text-decoration: none; color: inherit; margin-right: 20px;">&larr; Back to Shop</a>
-            <div class="cart-link" onclick="toggleCart()">
-                Cart <span id="cart-count">0</span>
-            </div>
+            <a href="/" style="text-decoration: none; color: inherit; font-weight: 500;">&larr; Return to Shop</a>
         </div>
     </nav>
 
@@ -76,40 +106,42 @@
                 {% if product.image %}
                     <img src="{{ product.image }}" alt="{{ product.name }}">
                 {% else %}
-                    <div class="no-image">No Image Available</div>
+                    <div style="padding: 100px; text-align: center; color: #ccc;">No Image</div>
                 {% endif %}
             </div>
 
-            <div class="product-details">
+            <div class="product-content">
                 {% if product.offsale %}
-                    <span class="status-badge status-offsale">Currently Offsale</span>
+                    <span class="status-badge status-offsale">Offsale</span>
                 {% else %}
                     <span class="status-badge status-available">In Stock</span>
                 {% endif %}
 
                 <h1 class="product-title">{{ product.name }}</h1>
-                <p class="product-price">{{ "{:,.2f}".format(product.price | float) if product.price is number else product.price }}</p>
-                
-                <div class="product-desc">
-                    <h3>Description</h3>
-                    <p>{{ product.description }}</p>
-                </div>
 
-                <div class="buy-section">
+                <div class="action-area">
                     {% if not product.offsale %}
-                        <button class="add-btn" 
-                                style="width: 100%; padding: 15px; font-size: 1.1rem;"
-                                onclick="addToCart('{{ product.name }}', '{{ product.price }}', '{{ product.image }}')">
+                        <button class="add-btn-large" onclick="addToCart('{{ product.name }}', '{{ product.price }}', '{{ product.image }}')">
                             Add to Cart
                         </button>
                     {% else %}
-                        <button class="add-btn" style="width: 100%; background: #ccc; cursor: not-allowed;" disabled>
-                            Not Available
-                        </button>
+                        <button class="add-btn-large" disabled>Item Unavailable</button>
                     {% endif %}
+                </div>
+
+                <hr>
+
+                <div class="details-area">
+                    <strong class="price-tag">{{ product.price }}</strong>
                     
-                    <p style="font-size: 0.75rem; color: #999; margin-top: 15px;">
-                        Listed on: {{ product.created_at }}
+                    <div class="desc-text">
+                        <h4 style="color: #000; margin-bottom: 8px;">Product Description</h4>
+                        <p>{{ product.description }}</p>
+                    </div>
+
+                    <p style="margin-top: 30px; font-size: 0.8rem; color: #bbb;">
+                        Product ID: {{ product.id }} <br>
+                        Listed: {{ product.created_at }}
                     </p>
                 </div>
             </div>
@@ -117,5 +149,6 @@
     </div>
 
     <div id="notification-toast" class="toast-left"></div>
+
 </body>
 </html>
