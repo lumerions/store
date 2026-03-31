@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const OTPBtn = document.getElementById("send-otp-btn");
     const emailModal = document.getElementById("emailModal");
     const verifyCodeBtn = document.getElementById("verifyCodeBtn");
-    const username = document.getElementById('username').value.trim();
+    let username = null;
     if (!loginForm) return;
 
     loginForm.addEventListener('submit', async (e) => {
@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const errorBox = document.getElementById('error-box');
         const errorMessage = document.getElementById('error-message');
         const password = document.getElementById('password').value;
+        username = document.getElementById('username').value.trim()
 
         errorBox.style.display = 'none'
         submitBtn.disabled = true;
@@ -61,6 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     OTPBtn.addEventListener("click", async () => {
         emailModal.style.display = "flex"
+        username = document.getElementById('username').value.trim()
 
         try {
             const response = await fetch("/api/OTP", {
@@ -83,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 showNotification(data.message)
             }
         } catch {
-           // window.location.href = "/internalerror"
+            window.location.href = "/internalerror"
         }
     })
 
@@ -112,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 showNotification(data.message)
             }
         } catch {
-           // window.location.href = "/internalerror"
+            window.location.href = "/internalerror"
         }
     })
 })
