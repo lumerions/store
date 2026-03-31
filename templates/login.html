@@ -3,38 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login in to {{ store_name }}</title>
+    <title>Verify Your Account - {{ store_name }}</title>
     <link rel="stylesheet" href="/css/style.css?v=999">
 </head>
 <body class="auth-wrapper">
     <div class="auth-card">
-        <h2>Welcome back</h2>
-        <p>Enter your details to access your account.</p>
+        <h2>Verify Your Account</h2>
+        <p>Enter the one-time code sent to your email.</p>
 
-        <div id="error-box" class="error-container" style="display: none;">
-            <p id="error-message"></p>
+        <div id="otp-error-box" class="error-container" style="display: none;">
+            <p id="otp-error-message"></p>
         </div>
 
-        <form id="loginForm">
+        <form id="otpForm">
 
             <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" placeholder="johndoe123" required>
+                <label for="otp">One-Time Code</label>
+                <input type="text" id="otp" name="otp" placeholder="Enter code" required maxlength="6">
             </div>
 
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" placeholder="••••••••" required>
-            </div>
-
-            <button type="submit" id="submit-btn" class="submit-btn">Log In</button>
+            <button type="submit" id="verify-btn" class="submit-btn">Verify</button>
         </form>
         
         <div class="auth-footer">
-            <a href="/signup" class="secondary-link">Don't have an account? Sign Up</a>
-            <a href="/" class="secondary-link">← Back to Store</a>
+            <a href="/login" class="secondary-link">← Back to Login</a>
+            <a href="#" id="resend-code" class="secondary-link">Resend Code</a>
         </div>
     </div>
-    <script type="module" src="/javascript/login.js"></script>
+
+    <script type="module" src="/javascript/otp.js"></script>
 </body>
 </html>
