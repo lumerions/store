@@ -26,19 +26,16 @@
             font-weight: 800; 
         }
 
-        /* Reverting Badge Style */
         .status-badge {
             font-weight: 600;
             color: var(--accent, #14F195);
             font-size: 0.9rem;
         }
 
-        /* Above the line */
         .action-area {
             margin-bottom: 30px;
         }
 
-        /* Below the line - Label/Value Layout */
         .info-row {
             display: flex;
             margin-bottom: 15px;
@@ -46,7 +43,7 @@
         }
 
         .info-label {
-            width: 120px; /* Fixed width for the "Label" side */
+            width: 120px;
             font-weight: 700;
             color: #888;
             font-size: 0.9rem;
@@ -80,10 +77,32 @@
 </head>
 <body>
 
+    <div id="cart-overlay" onclick="toggleCart()"></div>
+    <div id="modal-overlay" onclick="closeCheckout()"></div>
+
+    <div id="cart-panel">
+        <div class="cart-header">
+            <h3>Your Cart</h3>
+            <button class="close-x" onclick="toggleCart()">&times;</button>
+        </div>
+        <div id="cart-items"></div>
+        <div class="cart-footer">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                <strong>Total:</strong>
+                <strong id="cart-total">$0.00</strong>
+            </div>
+            <button class="checkout-btn" onclick="openCheckout()">Go to Checkout</button>
+        </div>
+    </div>
+
     <nav>
         <a href="/" class="logo">{{ store_name }}</a>
         <div class="nav-right">
-            <a href="/" style="text-decoration: none; color: inherit; font-weight: 500;">&larr; Back</a>
+            <a href="/" style="text-decoration: none; color: inherit; font-weight: 500; margin-right: 20px;">&larr; Back</a>
+            
+            <div class="cart-link" onclick="toggleCart()" style="cursor: pointer;">
+                Cart <span id="cart-count">0</span>
+            </div>
         </div>
     </nav>
 
@@ -118,7 +137,6 @@
                 <hr>
 
                 <div class="details-area">
-                    
                     <div class="info-row">
                         <div class="info-label">Price</div>
                         <div class="info-value price-highlight">{{ product.price }}</div>
@@ -134,6 +152,8 @@
     </div>
 
     <div id="notification-toast" class="toast-left"></div>
+
+    <script type="module" src="/javascript/index.js"></script>
 
 </body>
 </html>

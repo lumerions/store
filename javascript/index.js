@@ -23,6 +23,7 @@ function addToCart(name, price,image) {
     };
     
     cart.push(item);
+    showNotification(`Success! Added ${name} to cart.`, "success");
     saveAndRefresh();
 }
 
