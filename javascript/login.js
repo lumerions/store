@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 showNotification(data.message)
             }
         } catch(error) {
-            window.location.href = "/internalerror"
+           // window.location.href = "/internalerror"
             console.log(error)
         }
     })
@@ -115,8 +115,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 showNotification(data.message)
             }
         } catch(error) {
-            window.location.href = "/internalerror"
             console.log(error)
+           // window.location.href = "/internalerror"
         }
     })
 })
