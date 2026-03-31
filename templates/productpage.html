@@ -6,211 +6,116 @@
     <title>{{ product.name }} | {{ store_name }}</title>
     <link rel="stylesheet" href="/css/style.css?v=999">
     <style>
-        /* Marketplace Layout Extensions */
-        .item-page-container {
-            max-width: 1100px;
-            margin: 40px auto;
-            padding: 0 20px;
+        /* Specific Styles for Product Page Layout */
+        .product-view {
             display: grid;
-            grid-template-columns: 450px 1fr;
+            grid-template-columns: 1fr 1fr;
             gap: 40px;
+            margin-top: 50px;
+            align-items: start;
         }
 
-        /* Left side: Preview Box */
-        .item-preview-card {
-            background-color: #232527; /* Darker box for item contrast */
-            aspect-ratio: 1 / 1;
-            border-radius: 4px;
-            position: relative;
+        .product-image-container {
+            background: #f9f9f9;
+            border-radius: 12px;
+            overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 1px solid #333;
+            min-height: 400px;
         }
 
-        .item-preview-card img {
-            max-width: 85%;
-            max-height: 85%;
-            object-fit: contain;
+        .product-image-container img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
         }
 
-        .item-controls {
-            position: absolute;
-            bottom: 15px;
-            right: 15px;
-            display: flex;
-            gap: 8px;
+        .product-details {
+            padding: 20px 0;
         }
 
-        .control-pill {
-            background: rgba(57, 59, 61, 0.9);
-            border: none;
-            color: white;
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
+        .status-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-bottom: 15px;
         }
 
-        /* Right side: Info */
-        .item-details-panel {
-            display: flex;
-            flex-direction: column;
-        }
+        .status-available { background: #e6fffa; color: #008080; }
+        .status-offsale { background: #fff5f5; color: #c53030; }
 
-        .item-title-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-        }
+        .product-title { font-size: 2.5rem; margin: 0 0 10px 0; }
+        .product-price { font-size: 1.8rem; color: var(--accent, #14F195); font-weight: 800; margin-bottom: 25px; }
+        .product-desc { line-height: 1.6; color: #555; margin-bottom: 30px; }
+        
+        .buy-section { border-top: 1px solid #eee; padding-top: 25px; }
 
-        .item-main-title {
-            font-size: 32px;
-            margin: 0;
-            font-weight: 700;
-            color: #fff;
-        }
-
-        .attribution-text {
-            font-size: 16px;
-            color: #ccc;
-            margin: 10px 0;
-        }
-
-        .v-badge { color: #0074ff; font-weight: bold; margin-left: 4px; }
-
-        .item-hr {
-            height: 1px;
-            background: #393b3d;
-            border: none;
-            margin: 20px 0;
-        }
-
-        .price-display-row {
-            display: flex;
-            align-items: center;
-            margin-bottom: 25px;
-        }
-
-        .label-gray { width: 120px; color: #999; font-size: 15px; }
-
-        .price-bold {
-            font-size: 20px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #fff;
-        }
-
-        /* Action Buttons - Matching your reference */
-        .action-group {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            max-width: 400px;
-            margin-bottom: 30px;
-        }
-
-        .btn-market {
-            padding: 14px;
-            border-radius: 8px;
-            font-size: 18px;
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-            text-align: center;
-        }
-
-        .btn-buy-primary { background-color: #0074ff; color: white; }
-        .btn-add-secondary { background-color: #ffffff; color: #111; }
-        .btn-disabled { background-color: #393b3d; color: #777; cursor: not-allowed; }
-
-        /* Meta Data Grid */
-        .meta-list { display: flex; flex-direction: column; gap: 10px; }
-        .meta-row { display: flex; font-size: 15px; }
-        .meta-val { color: #fff; flex: 1; }
-
-        @media (max-width: 850px) {
-            .item-page-container { grid-template-columns: 1fr; }
+        @media (max-width: 768px) {
+            .product-view { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
-    <div id="cart-overlay" onclick="toggleCart()"></div>
-    <div id="modal-overlay" onclick="closeCheckout()"></div>
-
-    <div id="cart-panel">
-        <div class="cart-header">
-            <h3>Your Cart</h3>
-            <button class="close-x" onclick="toggleCart()">&times;</button>
-        </div>
-        <div id="cart-items"></div>
-        <div class="cart-footer">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
-                <strong>Total:</strong>
-                <strong id="cart-total">$0.00</strong>
-            </div>
-            <button class="checkout-btn" onclick="openCheckout()">Go to Checkout</button>
-        </div>
-    </div>
-
     <nav>
         <a href="/" class="logo">{{ store_name }}</a>
         <div class="nav-right">
+            <a href="/" style="text-decoration: none; color: inherit; margin-right: 20px;">&larr; Back to Shop</a>
             <div class="cart-link" onclick="toggleCart()">
                 Cart <span id="cart-count">0</span>
             </div>
-            <button type="button" id="login-link" class="login-btn">Login</button>
         </div>
     </nav>
 
-    <div class="item-page-container">
-        
-        <div class="item-preview-card">
-            <img src="{{ product.image }}" alt="{{ product.name }}">
-            <div class="item-controls">
-                <button class="control-pill">Try On</button>
-                <button class="control-pill">2D</button>
-            </div>
-        </div>
-
-        <div class="item-details-panel">
-            <div class="item-title-row">
-                <h1 class="item-main-title">{{ product.name }}</h1>
-            </div>
-            <p class="attribution-text">By <strong>Roblox</strong> <span class="v-badge">✓</span></p>
-            
-            <hr class="item-hr">
-
-            <div class="price-display-row">
-                <span class="label-gray">Price</span>
-                <div class="price-bold">
-                    <span>⏣</span> {{ product.price }}
-                </div>
-            </div>
-
-            <div class="action-group">
-                {% if not product.offsale %}
-                    <button class="btn-market btn-buy-primary" onclick="openCheckout()">Buy</button>
-                    <button class="btn-market btn-add-secondary" onclick="addToCart('{{ product.name }}', '{{ product.price }}', '{{ product.image }}')">Add to cart</button>
+    <div class="container">
+        <main class="product-view">
+            <div class="product-image-container">
+                {% if product.image %}
+                    <img src="{{ product.image }}" alt="{{ product.name }}">
                 {% else %}
-                    <button class="btn-market btn-disabled" disabled>Offsale</button>
+                    <div class="no-image">No Image Available</div>
                 {% endif %}
             </div>
 
-            <div class="meta-list">
-                <div class="meta-row"><span class="label-gray">Tradable</span><span class="meta-val">No</span></div>
-                <div class="meta-row"><span class="label-gray">Type</span><span class="meta-val">Head Accessories</span></div>
-                <div class="meta-row"><span class="label-gray">Created</span><span class="meta-val">{{ product.created_at }}</span></div>
-                <div class="meta-row" style="margin-top:10px; align-items:flex-start;">
-                    <span class="label-gray">Description</span>
-                    <span class="meta-val">{{ product.description }}</span>
+            <div class="product-details">
+                {% if product.offsale %}
+                    <span class="status-badge status-offsale">Currently Offsale</span>
+                {% else %}
+                    <span class="status-badge status-available">In Stock</span>
+                {% endif %}
+
+                <h1 class="product-title">{{ product.name }}</h1>
+                <p class="product-price">${{ "{:,.2f}".format(product.price | float) if product.price is number else product.price }}</p>
+                
+                <div class="product-desc">
+                    <h3>Description</h3>
+                    <p>{{ product.description }}</p>
+                </div>
+
+                <div class="buy-section">
+                    {% if not product.offsale %}
+                        <button class="add-btn" 
+                                style="width: 100%; padding: 15px; font-size: 1.1rem;"
+                                onclick="addToCart('{{ product.name }}', '{{ product.price }}', '{{ product.image }}')">
+                            Add to Cart
+                        </button>
+                    {% else %}
+                        <button class="add-btn" style="width: 100%; background: #ccc; cursor: not-allowed;" disabled>
+                            Not Available
+                        </button>
+                    {% endif %}
+                    
+                    <p style="font-size: 0.75rem; color: #999; margin-top: 15px;">
+                        Listed on: {{ product.created_at }}
+                    </p>
                 </div>
             </div>
-        </div>
+        </main>
     </div>
+
+    <div id="notification-toast" class="toast-left"></div>
 </body>
 </html>
