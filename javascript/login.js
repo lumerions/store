@@ -9,7 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const verificationCodeInput = document.getElementById("verificationCode");
     const closeModalBtn = document.getElementById("closeModalBtn");
     const delay = (ms) => new Promise(res => setTimeout(res,ms))
-
     let username = null;
     if (!loginForm) return;
 
@@ -110,12 +109,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json()
     
             if (data.success) {
+                await delay(1000)
                 verificationCodeInput.value = ""
                 emailModal.style.display = "none"
                 showNotification("Successfully logged in via OTP.", "success")
-                await delay(3000)
+                await delay(2500)
                 window.location.href = "/"
             } else {
+                emailModal.style.display = "none"
                 showNotification(data.message)
             }
         } catch(error) {

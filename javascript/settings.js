@@ -6,6 +6,7 @@ const emailModal = document.getElementById("emailModal")
 const profileForm = document.getElementById("profile-form")
 const verifyCodeBtn = document.getElementById("verifyCodeBtn")
 const closeModalBtn = document.getElementById('closeModalBtn')
+let originalPageLoadEmail = null
 
 passwordForm.addEventListener("submit",async (e) => {
     e.preventDefault()
@@ -125,3 +126,22 @@ closeModalBtn.addEventListener("click", async () => {
     emailModal.style.display = "none"
 })
 
+async function LoadSettingsData() {
+    try {
+        const response = await fetch("/api/getSettingsData")
+        const data = await response.json()
+
+        if (data.currentemailaddress && data.orderEmails) {
+            const notifyToggle = document.getElementById("notifyToggle")
+            console.log(data)
+            originalPageLoadEmail = data.currentemailaddress.trim()
+            document.getElementById("settingsEmail").value = data.currentemailaddress.trim()
+            notifyToggle.checked = data.orderEmails
+        }
+
+    } catch {
+        window.location.href = "/internalerror"
+    }
+}
+
+LoadSettingsData()
