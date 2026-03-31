@@ -1,4 +1,6 @@
 
+import { showNotification } from './functions.js';
+
 document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById("loginForm");
     const OTPBtn = document.getElementById("send-otp-btn");
@@ -85,8 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 showNotification(data.message)
             }
         } catch(error) {
-           // window.location.href = "/internalerror"
-            console.log(error)
+            window.location.href = "/internalerror"
         }
     })
 
@@ -115,8 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 showNotification(data.message)
             }
         } catch(error) {
-            console.log(error)
-           // window.location.href = "/internalerror"
+            window.location.href = "/internalerror"
         }
     })
 })
