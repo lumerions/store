@@ -385,3 +385,21 @@ textarea:focus {
     border-radius: 8px;
     border: 1px solid #f0f0f0;
 }
+
+.item-offsale {
+    opacity: 0.6;
+    filter: grayscale(0.8);
+    cursor: not-allowed !important;
+}
+
+.offsale-btn {
+    background-color: #4a4a4a !important; 
+    color: #999 !important;
+    cursor: not-allowed !important;
+    border: none;
+}
+
+.product-card-hover.item-offsale:hover {
+    transform: none;
+    box-shadow: none;
+}

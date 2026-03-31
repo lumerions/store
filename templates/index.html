@@ -80,23 +80,32 @@
     <div class="container">
         <div class="grid">
             {% for item in products %}
-                <div class="card product-card-hover" onclick="window.location.href='/store/product/{{ item.id }}'">
-                    {% if item.image %}
+            <div class="card product-card-hover {{ 'item-offsale' if item.offsale }}" 
+                {% if not item.offsale %} onclick="window.location.href='/store/product/{{ item.id }}'" {% endif %}>
+                
+                {% if item.image %}
                     <img src="{{ item.image }}" alt="{{ item.name }}" class="product-img">
-                    {% else %}
+                {% else %}
                     <div class="product-img no-image">No Image</div>
-                    {% endif %}
+                {% endif %}
+                
+                <div class="card-content">
+                    <h3>{{ item.name }}</h3>
+                    <p class="price">{{ item.price }}</p>
+                    <p class="product-desc">{{ item.desc }}</p>
                     
-                    <div class="card-content">
-                        <h3>{{ item.name }}</h3>
-                        <p class="price">{{ item.price }}</p>
-                        <p class="product-desc">{{ item.desc }}</p>
+                    {% if item.offsale %}
+                        <button class="add-btn offsale-btn" disabled>
+                            Unavailable
+                        </button>
+                    {% else %}
                         <button class="add-btn" onclick="event.stopPropagation(); addToCart('{{ item.name }}', '{{ item.price }}', '{{ item.image }}')">
                             Add to Cart
                         </button>
-                    </div>
+                    {% endif %}
                 </div>
-                {% endfor %}
+            </div>
+            {% endfor %}
         </div>
     </div>
 
