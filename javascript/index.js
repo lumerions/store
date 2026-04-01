@@ -110,7 +110,9 @@ function closeCheckout() {
 function processPayment(method) {    
     saveAndRefresh();
     closeCheckout();
-    showNotification("Success! Your order has been placed.", "success");
+    if (method == "Crypto") {
+        createInvoice()
+    }
 }
 
 function showCryptoOptions() {
@@ -143,6 +145,8 @@ async function createInvoice() {
     })
 
     const data = await response.json();
+
+    console.log(data)
     
     if (data.invoice_url) {
         window.location.href = data.invoice_url;
