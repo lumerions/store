@@ -77,10 +77,13 @@ async def root(request: Request):
             "products": json.loads(CachedStoreData)
         })
 
+    print(rows)
+
     items = []
     onsaleitems = []
 
     for row in rows:
+        print(row)
         if not row["offsale"]:
             continue
 
@@ -98,6 +101,10 @@ async def root(request: Request):
 
         if not row["offsale"]:
             onsaleitems.append(itemdata)
+
+        print(itemdata)
+
+    print(onsaleitems)
 
     redis.set("storedata", json.dumps(onsaleitems), ex=3600)
 
