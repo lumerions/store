@@ -1,66 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>Settings | {{ store_name }}</title>
-    <link rel="stylesheet" href="/css/style.css?v=1000">
-    <style>
-        .settings-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; }
-        .card-header { border-bottom: 2px solid var(--accent); margin-bottom: 20px; text-align: left; }
-        .card-header.dark { border-color: #333; }
-        .label-s { display:block; font-size:.8rem; font-weight:800; margin-bottom:5px; text-transform:uppercase; color:#666; }
-        .input-s { width:100%; padding:12px; border:1px solid #ddd; border-radius:8px; box-sizing:border-box; }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ store_name }}</title>
+    <link rel="stylesheet" href="/css/style.css?v=999">
 </head>
 <body>
+
     <nav>
         <a href="/" class="logo">{{ store_name }}</a>
-        <div class="nav-right"><a href="/" class="login-btn">Back to Store</a></div>
+        <div class="nav-right">
+            <a href="/" class="login-btn">Back to Store</a>
+        </div>
     </nav>
 
-    <header class="hero" style="padding:40px 20px;">
+    <header class="hero" style="padding: 40px 20px;">
         <h1>Account Settings</h1>
         <p>Manage your profile, security, and preferences.</p>
     </header>
 
-    <div class="container"><div class="settings-grid">
-        <div class="card" style="text-align:left;">
-            <div class="card-header"><h3>Profile Information</h3></div>
-            <form id="profile-form">
-                <div class="form-group" style="margin-bottom:25px;">
-                    <label class="label-s">Email Address</label>
-                    <input type="email" id="settingsEmail" class="input-s" value="{{ email }}">
+    <div class="container">
+        <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px;">
+            
+            <div class="card" style="text-align: left;">
+                <div style="border-bottom: 2px solid var(--accent); margin-bottom: 20px;">
+                    <h3 style="margin-bottom: 10px;">Profile Information</h3>
                 </div>
-                <button type="submit" class="add-btn" style="width:100%;">Update Profile</button>
-            </form>
-        </div>
-
-        <div class="card" style="text-align:left;">
-            <div class="card-header dark"><h3>Change Password</h3></div>
-            <form id="password-form">
-                <div class="form-group" style="margin-bottom:15px;"><label class="label-s">Current Password</label><input type="password" id="currentPass" class="input-s" required></div>
-                <div class="form-group" style="margin-bottom:15px;"><label class="label-s">New Password</label><input type="password" id="newPass" class="input-s" required></div>
-                <button type="submit" class="add-btn" style="width:100%;background:#333;">Update Password</button>
-            </form>
-        </div>
-
-        <div class="card" style="text-align:left;">
-            <div class="card-header"><h3>Preferences</h3></div>
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
-                <div><p style="font-weight:700;margin-bottom:2px;">Order Notifications</p><p style="font-size:.8rem;color:#888;">Email updates on delivery.</p></div>
-                <input type="checkbox" id="notifyToggle" checked style="width:20px;height:20px;accent-color:var(--accent);">
+                
+                <form id="profile-form">
+                    <div class="form-group" style="margin-bottom: 25px;">
+                        <label style="display:block; font-size: 0.8rem; font-weight: 800; margin-bottom: 5px; text-transform: uppercase; color: #666;">Email Address</label>
+                        <input type="email" id="settingsEmail" style="width:100%; padding:12px; border: 1px solid #ddd; border-radius: 8px;" placeholder="your@email.com" value="{{ email }}">
+                    </div>
+                    <button type="submit" class="add-btn" id="saveProfileBtn" style="width: 100%;">Update Profile</button>
+                </form>
             </div>
-            <button type="button" class="add-btn" id="savePrefsBtn" style="width:100%;">Save Preferences</button>
-        </div>
-    </div></div>
 
-    <div id="emailModal" class="modal-overlay">
-        <div class="modal-content">
-            <h3>Verify Your Email</h3>
-            <p style="font-size:14px;color:#666;">Enter the code sent to your email.</p>
-            <input type="text" id="verificationCode" placeholder="Enter code" class="modal-input">
+            <div class="card" style="text-align: left;">
+                <div style="border-bottom: 2px solid #333; margin-bottom: 20px;">
+                    <h3 style="margin-bottom: 10px;">Change Password</h3>
+                </div>
+                
+                <form id="password-form">
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label style="display:block; font-size: 0.8rem; font-weight: 800; margin-bottom: 5px; text-transform: uppercase; color: #666;">Current Password</label>
+                        <input type="password" id="currentPass" style="width:100%; padding:12px; border: 1px solid #ddd; border-radius: 8px;" required>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label style="display:block; font-size: 0.8rem; font-weight: 800; margin-bottom: 5px; text-transform: uppercase; color: #666;">New Password</label>
+                        <input type="password" id="newPass" style="width:100%; padding:12px; border: 1px solid #ddd; border-radius: 8px;" required>
+                    </div>
+                    <button type="submit" class="add-btn" id="savePassBtn" style="width: 100%; background: #333;">Update Password</button>
+                </form>
+            </div>
+
+            <div class="card" style="text-align: left;">
+                <div style="border-bottom: 2px solid var(--accent); margin-bottom: 20px;">
+                    <h3 style="margin-bottom: 10px;">Preferences</h3>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <p style="font-weight: 700; margin-bottom: 2px;">Order Notifications</p>
+                        <p style="font-size: 0.8rem; color: #888;">Receive emails when an order is delivered.</p>
+                    </div>
+                    <input type="checkbox" id="notifyToggle" checked style="width: 20px; height: 20px; accent-color: var(--accent);">
+                </div>
+                
+                <button type="button" class="add-btn" id="savePrefsBtn" style="width: 100%; background: var(--accent);">Save Preferences</button>
+            </div>
+
+        </div>
+    </div>
+        <div id="emailModal" style="
+        display:none;
+        position:fixed;
+        top:0; left:0;
+        width:100%; height:100%;
+        background:rgba(0,0,0,0.5);
+        justify-content:center;
+        align-items:center;
+        z-index:1000;
+    ">
+        <div style="
+            background:#fff;
+            padding:25px;
+            border-radius:10px;
+            width:90%;
+            max-width:400px;
+            text-align:center;
+        ">
+            <h3 style="margin-bottom:10px;">Verify Your Email</h3>
+            <p style="font-size:14px; color:#666;">Enter the verification code sent to your email.</p>
+
+            <input type="text" id="verificationCode" placeholder="Enter code"
+                style="width:100%; padding:12px; margin:15px 0; border:1px solid #ddd; border-radius:8px;">
+
             <button id="verifyCodeBtn" class="add-btn" style="width:100%;">Verify</button>
-            <button id="closeModalBtn" class="cancel-btn">Cancel</button>
+            <button id="closeModalBtn" style="margin-top:10px; background:none; border:none; color:#888; cursor:pointer;">Cancel</button>
         </div>
     </div>
 
