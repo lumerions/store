@@ -3,7 +3,7 @@ from fastapi.responses import HTMLResponse,JSONResponse,RedirectResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from datetime import datetime
-import re,os,sys,bcrypt,secrets,resend,json
+import re,os,sys,bcrypt,secrets,resend,json,requests
 libPath = os.path.join(os.path.dirname(__file__), 'lib')
 sys.path.append(libPath)
 from slowapi import Limiter
@@ -14,6 +14,8 @@ from lib.config import Config
 from lib.postgres import getPostgresConnection
 from lib.redis import getRedisInstance
 from lib.schema import *
+from lib.functions import *
+
 
 templates = Jinja2Templates(directory="templates")
 cfg = Config()
@@ -56,53 +58,6 @@ def checkUserEmailLimit(Username):
     redis.incr(rediskey)
     return True
 
-def setSessionCookie(response : Response,SessionId):
-    response.set_cookie(
-        key="SessionId", 
-        value=SessionId, 
-        max_age=34560000,  
-        httponly=True,  
-        secure=True,  
-        samesite="Lax", 
-    )
-
-def trustCheckAdminUser(cursor,SessionId):
-    SessionIdList = SessionId.split(":")
-    SessionId = SessionIdList[0]
-    
-    cursor.execute("""
-        SELECT locked,username FROM accounts WHERE sessionid = %s;
-    """, (SessionId,))
-
-    result = cursor.fetchone()
-
-    if not result:
-        return JSONResponse({"success": False, "message": "Unknown username or sessionid."})
-
-    locked = result[0]
-    username = result[1]
-
-    if locked:
-        return JSONResponse({"success": False, "message": "This admin user is locked."})
-    
-    if str(username) != cfg.AdminUsername:
-        return JSONResponse({"success": False, "message": "Not authorized to do this action."})
-    
-    return None
-
-def sendEmail(sender,reciever,subject,html):
-    try:
-        resend.Emails.send({
-            "from": sender,
-            "to": reciever,
-            "subject": subject,
-            "html": html
-        })
-        return {"success": True}
-    except resend.exceptions.ResendError as e:
-        return JSONResponse({"success": False, "message": str(e)})
-    except Exception as error:
-        return JSONResponse({"success": False, "message": str(error)})
 
 @app.get("/", response_class=HTMLResponse)
 @limiter.limit("60/minute")
@@ -845,6 +800,49 @@ async def verifyotp(request: Request, data: VerifyAccountEmail, response: Respon
 
     except Exception as e:
         return JSONResponse({"success": False,"message": "Internal Server Error."})
+
+@app.post("/api/createcryptoinvoice")
+@limiter.limit("60/minute")
+async def createinvoice(request: Request, data: CryptoInvoiceSchema):
+    TotalPrice = 0
+    headers = {
+        "x-api-key": cfg.NowPaymentsAPISecret,
+        "Content-Type": "application/json"
+    }
+
+    if not data.coin.lower() in cfg.SUPPORTEDCOINS:
+        return JSONResponse({"success": False,"message": f"We currently do not support {data.coin}"})
+
+    with getPostgresConnection() as conn:
+        with conn.cursor(row_factory=dict_row) as cursor:
+            cursor.execute("""SELECT * from storeitems""")
+            rows = cursor.fetchall()
+            for row in rows:
+                if row["itemname"].strip() in data.itemnames:
+                    PriceCleaned = int(row["price"].replace("$",""))
+                    TotalPrice += PriceCleaned
+                else:
+                    return JSONResponse({"success": False,"message": "One of the cart items doesn't exist."})
+                
+    payload = {
+        "price_amount": TotalPrice, 
+        "price_currency": "usd",
+        "pay_currency": data.coin,
+        "ipn_callback_url": "",
+        "order_id": secrets.token_urlsafe(16),
+        "order_description": f"Items: {', '.join(data.itemnames)}"
+    }
+
+    try:
+        response = requests.post(cfg.NowPaymentsAPIURL, json=payload, headers=headers)
+
+        if response.status_code == 200:
+            data = response.json()
+            return {"invoice_url": data.get('invoice_url')}
+        else:
+            return JSONResponse({"error": "Error with sending post request to nowpayments."}, status_code=400)
+    except Exception as e:
+        return JSONResponse({"error": "Oops, something went wrong, please try again later."}, status_code=400)
 
 
 @app.get("/{path:path}", response_class=HTMLResponse)

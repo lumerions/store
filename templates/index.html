@@ -38,13 +38,24 @@
             Pay with Card
         </div>
 
-        <div class="payment-method" onclick="processPayment('Solana')">
+        <div class="payment-option">
+            <label for="coin-select" style="display: block; margin-bottom: 8px; font-weight: 600;">Select Cryptocurrency:</label>
+            <select id="coin-select" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; background: var(--bg); color: var(--text);">
+                <option value="btc">Bitcoin (BTC)</option>
+                <option value="eth">Ethereum (ETH)</option>
+                <option value="sol" selected>Solana (SOL)</option>
+                <option value="ltc">Litecoin (LTC)</option>
+                <option value="usdc">USD Coin (USDC)</option>
+                </select>
+        </div>
+
+        <div class="payment-method" onclick="processPayment('Crypto')">
             <svg role="img" viewBox="0 0 397.7 311.7" xmlns="http://www.w3.org/2000/svg" style="color: #14F195;">
                 <path fill="currentColor" d="M64.6,237.9c2.4-2.4,5.7-3.8,9.2-3.8h317.4c5.8,0,8.7,7,4.6,11.1l-62.7,62.7c-2.4,2.4-5.7,3.8-9.2,3.8H6.5c-5.8,0-8.7-7-4.6-11.1L64.6,237.9z"></path>
                 <path fill="currentColor" d="M64.6,3.8C67.1,1.4,70.4,0,73.8,0h317.4c5.8,0,8.7,7,4.6,11.1l-62.7,62.7c-2.4,2.4-5.7,3.8-9.2,3.8H6.5c-5.8,0-8.7-7-4.6-11.1L64.6,3.8z"></path>
                 <path fill="currentColor" d="M333.1,120.1c-2.4-2.4-5.7-3.8-9.2-3.8H6.5c-5.8,0-8.7,7-4.6,11.1l62.7,62.7c2.4,2.4,5.7,3.8,9.2,3.8h317.4c5.8,0,8.7-7,4.6-11.1L333.1,120.1z"></path>
             </svg>
-            Pay with Solana
+            Pay with Crypto
         </div>
     </div>
 

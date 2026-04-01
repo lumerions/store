@@ -9,3 +9,38 @@ class Config(BaseSettings):
     ResendAPIKey: str = "re_Pwq37GMA_BbyuATLy4p5eQhUWE9FyRwjy"
     EMAILLimit: int = 5
     EMAILWindow: int = 15 * 60
+    NowPaymentsIPNSecret: str = "D/8dp2NgaLJXHk966I2NePXSMrFwCmos"
+    NowPaymentsAPISecret: str = "5FW8DQ8-H814VMB-HG04DHE-0W2JTN3"
+    NowPaymentsAPIURL: str = "https://api.nowpayments.io/v1/invoice"
+    SUPPORTEDCOINS = {
+        "btc": "Bitcoin",
+        "eth": "Ethereum",
+        "sol": "Solana",
+        "usdc": "USD Coin",
+        "usdt": "Tether",
+        "pyusd": "PayPal USD",
+        "busd": "Binance USD",
+        "ltc": "Litecoin",
+        "xrp": "Ripple",
+        "doge": "Dogecoin",
+        "trx": "Tron",
+        "bch": "Bitcoin Cash",
+        "xlm": "Stellar",
+        "matic": "Polygon",
+        "ada": "Cardano",
+        "shib": "Shiba Inu",
+        "avax": "Avalanche",
+        "link": "Chainlink",
+        "dot": "Polkadot",
+        "near": "Near Protocol",
+        "atom": "Cosmos",
+        "algo": "Algorand",
+        "ftm": "Fantom",
+        "hbar": "Hedera",
+        "vet": "VeChain",
+        "pepe": "Pepe",
+        "uni": "Uniswap",
+        "kas": "Kaspa",
+        "xmr": "Monero",
+        "zec": "Zcash"
+    }

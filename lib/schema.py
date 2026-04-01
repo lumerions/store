@@ -1,4 +1,5 @@
 from pydantic import BaseModel, EmailStr
+from typing import List
 
 class SignupSchema(BaseModel):
     confirmpassword: str
@@ -31,8 +32,13 @@ class EnableOrderEmailsSchema(BaseModel):
 class ChangeAccountEmailSchema(BaseModel):
     email: EmailStr
 
+class CryptoInvoiceSchema(BaseModel):
+    itemnames: List[str]
+    coin: str
+
 class VerifyAccountEmail(BaseModel):
     code: str
 
 class OTP(BaseModel):
     username: str
+
