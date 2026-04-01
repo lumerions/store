@@ -1,6 +1,8 @@
 from fastapi import FastAPI,Request,Response,Cookie
 from fastapi.responses import JSONResponse
 import resend
+from config import Config
+cfg = Config()
 
 def trustCheckAdminUser(cursor,SessionId):
     SessionIdList = SessionId.split(":")

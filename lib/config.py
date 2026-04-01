@@ -12,7 +12,7 @@ class Config(BaseSettings):
     NowPaymentsIPNSecret: str = "D/8dp2NgaLJXHk966I2NePXSMrFwCmos"
     NowPaymentsAPISecret: str = "5FW8DQ8-H814VMB-HG04DHE-0W2JTN3"
     NowPaymentsAPIURL: str = "https://api.nowpayments.io/v1/invoice"
-    SUPPORTEDCOINS = {
+    SUPPORTEDCOINS: dict = {
         "btc": "Bitcoin",
         "eth": "Ethereum",
         "sol": "Solana",
