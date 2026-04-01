@@ -81,7 +81,7 @@ async def root(request: Request):
     onsaleitems = []
 
     for row in rows:
-        if not r["offsale"]:
+        if not row["offsale"]:
             continue
 
         itemdata = ({
