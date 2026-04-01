@@ -202,4 +202,5 @@ window.removeItem = removeItem
 window.openCheckout = openCheckout
 window.closeCheckout = closeCheckout
 window.processPayment = processPayment
-
+window.showCryptoOptions = showCryptoOptions
+window.backToMethods = backToMethods
