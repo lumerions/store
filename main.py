@@ -96,7 +96,7 @@ async def root(request: Request):
 
         items.append(itemdata)
 
-        if not itemdata["offsale"]:
+        if not row["offsale"]:
             onsaleitems.append(itemdata)
 
     redis.set("storedata", json.dumps(onsaleitems), ex=3600)
