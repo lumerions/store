@@ -1,108 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
     <title>{{ store_name }}</title>
-    <link rel="stylesheet" href="/css/style.css?v=999">
+    <link rel="stylesheet" href="/css/style.css?v=1000">
 </head>
 <body>
+    <div id="cart-overlay" onclick="toggleCart()"></div>
+    <div id="modal-overlay" onclick="closeCheckout()"></div>
+
+    <div id="cart-panel">
+        <div class="cart-header"><h3>Your Cart</h3><button class="close-x" onclick="toggleCart()">&times;</button></div>
+        <div id="cart-items"></div>
+        <div class="cart-footer">
+            <div style="display:flex;justify-content:space-between;margin-bottom:15px;"><strong>Total:</strong><strong id="cart-total">$0.00</strong></div>
+            <button class="checkout-btn" onclick="openCheckout()">Go to Checkout</button>
+        </div>
+    </div>
+
+    <div id="checkout-modal">
+        <div class="modal-header"><h3>Checkout</h3><button class="close-x" onclick="closeCheckout()">&times;</button></div>
+        <p style="margin-bottom:10px;">Total Due: <span id="modal-total-display" style="font-weight:800;color:var(--accent);"></span></p>
+        <div id="method-selection">
+            <div class="payment-method" onclick="processPayment('Credit Card')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="icon-s"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg> Pay with Card</div>
+            <div class="payment-method" onclick="showCryptoOptions()"><svg viewBox="0 0 397.7 311.7" style="color:#14F195;width:24px;"><path fill="currentColor" d="M64.6 237.9c2.4-2.4 5.7-3.8 9.2-3.8h317.4c5.8 0 8.7 7 4.6 11.1l-62.7 62.7c-2.4 2.4-5.7 3.8-9.2 3.8H6.5c-5.8 0-8.7-7-4.6-11.1L64.6 237.9zM64.6 3.8C67.1 1.4 70.4 0 73.8 0h317.4c5.8 0 8.7 7 4.6 11.1l-62.7 62.7c-2.4 2.4-5.7 3.8-9.2 3.8H6.5c-5.8 0-8.7-7-4.6-11.1L64.6 3.8zM333.1 120.1c-2.4-2.4-5.7-3.8-9.2-3.8H6.5c-5.8 0-8.7 7-4.6 11.1l62.7 62.7c2.4 2.4 5.7 3.8 9.2 3.8h317.4c5.8 0 8.7-7 4.6-11.1L333.1 120.1z"/></svg> Pay with Crypto</div>
+        </div>
+        <div id="crypto-selection" style="display:none;flex-direction:column;gap:15px;">
+            <select id="coin-select" style="width:100%;padding:12px;border-radius:8px;border:1px solid #444;background:#1a1a1a;color:#fff;">
+                <option value="btc">Bitcoin (BTC)</option><option value="eth">Ethereum (ETH)</option><option value="sol" selected>Solana (SOL)</option><option value="ltc">Litecoin (LTC)</option><option value="usdc">USD Coin (USDC)</option><option value="doge">Dogecoin (DOGE)</option>
+            </select>
+            <button class="pay-btn" onclick="createInvoice()" style="width:100%;background:#14F195;color:#000;font-weight:700;padding:12px;border:none;border-radius:8px;">Confirm & Generate Invoice</button>
+            <button onclick="backToMethods()" style="background:0 0;color:#888;border:none;font-size:.8rem;">← Back</button>
+        </div>
+    </div>
 
     <nav>
         <a href="/" class="logo">{{ store_name }}</a>
         <div class="nav-right">
-            <a href="/" class="login-btn">Back to Store</a>
+            <a href="/admin" id="admin-btn" class="admin-btn" style="display:none!important;">Admin</a>
+            <div class="cart-link" onclick="toggleCart()">Cart <span id="cart-count">0</span></div>
+            <button id="login-link" class="login-btn">Login <span id="login"></span></button>
+            <a href="/settings" style="display:flex;margin-left:10px;color:var(--text);"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></a>
         </div>
     </nav>
 
-    <header class="hero" style="padding: 40px 20px;">
-        <h1>Account Settings</h1>
-        <p>Manage your profile, security, and preferences.</p>
-    </header>
+    <header class="hero"><h1>Welcome to {{ store_name }}</h1><p>Premium items curated just for you.</p></header>
 
-    <div class="container">
-        <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px;">
-            
-            <div class="card" style="text-align: left;">
-                <div style="border-bottom: 2px solid var(--accent); margin-bottom: 20px;">
-                    <h3 style="margin-bottom: 10px;">Profile Information</h3>
-                </div>
-                
-                <form id="profile-form">
-                    <div class="form-group" style="margin-bottom: 25px;">
-                        <label style="display:block; font-size: 0.8rem; font-weight: 800; margin-bottom: 5px; text-transform: uppercase; color: #666;">Email Address</label>
-                        <input type="email" id="settingsEmail" style="width:100%; padding:12px; border: 1px solid #ddd; border-radius: 8px;" placeholder="your@email.com" value="{{ email }}">
-                    </div>
-                    <button type="submit" class="add-btn" id="saveProfileBtn" style="width: 100%;">Update Profile</button>
-                </form>
+    <div class="container"><div class="grid">
+        {% for item in products %}
+        <div class="card product-card-hover {{ 'item-offsale' if item.offsale }}" {% if not item.offsale %}onclick="location.href='/store/product/{{item.id}}'"{% endif %}>
+            {% if item.image %}<img src="{{item.image}}" alt="{{item.name}}" class="product-img">{% else %}<div class="product-img no-image">No Image</div>{% endif %}
+            <div class="card-content">
+                <h3>{{item.name}}</h3><p class="price">{{item.price}}</p><p class="product-desc">{{item.desc}}</p>
+                <button class="add-btn {{'offsale-btn' if item.offsale}}" {{'disabled' if item.offsale}} {% if not item.offsale %}onclick="event.stopPropagation();addToCart('{{item.name}}','{{item.price}}','{{item.image}}')"{% endif %}>{{'Unavailable' if item.offsale else 'Add to Cart'}}</button>
             </div>
-
-            <div class="card" style="text-align: left;">
-                <div style="border-bottom: 2px solid #333; margin-bottom: 20px;">
-                    <h3 style="margin-bottom: 10px;">Change Password</h3>
-                </div>
-                
-                <form id="password-form">
-                    <div class="form-group" style="margin-bottom: 15px;">
-                        <label style="display:block; font-size: 0.8rem; font-weight: 800; margin-bottom: 5px; text-transform: uppercase; color: #666;">Current Password</label>
-                        <input type="password" id="currentPass" style="width:100%; padding:12px; border: 1px solid #ddd; border-radius: 8px;" required>
-                    </div>
-                    <div class="form-group" style="margin-bottom: 15px;">
-                        <label style="display:block; font-size: 0.8rem; font-weight: 800; margin-bottom: 5px; text-transform: uppercase; color: #666;">New Password</label>
-                        <input type="password" id="newPass" style="width:100%; padding:12px; border: 1px solid #ddd; border-radius: 8px;" required>
-                    </div>
-                    <button type="submit" class="add-btn" id="savePassBtn" style="width: 100%; background: #333;">Update Password</button>
-                </form>
-            </div>
-
-            <div class="card" style="text-align: left;">
-                <div style="border-bottom: 2px solid var(--accent); margin-bottom: 20px;">
-                    <h3 style="margin-bottom: 10px;">Preferences</h3>
-                </div>
-
-                <div class="form-group" style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                        <p style="font-weight: 700; margin-bottom: 2px;">Order Notifications</p>
-                        <p style="font-size: 0.8rem; color: #888;">Receive emails when an order is delivered.</p>
-                    </div>
-                    <input type="checkbox" id="notifyToggle" checked style="width: 20px; height: 20px; accent-color: var(--accent);">
-                </div>
-                
-                <button type="button" class="add-btn" id="savePrefsBtn" style="width: 100%; background: var(--accent);">Save Preferences</button>
-            </div>
-
         </div>
-    </div>
-        <div id="emailModal" style="
-        display:none;
-        position:fixed;
-        top:0; left:0;
-        width:100%; height:100%;
-        background:rgba(0,0,0,0.5);
-        justify-content:center;
-        align-items:center;
-        z-index:1000;
-    ">
-        <div style="
-            background:#fff;
-            padding:25px;
-            border-radius:10px;
-            width:90%;
-            max-width:400px;
-            text-align:center;
-        ">
-            <h3 style="margin-bottom:10px;">Verify Your Email</h3>
-            <p style="font-size:14px; color:#666;">Enter the verification code sent to your email.</p>
-
-            <input type="text" id="verificationCode" placeholder="Enter code"
-                style="width:100%; padding:12px; margin:15px 0; border:1px solid #ddd; border-radius:8px;">
-
-            <button id="verifyCodeBtn" class="add-btn" style="width:100%;">Verify</button>
-            <button id="closeModalBtn" style="margin-top:10px; background:none; border:none; color:#888; cursor:pointer;">Cancel</button>
-        </div>
-    </div>
-
+        {% endfor %}
+    </div></div>
     <div id="notification-toast" class="toast-left"></div>
-    <script type="module" src="/javascript/settings.js"></script>
+    <script type="module" src="/javascript/index.js"></script>
 </body>
 </html>

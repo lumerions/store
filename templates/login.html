@@ -11,9 +11,7 @@
         <h2>Welcome back</h2>
         <p>Enter your details to access your account.</p>
 
-        <div id="error-box" class="error-container" style="display: none;">
-            <p id="error-message"></p>
-        </div>
+        <div id="error-box" class="error-container" style="display: none;"><p id="error-message"></p></div>
 
         <form id="loginForm">
             <div class="form-group">
@@ -24,14 +22,9 @@
                 <label for="password">Password</label>
                 <input type="password" id="password" name="password" placeholder="••••••••" required>
             </div>
-
-            <button type="submit" id="submit-btn" class="submit-btn">Log In</button>
-            
+            <button type="submit" class="submit-btn">Log In</button>
             <hr class="divider">
-
-            <div class="otp-link-wrapper">
-                <button type="button" id="send-otp-btn" class="otp-pill-link">Sign in with a one-time code</button>
-            </div>
+            <button type="button" id="send-otp-btn" class="otp-pill-link" style="display:block; margin: 0 auto;">Sign in with a one-time code</button>
         </form>
 
         <div class="auth-footer">
@@ -40,18 +33,13 @@
         </div>
     </div>
 
-    <div id="emailModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:1000;">
-        <div style="background:#fff; padding:25px; border-radius:10px; width:90%; max-width:400px; text-align:center; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
-            <h3 style="margin-bottom:10px;">Verify Your Email</h3>
-            <p style="font-size:14px; color:#666;">Enter the verification code sent to your email associated with your account.</p>
-            
-
-            <input type="text" id="verificationCode" placeholder="Enter code" 
-                   inputmode="numeric" 
-                   style="width:100%; padding:12px; margin:15px 0; border:1px solid #ddd; border-radius:8px; box-sizing: border-box;">
-
+    <div id="emailModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3>Verify Your Email</h3>
+            <p style="font-size:14px; color:#666;">Enter the verification code sent to your email.</p>
+            <input type="text" id="verificationCode" placeholder="Enter code" inputmode="numeric" class="modal-input">
             <button id="verifyCodeBtn" class="submit-btn" style="width:100%;">Verify</button>
-            <button id="closeModalBtn" style="margin-top:15px; background:none; border:none; color:#888; cursor:pointer; font-size: 0.9rem;">Cancel</button>
+            <button id="closeModalBtn" class="cancel-btn">Cancel</button>
         </div>
     </div>
     

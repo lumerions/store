@@ -71,7 +71,6 @@ async def root(request: Request):
                 cursor.execute("""SELECT * from storeitems""")
                 rows = cursor.fetchall()
     else: 
-        print("cache hit")
         return templates.TemplateResponse("index.html", {
             "request": request, 
             "store_name": cfg.StoreName,  
@@ -79,9 +78,13 @@ async def root(request: Request):
         })
 
     items = []
+    onsaleitems = []
 
     for row in rows:
-        items.append({
+        if not r["offsale"]:
+            continue
+
+        itemdata = ({
             "id": row['itemid'],
             "name": row['itemname'],    
             "price": row['price'],       
@@ -91,7 +94,10 @@ async def root(request: Request):
             "desc": ""                   # for now temporary
         })
 
-    onsaleitems = [r for r in items if not r["offsale"]]
+        items.append(itemdata)
+
+        if not item_data["offsale"]:
+            onsaleitems.append(itemdata)
 
     redis.set("storedata", json.dumps(onsaleitems), ex=3600)
 
