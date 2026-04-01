@@ -1,15 +1,15 @@
-import { showNotification } from './functions.js';
-import { logout } from './functions.js';
-let cart = JSON.parse(localStorage.getItem('store_cart')) || [];
-const loginBtn = document.querySelector('.login-btn'); 
-const loginBtnText = document.querySelector('button.login-btn'); 
+import { showNotification } from "./functions.js";
+import { logout } from "./functions.js";
+let cart = JSON.parse(localStorage.getItem("store_cart")) || [];
+const loginBtn = document.querySelector(".login-btn"); 
+const loginBtnText = document.querySelector("button.login-btn"); 
 
 function toggleCart() {
-    const panel = document.getElementById('cart-panel');
-    const overlay = document.getElementById('cart-overlay');
+    const panel = document.getElementById("cart-panel");
+    const overlay = document.getElementById("cart-overlay");
     
-    panel.classList.toggle('open');
-    overlay.style.display = panel.classList.contains('open') ? 'block' : 'none';
+    panel.classList.toggle("open");
+    overlay.style.display = panel.classList.contains("open") ? "block" : "none";
     
     renderCart();
 }
@@ -19,7 +19,7 @@ function addToCart(name, price,image) {
         id: Date.now(), 
         name: name,
         price: price,
-        image: image || 'https://via.placeholder.com/60'
+        image: image || "https://via.placeholder.com/60"
     };
     
     cart.push(item);
@@ -33,21 +33,21 @@ function removeItem(id) {
 }
 
 function saveAndRefresh() {
-    localStorage.setItem('store_cart', JSON.stringify(cart));
+    localStorage.setItem("store_cart", JSON.stringify(cart));
     updateCountBadge();
     renderCart();
 }
 
 function updateCountBadge() {
-    const badge = document.getElementById('cart-count');
+    const badge = document.getElementById("cart-count");
     if(badge) badge.innerText = cart.length;
 }
 
 function renderCart() {
-    const container = document.getElementById('cart-items');
-    const totalEl = document.getElementById('cart-total');
+    const container = document.getElementById("cart-items");
+    const totalEl = document.getElementById("cart-total");
     
-    container.innerHTML = '';
+    container.innerHTML = "";
     let total = 0;
 
     if (cart.length === 0) {
@@ -57,7 +57,7 @@ function renderCart() {
             </div>`;
     } else {
         cart.forEach((item, index) => {
-            const numPrice = parseFloat(item.price.replace('$', ''));
+            const numPrice = parseFloat(item.price.replace("$", ""));
             total += numPrice;
 
             container.innerHTML += `
@@ -94,23 +94,61 @@ function openCheckout() {
         return;
     }
 
-    document.getElementById('cart-panel').classList.remove('open');
-    document.getElementById('cart-overlay').style.display = 'none';
-    const total = cart.reduce((sum, item) => sum + parseFloat(item.price.replace('$', '')), 0);
-    document.getElementById('modal-total-display').innerText = `$${total.toFixed(2)}`;
-    document.getElementById('checkout-modal').style.display = 'block';
-    document.getElementById('modal-overlay').style.display = 'block';
+    document.getElementById("cart-panel").classList.remove("open");
+    document.getElementById("cart-overlay").style.display = "none";
+    const total = cart.reduce((sum, item) => sum + parseFloat(item.price.replace("$", "")), 0);
+    document.getElementById("modal-total-display").innerText = `$${total.toFixed(2)}`;
+    document.getElementById("checkout-modal").style.display = "block";
+    document.getElementById("modal-overlay").style.display = "block";
 }
 
 function closeCheckout() {
-    document.getElementById('checkout-modal').style.display = 'none';
-    document.getElementById('modal-overlay').style.display = 'none';
+    document.getElementById("checkout-modal").style.display = "none";
+    document.getElementById("modal-overlay").style.display = "none";
 }
 
 function processPayment(method) {    
     saveAndRefresh();
     closeCheckout();
     showNotification("Success! Your order has been placed.", "success");
+}
+
+function showCryptoOptions() {
+    document.getElementById("method-selection").style.display = "none";
+    document.getElementById("modal-title").innerText = "Select Crypto";
+    document.getElementById("crypto-selection").style.display = "flex";
+}
+
+function backToMethods() {
+    document.getElementById("method-selection").style.display = "block";
+    document.getElementById("modal-title").innerText = "Checkout";
+    document.getElementById("crypto-selection").style.display = "none";
+}
+
+async function createInvoice() {
+    const itemNames = cart.map(item => item.name);
+
+    if (cart.length === 0) {
+        showNotification("Add some items first!")
+        return;
+    }
+
+    const response = await fetch("/api/createcryptoinvoice",{
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            itemnames: itemNames, 
+            coin: selectedCoin
+        })
+    })
+
+    const data = await response.json();
+    
+    if (data.invoice_url) {
+        window.location.href = data.invoice_url;
+    } else {
+        showNotification("Something went wrong with creating crypto invoice.")
+    }
 }
 
 updateCountBadge()
@@ -160,3 +198,4 @@ window.removeItem = removeItem
 window.openCheckout = openCheckout
 window.closeCheckout = closeCheckout
 window.processPayment = processPayment
+

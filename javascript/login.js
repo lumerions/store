@@ -1,7 +1,7 @@
 
-import { showNotification } from './functions.js';
+import { showNotification } from "./functions.js";
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
     const loginForm = document.getElementById("loginForm");
     const OTPBtn = document.getElementById("send-otp-btn");
     const emailModal = document.getElementById("emailModal");
@@ -12,22 +12,22 @@ document.addEventListener('DOMContentLoaded', () => {
     let username = null;
     if (!loginForm) return;
 
-    loginForm.addEventListener('submit', async (e) => {
+    loginForm.addEventListener("submit", async (e) => {
         e.preventDefault();
 
-        const submitBtn = document.getElementById('submit-btn');
-        const errorBox = document.getElementById('error-box');
-        const errorMessage = document.getElementById('error-message');
-        const password = document.getElementById('password').value;
-        username = document.getElementById('username').value.trim()
+        const submitBtn = document.getElementById("submit-btn");
+        const errorBox = document.getElementById("error-box");
+        const errorMessage = document.getElementById("error-message");
+        const password = document.getElementById("password").value;
+        username = document.getElementById("username").value.trim()
 
-        errorBox.style.display = 'none'
+        errorBox.style.display = "none"
         submitBtn.disabled = true;
         submitBtn.innerText = "Logging in...";
 
         function showError(text) {
             errorMessage.innerText = text;
-            errorBox.style.display = 'block';
+            errorBox.style.display = "block";
             submitBtn.disabled = false;
             submitBtn.innerText = "Create account";
         }
@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     OTPBtn.addEventListener("click", async () => {
         emailModal.style.display = "flex"
-        username = document.getElementById('username').value.trim()
+        username = document.getElementById("username").value.trim()
 
         try {
             const response = await fetch("/api/OTP", {

@@ -1,11 +1,11 @@
-import { showNotification } from './functions.js';
+import { showNotification } from "./functions.js";
 const passwordForm = document.getElementById("password-form")
 const savePrefsBtn = document.getElementById("savePrefsBtn")
 const orderEmailsCheckBox = document.getElementById("notifyToggle")
 const emailModal = document.getElementById("emailModal")
 const profileForm = document.getElementById("profile-form")
 const verifyCodeBtn = document.getElementById("verifyCodeBtn")
-const closeModalBtn = document.getElementById('closeModalBtn')
+const closeModalBtn = document.getElementById("closeModalBtn")
 
 passwordForm.addEventListener("submit",async (e) => {
     e.preventDefault()
