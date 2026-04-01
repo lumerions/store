@@ -83,10 +83,6 @@ async def root(request: Request):
     onsaleitems = []
 
     for row in rows:
-        print(row)
-        if not row["offsale"]:
-            continue
-
         itemdata = ({
             "id": row['itemid'],
             "name": row['itemname'],    
@@ -102,9 +98,6 @@ async def root(request: Request):
         if not row["offsale"]:
             onsaleitems.append(itemdata)
 
-        print(itemdata)
-
-    print(onsaleitems)
 
     redis.set("storedata", json.dumps(onsaleitems), ex=3600)
 
