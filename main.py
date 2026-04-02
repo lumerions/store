@@ -12,7 +12,7 @@ from slowapi.middleware import SlowAPIMiddleware
 from psycopg.rows import dict_row
 from lib.config import Config
 from lib.postgres import getPostgresConnection
-from lib.redis import getRedisInstance
+from lib.redisclient import getRedisInstance
 from lib.schema import *
 from lib.functions import *
 
@@ -61,7 +61,7 @@ def checkUserEmailLimit(Username):
 
 @app.get("/", response_class=HTMLResponse)
 @limiter.limit("60/minute")
-async def root(request: Request):
+async def root(request: Request, SessionId: str = Cookie(None)):
 
     CachedStoreData = redis.get("storedata")
 
@@ -77,7 +77,7 @@ async def root(request: Request):
             "products": json.loads(CachedStoreData)
         })
 
-    print(rows)
+    SessionData = userIsLoggedIn(SessionId)
 
     items = []
     onsaleitems = []
@@ -103,7 +103,8 @@ async def root(request: Request):
     return templates.TemplateResponse("index.html", {
         "request": request, 
         "store_name": cfg.StoreName,  
-        "products": onsaleitems
+        "products": onsaleitems,
+        "sessiondata": SessionData
     })
 
 @app.get("/ratelimited",response_class=HTMLResponse)
@@ -182,17 +183,7 @@ async def adminload(request: Request,SessionId: str = Cookie(None)):
 @app.get("/userloggedin",response_class=JSONResponse)
 @limiter.limit("60/minute")
 async def userloggedin(request: Request, SessionId: str = Cookie(None)):
-    sessionData = None 
-    if SessionId:
-        sessionData = redis.get(SessionId)
-        SessionIdList = SessionId.split(":")
-        SessionId = SessionIdList[0]
-        SessionUsername = SessionIdList[1]
-
-        if SessionUsername == cfg.AdminUsername:
-            return JSONResponse({"loggedin": sessionData,"isadmin":True})
-
-    return JSONResponse({"loggedin": sessionData})
+    return userIsLoggedIn(SessionId)
 
 @app.get("/adminapi/getPendingOrders")
 @limiter.limit("60/minute")

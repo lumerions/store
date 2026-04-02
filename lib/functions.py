@@ -3,6 +3,8 @@ from fastapi.responses import JSONResponse
 import resend
 from config import Config
 cfg = Config()
+from redisclient import getRedisInstance
+redis = getRedisInstance()
 
 def trustCheckAdminUser(cursor,SessionId):
     SessionIdList = SessionId.split(":")
@@ -52,3 +54,16 @@ def setSessionCookie(response : Response,SessionId):
         secure=True,  
         samesite="Lax", 
     )
+
+def userIsLoggedIn(SessionId)
+    sessionData = None 
+    if SessionId:
+        sessionData = redis.get(SessionId)
+        SessionIdList = SessionId.split(":")
+        SessionId = SessionIdList[0]
+        SessionUsername = SessionIdList[1]
+
+        if SessionUsername == cfg.AdminUsername:
+            return {"loggedin": sessionData,"isadmin":True}
+
+    return {"loggedin": sessionData}
