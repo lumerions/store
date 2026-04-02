@@ -1,0 +1,43 @@
+<div id="cart-overlay" onclick="toggleCart()"></div>
+<div id="modal-overlay" onclick="closeCheckout()"></div>
+
+<div id="cart-panel">
+    <div class="cart-header">
+        <h3>Your Cart</h3>
+        <button class="close-x" onclick="toggleCart()">&times;</button>
+    </div>
+    <div id="cart-items"></div>
+    <div class="cart-footer">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+            <strong>Total:</strong><strong id="cart-total">$0.00</strong>
+        </div>
+        <button class="checkout-btn" onclick="openCheckout()">Go to Checkout</button>
+    </div>
+</div>
+
+<div id="checkout-modal">
+    <div class="modal-header">
+        <h3 id="modal-title">Checkout</h3>
+        <button class="close-x" onclick="closeCheckout()">&times;</button>
+    </div>
+    <p id="modal-desc" style="margin-bottom: 10px;">Total Due: <span id="modal-total-display" style="font-weight: 800; color: var(--accent);"></span></p>
+    
+    <div id="method-selection">
+        <div class="payment-method" onclick="processPayment('Credit Card')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="icon-s"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg> Pay with Card
+        </div>
+        <div class="payment-method" onclick="showCryptoOptions()">
+            <svg viewBox="0 0 397.7 311.7" style="color: #14F195; width: 24px;">
+                <path fill="currentColor" d="M64.6 237.9c2.4-2.4 5.7-3.8 9.2-3.8h317.4c5.8 0 8.7 7 4.6 11.1l-62.7 62.7c-2.4 2.4-5.7 3.8-9.2 3.8H6.5c-5.8 0-8.7-7-4.6-11.1L64.6 237.9zM64.6 3.8C67.1 1.4 70.4 0 73.8 0h317.4c5.8 0 8.7 7 4.6 11.1l-62.7 62.7c-2.4 2.4-5.7 3.8-9.2 3.8H6.5c-5.8 0-8.7-7-4.6-11.1L64.6 3.8zM333.1 120.1c-2.4-2.4-5.7-3.8-9.2-3.8H6.5c-5.8 0-8.7 7-4.6 11.1l62.7 62.7c2.4 2.4 5.7 3.8 9.2 3.8h317.4c5.8 0 8.7-7 4.6-11.1L333.1 120.1z"/>
+            </svg> Pay with Crypto
+        </div>
+    </div>
+
+    <div id="crypto-selection" style="display: none; flex-direction: column; gap: 15px;">
+        <select id="coin-select" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #444; background: #1a1a1a; color: white;">
+            <option value="btc">Bitcoin (BTC)</option><option value="eth">Ethereum (ETH)</option><option value="sol" selected>Solana (SOL)</option><option value="ltc">Litecoin (LTC)</option><option value="usdc">USD Coin (USDC)</option><option value="doge">Dogecoin (DOGE)</option>
+        </select>
+        <button class="pay-btn" onclick="createInvoice()" style="width: 100%; background: #14F195; color: black; font-weight: 700; padding: 12px; border: none; border-radius: 8px;">Confirm & Generate Invoice</button>
+        <button onclick="backToMethods()" style="background:transparent; color:#888; border:none; font-size:0.8rem;">← Back</button>
+    </div>
+</div>

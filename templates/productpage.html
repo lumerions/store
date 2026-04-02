@@ -1,36 +1,7 @@
 {% extends "layout.html" %}
 {% block title %}{{ product.name }}{% endblock %}
 {% block content %}
-    <div id="cart-overlay" onclick="toggleCart()"></div>
-    <div id="modal-overlay" onclick="closeCheckout()"></div>
-
-    <div id="cart-panel">
-        <div class="cart-header">
-            <h3>Your Cart</h3>
-            <button class="close-x" onclick="toggleCart()">&times;</button>
-        </div>
-        <div id="cart-items"></div>
-        <div class="cart-footer">
-            <div style="display:flex;justify-content:space-between;margin-bottom:15px;">
-                <strong>Total:</strong><strong id="cart-total">$0.00</strong>
-            </div>
-            <button class="checkout-btn" onclick="openCheckout()">Go to Checkout</button>
-        </div>
-    </div>
-
-    <div id="checkout-modal">
-        <div class="modal-header">
-            <h3>Checkout</h3>
-            <button class="close-x" onclick="closeCheckout()">&times;</button>
-        </div>
-        <p style="margin-bottom:10px;">Total Due: <span id="modal-total-display" style="font-weight:800;color:var(--accent);"></span></p>
-        <div class="payment-method" onclick="processPayment('Credit Card')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:24px;margin-right:10px"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg> Pay with Card
-        </div>
-        <div class="payment-method" onclick="processPayment('Crypto')">
-            <svg viewBox="0 0 397.7 311.7" style="color:#14F195;width:24px;margin-right:10px"><path fill="currentColor" d="M64.6 237.9c2.4-2.4 5.7-3.8 9.2-3.8h317.4c5.8 0 8.7 7 4.6 11.1l-62.7 62.7c-2.4 2.4-5.7 3.8-9.2 3.8H6.5c-5.8 0-8.7-7-4.6-11.1L64.6 237.9zM64.6 3.8C67.1 1.4 70.4 0 73.8 0h317.4c5.8 0 8.7 7 4.6 11.1l-62.7 62.7c-2.4 2.4-5.7 3.8-9.2 3.8H6.5c-5.8 0-8.7-7-4.6-11.1L64.6 3.8zM333.1 120.1c-2.4-2.4-5.7-3.8-9.2-3.8H6.5c-5.8 0-8.7 7-4.6 11.1l62.7 62.7c2.4 2.4 5.7 3.8 9.2 3.8h317.4c5.8 0 8.7-7 4.6-11.1L333.1 120.1z"/></svg> Pay with Crypto
-        </div>
-    </div>
+    {% include "cart.html" %}
 
     <nav>
         <a href="/" class="logo">{{ store_name }}</a>
