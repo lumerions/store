@@ -1,28 +1,35 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>{{ product.name }} | {{ store_name }}</title>
-    <link rel="stylesheet" href="/css/style.css?v=1000">
-</head>
-<body>
+{% extends "layout.html" %}
+{% block title %}{{ product.name }}{% endblock %}
+{% block content %}
     <div id="cart-overlay" onclick="toggleCart()"></div>
     <div id="modal-overlay" onclick="closeCheckout()"></div>
 
     <div id="cart-panel">
-        <div class="cart-header"><h3>Your Cart</h3><button class="close-x" onclick="toggleCart()">&times;</button></div>
+        <div class="cart-header">
+            <h3>Your Cart</h3>
+            <button class="close-x" onclick="toggleCart()">&times;</button>
+        </div>
         <div id="cart-items"></div>
         <div class="cart-footer">
-            <div style="display:flex;justify-content:space-between;margin-bottom:15px;"><strong>Total:</strong><strong id="cart-total">$0.00</strong></div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:15px;">
+                <strong>Total:</strong><strong id="cart-total">$0.00</strong>
+            </div>
             <button class="checkout-btn" onclick="openCheckout()">Go to Checkout</button>
         </div>
     </div>
 
     <div id="checkout-modal">
-        <div class="modal-header"><h3>Checkout</h3><button class="close-x" onclick="closeCheckout()">&times;</button></div>
+        <div class="modal-header">
+            <h3>Checkout</h3>
+            <button class="close-x" onclick="closeCheckout()">&times;</button>
+        </div>
         <p style="margin-bottom:10px;">Total Due: <span id="modal-total-display" style="font-weight:800;color:var(--accent);"></span></p>
-        <div class="payment-method" onclick="processPayment('Credit Card')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:24px;margin-right:10px"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg> Pay with Card</div>
-        <div class="payment-method" onclick="processPayment('Crypto')"><svg viewBox="0 0 397.7 311.7" style="color:#14F195;width:24px;margin-right:10px"><path fill="currentColor" d="M64.6 237.9c2.4-2.4 5.7-3.8 9.2-3.8h317.4c5.8 0 8.7 7 4.6 11.1l-62.7 62.7c-2.4 2.4-5.7 3.8-9.2 3.8H6.5c-5.8 0-8.7-7-4.6-11.1L64.6 237.9zM64.6 3.8C67.1 1.4 70.4 0 73.8 0h317.4c5.8 0 8.7 7 4.6 11.1l-62.7 62.7c-2.4 2.4-5.7 3.8-9.2 3.8H6.5c-5.8 0-8.7-7-4.6-11.1L64.6 3.8zM333.1 120.1c-2.4-2.4-5.7-3.8-9.2-3.8H6.5c-5.8 0-8.7 7-4.6 11.1l62.7 62.7c2.4 2.4 5.7 3.8 9.2 3.8h317.4c5.8 0 8.7-7 4.6-11.1L333.1 120.1z"/></svg> Pay with Crypto</div>
+        <div class="payment-method" onclick="processPayment('Credit Card')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:24px;margin-right:10px"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg> Pay with Card
+        </div>
+        <div class="payment-method" onclick="processPayment('Crypto')">
+            <svg viewBox="0 0 397.7 311.7" style="color:#14F195;width:24px;margin-right:10px"><path fill="currentColor" d="M64.6 237.9c2.4-2.4 5.7-3.8 9.2-3.8h317.4c5.8 0 8.7 7 4.6 11.1l-62.7 62.7c-2.4 2.4-5.7 3.8-9.2 3.8H6.5c-5.8 0-8.7-7-4.6-11.1L64.6 237.9zM64.6 3.8C67.1 1.4 70.4 0 73.8 0h317.4c5.8 0 8.7 7 4.6 11.1l-62.7 62.7c-2.4 2.4-5.7 3.8-9.2 3.8H6.5c-5.8 0-8.7-7-4.6-11.1L64.6 3.8zM333.1 120.1c-2.4-2.4-5.7-3.8-9.2-3.8H6.5c-5.8 0-8.7 7-4.6 11.1l62.7 62.7c2.4 2.4 5.7 3.8 9.2 3.8h317.4c5.8 0 8.7-7 4.6-11.1L333.1 120.1z"/></svg> Pay with Crypto
+        </div>
     </div>
 
     <nav>
@@ -33,30 +40,39 @@
         </div>
     </nav>
 
-    <div class="container"><main class="product-view">
-        <div class="product-image-container">
-            {% if product.image %}<img src="{{ product.image }}" alt="{{ product.name }}">
-            {% else %}<div class="no-image">No Image</div>{% endif %}
-        </div>
-
-        <div class="product-content">
-            <div class="status-badge">{% if product.offsale %}[ OFF-SALE ]{% else %}[ IN-STOCK ]{% endif %}</div>
-            <h1 class="product-title">{{ product.name }}</h1>
-            <div class="action-area">
-                <button class="add-btn" style="width:100%;padding:18px;{{ 'background:#444;opacity:.5' if product.offsale }}" 
-                        {{ 'disabled' if product.offsale }} onclick="addToCart('{{ product.name }}','{{ product.price }}','{{ product.image }}')">
-                    {{ 'Unavailable' if product.offsale else 'Add to Cart' }}
-                </button>
+    <div class="container">
+        <main class="product-view">
+            <div class="product-image-container">
+                {% if product.image %}<img src="{{ product.image }}" alt="{{ product.name }}">
+                {% else %}<div class="no-image">No Image</div>{% endif %}
             </div>
-            <hr>
-            <div class="details-area">
-                <div class="info-row"><div class="info-label">Price</div><div class="info-value price-highlight">{{ product.price }}</div></div>
-                <div class="info-row"><div class="info-label">Description</div><div class="info-value">{{ product.description }}</div></div>
-            </div>
-        </div>
-    </main></div>
 
-    <div id="notification-toast" class="toast-left"></div>
+            <div class="product-content">
+                <div class="status-badge">
+                    {% if product.offsale %}[ OFF-SALE ]{% else %}[ IN-STOCK ]{% endif %}
+                </div>
+                <h1 class="product-title">{{ product.name }}</h1>
+                <div class="action-area">
+                    <button class="add-btn" style="width:100%;padding:18px;{{ 'background:#444;opacity:.5' if product.offsale }}" 
+                            {{ 'disabled' if product.offsale }} 
+                            onclick="addToCart('{{ product.name }}','{{ product.price }}','{{ product.image }}')">
+                        {{ 'Unavailable' if product.offsale else 'Add to Cart' }}
+                    </button>
+                </div>
+                <hr>
+                <div class="details-area">
+                    <div class="info-row">
+                        <div class="info-label">Price</div>
+                        <div class="info-value price-highlight">{{ product.price }}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Description</div>
+                        <div class="info-value">{{ product.description }}</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
     <script type="module" src="/javascript/index.js"></script>
-</body>
-</html>
+{% endblock %}

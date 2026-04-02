@@ -1,45 +1,43 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up | {{ store_name }}</title>
-    <link rel="stylesheet" href="/css/style.css?v=1000">
-</head>
-<body class="auth-wrapper"> 
-    <div class="auth-card">
-        <h2>Create Account</h2>
-        <p>Join {{ store_name }} to track your orders.</p>
+{% extends "layout.html" %}
+{% block title %}{{ store_name }}{% endblock %}
+{% block content %}
+    <div class="auth-wrapper"> 
+        <div class="auth-card">
+            <h2>Create Account</h2>
+            <p>Join {{ store_name }} to track your orders.</p>
 
-        <div id="error-box" class="error-container" style="display: none;"><p id="error-message"></p></div>
-        
-        <form id="signupForm">
-            <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" placeholder="johndoe123" required>
+            <div id="error-box" class="error-container" style="display: none;">
+                <p id="error-message"></p>
             </div>
-            <div class="form-group">
-                <label for="email">Email Address</label>
-                <input type="email" id="email" name="email" placeholder="name@company.com" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" placeholder="••••••••" required>
-            </div>
-            <div class="form-group">
-                <label for="confirm_password">Confirm Password</label>
-                <input type="password" id="confirm_password" name="confirm_password" placeholder="••••••••" required>
-            </div>
+            
+            <form id="signupForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" placeholder="johndoe123" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" placeholder="name@company.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="••••••••" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirm_password">Confirm Password</label>
+                    <input type="password" id="confirm_password" name="confirm_password" placeholder="••••••••" required>
+                </div>
 
-            <button type="submit" id="submit-btn" class="submit-btn">Create Account</button>
-            <hr class="divider">
-        </form>
-        
-        <div class="auth-footer">
-            <a href="/login" class="secondary-link">Already have an account? Log In</a>
-            <a href="/" class="secondary-link">← Back to Store</a>
+                <button type="submit" id="submit-btn" class="submit-btn">Create Account</button>
+                <hr class="divider">
+            </form>
+            
+            <div class="auth-footer">
+                <a href="/login" class="secondary-link">Already have an account? Log In</a>
+                <a href="/" class="secondary-link">← Back to Store</a>
+            </div>
         </div>
     </div>
+
     <script type="module" src="/javascript/signup.js"></script>
-</body>
-</html>
+{% endblock %}

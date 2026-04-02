@@ -1,13 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ store_name }}</title>
-    <link rel="stylesheet" href="/css/style.css?v=999">
-</head>
-<body>
-
+{% extends "layout.html" %}
+{% block title %}{{ store_name }}{% endblock %}
+{% block content %}
     <nav>
         <a href="/" class="logo">{{ store_name }}</a>
         <div class="nav-right">
@@ -105,34 +98,32 @@
             </div>
             
             <div class="card" style="grid-column: 1 / -1; text-align: left; margin-top: 20px;">
-            <div style="border-bottom: 2px solid var(--accent); margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
-                <h3 style="margin-bottom: 10px;">Pending Orders</h3>
-                <span id="order-count" style="background: var(--accent); color: white; padding: 2px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: bold;">0 Pending</span>
-            </div>
+                <div style="border-bottom: 2px solid var(--accent); margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+                    <h3 style="margin-bottom: 10px;">Pending Orders</h3>
+                    <span id="order-count" style="background: var(--accent); color: white; padding: 2px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: bold;">0 Pending</span>
+                </div>
 
-            <div style="overflow-x: auto;">
-                <table style="width: 100%; border-collapse: collapse; min-width: 600px;">
-                    <thead>
-                        <tr style="text-align: left; border-bottom: 2px solid var(--grey);">
-                            <th style="padding: 12px; font-size: 0.8rem; text-transform: uppercase; color: #666;">Order ID</th>
-                            <th style="padding: 12px; font-size: 0.8rem; text-transform: uppercase; color: #666;">Customer</th>
-                            <th style="padding: 12px; font-size: 0.8rem; text-transform: uppercase; color: #666;">Items</th>
-                            <th style="padding: 12px; font-size: 0.8rem; text-transform: uppercase; color: #666;">Total</th>
-                            <th style="padding: 12px; font-size: 0.8rem; text-transform: uppercase; color: #666;">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="orders-table-body">
-                        <tr>
-                            <td colspan="5" style="padding: 40px; text-align: center; color: #999;">Loading orders...</td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; min-width: 600px;">
+                        <thead>
+                            <tr style="text-align: left; border-bottom: 2px solid var(--grey);">
+                                <th style="padding: 12px; font-size: 0.8rem; text-transform: uppercase; color: #666;">Order ID</th>
+                                <th style="padding: 12px; font-size: 0.8rem; text-transform: uppercase; color: #666;">Customer</th>
+                                <th style="padding: 12px; font-size: 0.8rem; text-transform: uppercase; color: #666;">Items</th>
+                                <th style="padding: 12px; font-size: 0.8rem; text-transform: uppercase; color: #666;">Total</th>
+                                <th style="padding: 12px; font-size: 0.8rem; text-transform: uppercase; color: #666;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orders-table-body">
+                            <tr>
+                                <td colspan="5" style="padding: 40px; text-align: center; color: #999;">Loading orders...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
         </div>
     </div>
 
-    <div id="notification-toast" class="toast-left"></div>
     <script type="module" src="/javascript/admin.js"></script>
-</body>
-</html>
+{% endblock %}

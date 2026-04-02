@@ -1,7 +1,5 @@
 {% extends "layout.html" %}
-
 {% block title %}{{ store_name }} - Settings{% endblock %}
-
 {% block content %}
     <nav>
         <a href="/" class="logo">{{ store_name }}</a>
@@ -71,7 +69,5 @@
 
     {% include "emailmodal.html" %}
 
-    <div id="notification-toast" class="toast-left"></div>
     <script type="module" src="/javascript/settings.js"></script>
-
 {% endblock %}

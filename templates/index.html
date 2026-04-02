@@ -1,12 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ store_name }}</title>
-    <link rel="stylesheet" href="/css/style.css?v=1000">
-</head>
-<body>
+{% extends "layout.html" %}
+{% block title %}{{ store_name }}{% endblock %}
+{% block content %}
     <div id="cart-overlay" onclick="toggleCart()"></div>
     <div id="modal-overlay" onclick="closeCheckout()"></div>
 
@@ -68,26 +62,26 @@
         <p>Premium items curated just for you.</p>
     </header>
 
-    <div class="container"><div class="grid">
-        {% for item in products %}
-        <div class="card product-card-hover {{ 'item-offsale' if item.offsale }}" 
-             {% if not item.offsale %} onclick="location.href='/store/product/{{ item.id }}'" {% endif %}>
-            {% if item.image %}<img src="{{ item.image }}" alt="{{ item.name }}" class="product-img">
-            {% else %}<div class="product-img no-image">No Image</div>{% endif %}
-            <div class="card-content">
-                <h3>{{ item.name }}</h3>
-                <p class="price">{{ item.price }}</p>
-                <p class="product-desc">{{ item.desc }}</p>
-                <button class="add-btn {{ 'offsale-btn' if item.offsale }}" {{ 'disabled' if item.offsale }}
-                        {% if not item.offsale %} onclick="event.stopPropagation(); addToCart('{{ item.name }}', '{{ item.price }}', '{{ item.image }}')" {% endif %}>
-                    {{ 'Unavailable' if item.offsale else 'Add to Cart' }}
-                </button>
+    <div class="container">
+        <div class="grid">
+            {% for item in products %}
+            <div class="card product-card-hover {{ 'item-offsale' if item.offsale }}" 
+                 {% if not item.offsale %} onclick="location.href='/store/product/{{ item.id }}'" {% endif %}>
+                {% if item.image %}<img src="{{ item.image }}" alt="{{ item.name }}" class="product-img">
+                {% else %}<div class="product-img no-image">No Image</div>{% endif %}
+                <div class="card-content">
+                    <h3>{{ item.name }}</h3>
+                    <p class="price">{{ item.price }}</p>
+                    <p class="product-desc">{{ item.desc }}</p>
+                    <button class="add-btn {{ 'offsale-btn' if item.offsale }}" {{ 'disabled' if item.offsale }}
+                            {% if not item.offsale %} onclick="event.stopPropagation(); addToCart('{{ item.name }}', '{{ item.price }}', '{{ item.image }}')" {% endif %}>
+                        {{ 'Unavailable' if item.offsale else 'Add to Cart' }}
+                    </button>
+                </div>
             </div>
+            {% endfor %}
         </div>
-        {% endfor %}
-    </div></div>
+    </div>
 
-    <div id="notification-toast" class="toast-left"></div>
     <script type="module" src="/javascript/index.js"></script>
-</body>
-</html>
+{% endblock %}
