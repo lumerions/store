@@ -98,7 +98,6 @@ async def root(request: Request):
         if not row["offsale"]:
             onsaleitems.append(itemdata)
 
-
     redis.set("storedata", json.dumps(onsaleitems), ex=3600)
 
     return templates.TemplateResponse("index.html", {
@@ -130,7 +129,6 @@ async def login(request: Request):
         "request": request, 
         "store_name": cfg.StoreName,  
     })
-
 
 @app.get("/settings",response_class=HTMLResponse)
 @limiter.limit("60/minute")

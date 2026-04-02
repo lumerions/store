@@ -1,9 +1,14 @@
+{% extends "emailmodal.html" %}
+
+{% block title %}Login to {{ store_name }}{% endblock %}
+
+{% block content %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login to {{ store_name }}</title>
     <link rel="stylesheet" href="/css/style.css?v=999">
 </head>
 <body class="auth-wrapper">
@@ -32,18 +37,10 @@
             <a href="/" class="secondary-link">← Back to Store</a>
         </div>
     </div>
-
-    <div id="emailModal" class="modal-overlay">
-        <div class="modal-content">
-            <h3>Verify Your Email</h3>
-            <p style="font-size:14px; color:#666;">Enter the verification code sent to your email.</p>
-            <input type="text" id="verificationCode" placeholder="Enter code" inputmode="numeric" class="modal-input">
-            <button id="verifyCodeBtn" class="submit-btn" style="width:100%;">Verify</button>
-            <button id="closeModalBtn" class="cancel-btn">Cancel</button>
-        </div>
-    </div>
     
     <div id="notification-toast" class="toast-left"></div>
     <script type="module" src="/javascript/login.js"></script>
 </body>
 </html>
+
+{% endblock %}
