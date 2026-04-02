@@ -1,19 +1,8 @@
-{% extends "emailmodal.html" %}
+{% extends "layout.html" %}
 
-{% block title %}{{ store_name }}{% endblock %}
+{% block title %}{{ store_name }} - Settings{% endblock %}
 
 {% block content %}
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ store_name }}</title>
-    <link rel="stylesheet" href="/css/style.css?v=999">
-</head>
-<body>
-
     <nav>
         <a href="/" class="logo">{{ store_name }}</a>
         <div class="nav-right">
@@ -80,8 +69,9 @@
         </div>
     </div>
 
+    {% include "emailmodal.html" %}
+
     <div id="notification-toast" class="toast-left"></div>
     <script type="module" src="/javascript/settings.js"></script>
-</body>
-</html>
+
 {% endblock %}

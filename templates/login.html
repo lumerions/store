@@ -1,46 +1,39 @@
-{% extends "emailmodal.html" %}
+{% extends "layout.html" %}
 
 {% block title %}Login to {{ store_name }}{% endblock %}
 
 {% block content %}
+    <div class="auth-wrapper">
+        <div class="auth-card">
+            <h2>Welcome back</h2>
+            <p>Enter your details to access your account.</p>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/style.css?v=999">
-</head>
-<body class="auth-wrapper">
-    <div class="auth-card">
-        <h2>Welcome back</h2>
-        <p>Enter your details to access your account.</p>
-
-        <div id="error-box" class="error-container" style="display: none;"><p id="error-message"></p></div>
-
-        <form id="loginForm">
-            <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" placeholder="johndoe123" required>
+            <div id="error-box" class="error-container" style="display: none;">
+                <p id="error-message"></p>
             </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" placeholder="••••••••" required>
-            </div>
-            <button type="submit" class="submit-btn">Log In</button>
-            <hr class="divider">
-            <button type="button" id="send-otp-btn" class="otp-pill-link" style="display:block; margin: 0 auto;">Sign in with a one-time code</button>
-        </form>
 
-        <div class="auth-footer">
-            <a href="/signup" class="secondary-link">Don't have an account? Sign Up</a>
-            <a href="/" class="secondary-link">← Back to Store</a>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" placeholder="johndoe123" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="submit-btn">Log In</button>
+                <hr class="divider">
+                <button type="button" id="send-otp-btn" class="otp-pill-link" style="display:block; margin: 0 auto;">Sign in with a one-time code</button>
+            </form>
+
+            <div class="auth-footer">
+                <a href="/signup" class="secondary-link">Don't have an account? Sign Up</a>
+                <a href="/" class="secondary-link">← Back to Store</a>
+            </div>
         </div>
     </div>
-    
-    <div id="notification-toast" class="toast-left"></div>
-    <script type="module" src="/javascript/login.js"></script>
-</body>
-</html>
 
+    {% include "emailmodal.html" %}
+    
+    <script type="module" src="/javascript/login.js"></script>
 {% endblock %}
