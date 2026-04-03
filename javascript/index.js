@@ -204,3 +204,4 @@ window.closeCheckout = closeCheckout
 window.processPayment = processPayment
 window.showCryptoOptions = showCryptoOptions
 window.backToMethods = backToMethods
+window.createInvoice = createInvoice
