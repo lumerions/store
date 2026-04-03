@@ -774,7 +774,7 @@ async def verifyotp(request: Request, data: VerifyAccountEmail, response: Respon
 
 @app.post("/api/createcryptoinvoice")
 @limiter.limit("60/minute")
-async def createinvoice(request: Request, data: CryptoInvoiceSchema):
+async def createinvoice(request: Request, data: CryptoInvoiceSchema, SessionIdToken: str = Cookie(None)):
     TotalPrice = 0
     PriceLookup = None
     headers = {
@@ -799,30 +799,87 @@ async def createinvoice(request: Request, data: CryptoInvoiceSchema):
         if itemnameStriped in PriceLookup:
             TotalPrice += int(PriceLookup[itemnameStriped])
         else:
-            return JSONResponse({"success": False,"message": "One of the cart items doesn't exist."})        
+            return JSONResponse({"success": False,"message": "One of the cart items doesn't exist."})    
+
+    SessionIdList = SessionIdToken.split(":")
+    SessionUsername = SessionIdList[1]    
 
     payload = {
         "price_amount": TotalPrice, 
         "price_currency": "usd",
         "pay_currency": data.coin,
         "ipn_callback_url": "https://store-weld-five.vercel.app/api/cryptobuy",
-        "order_id": secrets.token_urlsafe(16),
-        "order_description": f"Items: {', '.join(data.itemnames)}"
+        "order_id": secrets.token_urlsafe(16) + "©" + SessionUsername,
+        "order_description": ", ".join(data.itemnames)"
     }
 
     try:
-        response = requests.post(cfg.NowPaymentsAPIURL, json=payload, headers=headers)
+        response = requests.post("https://api.nowpayments.io/v1/invoice", json=payload, headers=headers)
 
         if response.status_code == 200:
             data = response.json()
             return {"invoice_url": data.get('invoice_url')}
         else:
-            print(f"Status Code: {response.status_code}")
-            print(f"Response Body: {response.text}")
             return JSONResponse({"error": "Error with sending post request to nowpayments."}, status_code=400)
     except Exception as e:
         return JSONResponse({"error": "Oops, something went wrong, please try again later."}, status_code=400)
 
+
+@app.post("/api/cryptobuy")
+@limiter.limit("60/minute")
+async def cryptobuy(request: Request):
+    OrderId = ""
+
+    try:
+        body_bytes = await request.body()
+        signature = request.headers.get("x-nowpayments-sig", "")
+
+        expected_signature = hmac.new(
+            NOWPAYMENTS_WEBHOOK_SECRET.encode().strip(),
+            body_bytes,
+            hashlib.sha512
+        ).hexdigest()
+
+        if not hmac.compare_digest(signature, expected_signature):
+            return {"status": "ignored", "reason": "invalid signature"}
+
+        payload = json.loads(body_bytes)
+        if payload.get("payment_status") == "finished":
+            paymentId = payload.get("payment_id")
+            OrderId = payload.get("order_id",None)
+            Description = payload.get("order_description", "")
+            RawAmount = payload.get("price_amount")
+
+            if payload.get("price_currency") != "usd":
+                return {"status": "ignored"}
+
+            if OrderId and len(Description) > 0:
+                OrderIdList = OrderId.split("©")
+                OrderIdUserName = OrderIdList[0]
+                ItemsList = [item.strip() for item in Description.split(",")]
+                TotalPaid = float(TotalPaid)
+
+                try:
+                    with getPostgresConnection() as conn:
+                        with conn.cursor() as cursor:
+                            cursor.execute("""
+                                INSERT INTO orders (username, items, total)
+                                VALUES (%s, %s, %s)
+                            """, (OrderIdUserName,Description,f"${TotalPaid:.2f}" ))
+                            
+                            cursor.execute("""
+                                INSERT INTO purchases (orderid, total, items, username)
+                                VALUES (%s, %s, %s, %s);
+                            """, (OrderId, f"${TotalPaid:.2f}", Description, OrderIdUserName))
+
+                            conn.commit()
+                except Exception as e:
+                    return JSONResponse({"success": False,"message": "Internal Server Error."})
+
+    except Exception as e:
+        print("Error with " + OrderId + "" + e)
+
+    return {"status": "ok"}
 
 @app.get("/{path:path}", response_class=HTMLResponse)
 @limiter.limit("60/minute")

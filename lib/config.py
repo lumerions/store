@@ -11,7 +11,6 @@ class Config(BaseSettings):
     EMAILWindow: int = 15 * 60
     NowPaymentsIPNSecret: str = "D/8dp2NgaLJXHk966I2NePXSMrFwCmos"
     NowPaymentsAPISecret: str = "5FW8DQ8-H814VMB-HG04DHE-0W2JTN3"
-    NowPaymentsAPIURL: str = "https://api.nowpayments.io/v1/invoice"
     SUPPORTEDCOINS: dict = {
         "btc": "Bitcoin",
         "eth": "Ethereum",
@@ -44,3 +43,4 @@ class Config(BaseSettings):
         "xmr": "Monero",
         "zec": "Zcash"
     }
+
