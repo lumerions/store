@@ -55,7 +55,7 @@ def setSessionCookie(response : Response,SessionId):
         samesite="Lax", 
     )
 
-def userIsLoggedIn(SessionId)
+def userIsLoggedIn(SessionId):
     sessionData = None 
     if SessionId:
         sessionData = redis.get(SessionId)
