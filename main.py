@@ -817,6 +817,8 @@ async def createinvoice(request: Request, data: CryptoInvoiceSchema):
             data = response.json()
             return {"invoice_url": data.get('invoice_url')}
         else:
+            print(f"Status Code: {response.status_code}")
+            print(f"Response Body: {response.text}")
             return JSONResponse({"error": "Error with sending post request to nowpayments."}, status_code=400)
     except Exception as e:
         return JSONResponse({"error": "Oops, something went wrong, please try again later."}, status_code=400)
