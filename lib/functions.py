@@ -67,3 +67,51 @@ def userIsLoggedIn(SessionId)
             return {"loggedin": sessionData,"isadmin":True}
 
     return {"loggedin": sessionData}
+
+def generateEmailHtml(code: str, store_name: str, title: str, message: str, expiry_minutes: int = 15) -> str:
+    """
+    Generates HTML for an email with a verification or one-time login code.
+
+    Args:
+        code (str): The verification or login code.
+        store_name (str): Name of your store/application.
+        title (str): Header/title for the email (e.g., "Email Verification").
+        message (str): Main message describing the code usage.
+        expiry_minutes (int): How long the code is valid for. Default is 15 minutes.
+
+    Returns:
+        str: HTML content as a string.
+    """
+    htmlcontent = f"""
+    <html>
+    <body style="font-family: Arial, sans-serif; background-color: #f7f7f7; padding: 20px;">
+        <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 8px; padding: 30px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+            <h2 style="color: #333;">{title}</h2>
+            <p style="font-size: 16px; color: #555;">{message}</p>
+            <div style="margin: 20px 0;">
+                <span style="font-size: 24px; font-weight: bold; color: #1a73e8; background-color: #e8f0fe; padding: 10px 20px; border-radius: 6px;">{code}</span>
+            </div>
+            <p style="font-size: 14px; color: #555;">This code will expire in {expiry_minutes} minutes. Requesting a new code will expire the previous one.</p>
+            <p style="font-size: 14px; color: #888;">If you did not request this, you can ignore this email.</p>
+            <p style="font-size: 14px; color: #888;">&copy; {datetime.now().year} {store_name}</p>
+        </div>
+    </body>
+    </html>
+    """
+    return htmlcontent
+
+def checkUserEmailLimit(Username):
+    rediskey = Username
+    emailCount = redis.get(rediskey)
+
+    if emailCount is None:
+        redis.set(rediskey,1,ex=cfg.EMAILWindow)
+        return True
+    
+    emailCount = int(emailCount)
+
+    if emailCount >= cfg.EMAILLimit:
+        return False
+
+    redis.incr(rediskey)
+    return True

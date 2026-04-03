@@ -42,22 +42,6 @@ app.state.limiter = limiter
 async def ratelimited(request : Request,exc: RateLimitExceeded):
     return RedirectResponse(url="/ratelimited")
 
-def checkUserEmailLimit(Username):
-    rediskey = Username
-    emailCount = redis.get(rediskey)
-
-    if emailCount is None:
-        redis.set(rediskey,1,ex=cfg.EMAILWindow)
-        return True
-    
-    emailCount = int(emailCount)
-
-    if emailCount >= cfg.EMAILLimit:
-        return False
-
-    redis.incr(rediskey)
-    return True
-
 
 @app.get("/", response_class=HTMLResponse)
 @limiter.limit("60/minute")
@@ -418,7 +402,7 @@ async def additem(request: Request,data: AddItemSchema, SessionId: str = Cookie(
     description = data.description
     price = data.price
     offsale = data.offsale
-# hopefully 2 different admins dont run this at once
+
     with getPostgresConnection() as conn:
         with conn.cursor() as cursor:
             print(SessionId)
@@ -456,7 +440,7 @@ async def additem(request: Request,data: AddItemSchema, SessionId: str = Cookie(
 
 @app.post("/adminapi/changeItem")
 @limiter.limit("60/minute")
-async def additem(request: Request,data: AddItemSchema, SessionId: str = Cookie(None)):
+async def changeitem(request: Request,data: AddItemSchema, SessionId: str = Cookie(None)):
     itemname = data.itemname
     imageurl = data.imageurl
     description = data.description
@@ -490,7 +474,7 @@ async def additem(request: Request,data: AddItemSchema, SessionId: str = Cookie(
 
 @app.post("/adminapi/lockAccount")
 @limiter.limit("60/minute")
-async def additem(request: Request,data: LockAccountSchema, SessionId: str = Cookie(None)):
+async def lockaccount(request: Request,data: LockAccountSchema, SessionId: str = Cookie(None)):
     username = data.username
     lockAccount = data.lockaccount
 
@@ -656,23 +640,13 @@ async def changeaccountemail(request: Request,data: ChangeAccountEmailSchema, re
 
             if cursor.rowcount == 0:
                 return JSONResponse({"success": False, "message": "Invalid session or account not found."})
-            
-            HtmlContent = f"""
-            <html>
-            <body style="font-family: Arial, sans-serif; background-color: #f7f7f7; padding: 20px;">
-                <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 8px; padding: 30px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-                <h2 style="color: #333;">Email Verification</h2>
-                <p style="font-size: 16px; color: #555;">Use the code below to verify your email address:</p>
-                <div style="margin: 20px 0;">
-                    <span style="font-size: 24px; font-weight: bold; color: #1a73e8; background-color: #e8f0fe; padding: 10px 20px; border-radius: 6px;">{EmailVerificationCode}</span>
-                </div>
-                <p style="font-size: 14px; color: #555;">This verification code will expire in 15 minutes. Requesting a new code will expire the previous one.</p>
-                <p style="font-size: 14px; color: #888;">If you did not request this verification, you can ignore this email.</p>
-                <p style="font-size: 14px; color: #888;">&copy; {datetime.now().year} {cfg.StoreName}</p>
-                </div>
-            </body>
-            </html>
-            """
+
+            HtmlContent = generate_email_html(
+                code=EmailVerificationCode,
+                store_name=cfg.StoreName,
+                title="Email Verification",
+                message="Use the code below to verify your email address:"
+            )
 
             sendEmail("Email Verification <verification@syntaxrevival.store>",newEmail,"Email Verification",HtmlContent)
             conn.commit()   
@@ -740,24 +714,13 @@ async def otp(request: Request, data: OTP, response: Response, SessionId: str = 
             if not result:
                 return JSONResponse({"success": False, "message": "Invalid session or account not found."})
             
-            UserEmail = result[0]
-            
-            HtmlContent = f"""
-            <html>
-            <body style="font-family: Arial, sans-serif; background-color: #f7f7f7; padding: 20px;">
-                <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 8px; padding: 30px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-                <h2 style="color: #333;">One Time Login Code</h2>
-                <p style="font-size: 16px; color: #555;">Use the one time code to log into your account:</p>
-                <div style="margin: 20px 0;">
-                    <span style="font-size: 24px; font-weight: bold; color: #1a73e8; background-color: #e8f0fe; padding: 10px 20px; border-radius: 6px;">{optCode}</span>
-                </div>
-                <p style="font-size: 14px; color: #555;">This verification code will expire in 15 minutes. Requesting a new code will expire the previous one.</p>
-                <p style="font-size: 14px; color: #888;">If you did not request this one time code, you can ignore this email.</p>
-                <p style="font-size: 14px; color: #888;">&copy; {datetime.now().year} {cfg.StoreName}</p>
-                </div>
-            </body>
-            </html>
-            """
+            UserEmail = result[0]       
+            HtmlContent = generate_email_html(
+                code=optCode,
+                store_name=cfg.StoreName,
+                title="One Time Login Code",
+                message="Use the one time code to log into your account:"
+            )
 
             sendEmail("One Time Code <otp@syntaxrevival.store>",UserEmail,"One Time Code",HtmlContent)
             conn.commit()   
