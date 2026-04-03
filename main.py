@@ -97,6 +97,7 @@ async def login(request: Request):
     return templates.TemplateResponse("ratelimited.html", {
         "request": request, 
         "store_name": cfg.StoreName,  
+        "error_code": 429
     })
 
 @app.get("/notfound",response_class=HTMLResponse)
