@@ -120,56 +120,62 @@ async def login(request: Request):
 
 @app.get("/settings",response_class=HTMLResponse)
 @limiter.limit("60/minute")
-async def login(request: Request):
-
+async def settings(request: Request, SessionId: str = Cookie(None)):
     sessionData = None 
-    print(SessionId)
-    if SessionId:
-        keys = [
-            SessionId,
-            SessionId + "e",
-            SessionId + "oe"
-        ]
 
-        sessionData, EmailCached, OrderEmailsCached = redis.mget(*keys)
-        SessionIdList = SessionId.split(":")
-        SessionId = SessionIdList[0]
-        SessionUsername = SessionIdList[1]
+    if not SessionId:
+        return templates.TemplateResponse("settings.html", {
+            "request": request,
+            "store_name": cfg.StoreName,
+            "email": "",
+            "order_emails": "OrderEmailsCached"
+        })
 
-        if EmailCached is None and OrderEmailsCached is None:
-            with getPostgresConnection() as conn:
-                with conn.cursor() as cursor:
-                    cursor.execute("""
-                        SELECT email,orderemails password FROM accounts WHERE username = %s AND sessionid = %s;
-                    """, (SessionUsername,SessionId))
+    keys = [
+        SessionId,
+        SessionId + "e",
+        SessionId + "oe"
+    ]
 
-                    result = cursor.fetchone()
+    sessionData, EmailCached, OrderEmailsCached = redis.mget(*keys)
+    SessionIdList = SessionId.split(":")
+    SessionId = SessionIdList[0]
+    SessionUsername = SessionIdList[1]
 
-                    if not result:
-                        return JSONResponse({"success": False, "message": "This username has no data."})
-                    
-                    email = result[0]
-                    orderEmails = result[1]
+    if EmailCached is None and OrderEmailsCached is None:
+        with getPostgresConnection() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute("""
+                    SELECT email,orderemails password FROM accounts WHERE username = %s AND sessionid = %s;
+                """, (SessionUsername,SessionId))
 
-                    redis.mset({
-                        SessionId + "e": email,
-                        SessionId + "oe": orderEmails,
-                    })
+                result = cursor.fetchone()
 
+                if not result:
+                    return JSONResponse({"success": False, "message": "This username has no data."})
+                
+                email = result[0]
+                orderEmails = result[1]
 
-                return templates.TemplateResponse("settings.html", {
-                    "request": request,
-                    "store_name": cfg.StoreName,
-                    "email": email,
-                    "order_emails": orderEmails
+                redis.mset({
+                    SessionId + "e": email,
+                    SessionId + "oe": orderEmails,
                 })
-        else:
+
+
             return templates.TemplateResponse("settings.html", {
                 "request": request,
                 "store_name": cfg.StoreName,
-                "email": EmailCached,
-                "order_emails": OrderEmailsCached
+                "email": email,
+                "order_emails": orderEmails
             })
+    else:
+        return templates.TemplateResponse("settings.html", {
+            "request": request,
+            "store_name": cfg.StoreName,
+            "email": EmailCached,
+            "order_emails": OrderEmailsCached
+        })
 
 
 @app.get("/signup",response_class=HTMLResponse)
