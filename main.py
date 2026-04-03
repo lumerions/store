@@ -877,10 +877,11 @@ async def cryptobuy(request: Request):
 
                             conn.commit()
                 except Exception as e:
+                    print(f"Database Error: {e}")
                     return JSONResponse({"success": False,"message": "Internal Server Error."})
 
     except Exception as e:
-        print("Error with " + OrderId + "" + e)
+        print(f"Webhook Error with {OrderId}: {e}")
 
     return {"status": "ok"}
 
