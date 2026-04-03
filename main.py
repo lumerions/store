@@ -838,7 +838,7 @@ async def cryptobuy(request: Request):
         signature = request.headers.get("x-nowpayments-sig", "")
 
         expected_signature = hmac.new(
-            NOWPAYMENTS_WEBHOOK_SECRET.encode().strip(),
+            cfg.NowPaymentsIPNSecret.encode().strip(),
             body_bytes,
             hashlib.sha512
         ).hexdigest()
