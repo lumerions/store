@@ -71,6 +71,10 @@ document.getElementById('edit-item-form').onsubmit = async (e) => {
     await adminApi("/adminapi/changeItem", data, "editSubmitBtn")
 }
 
+async function deliverOrder(OrderId) {
+    
+}
+
 async function loadPendingOrders() {
     try {
         const response = await fetch("/adminapi/getPendingOrders")

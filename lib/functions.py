@@ -6,7 +6,7 @@ cfg = Config()
 from redisclient import getRedisInstance
 redis = getRedisInstance()
 
-def trustCheckAdminUser(cursor,SessionId):
+def trustCheckAdminUser(cursor,SessionId,ReturnUser = None):
     SessionIdList = SessionId.split(":")
     SessionId = SessionIdList[0]
     
@@ -27,7 +27,10 @@ def trustCheckAdminUser(cursor,SessionId):
     
     if str(username) != cfg.AdminUsername:
         return JSONResponse({"success": False, "message": "Not authorized to do this action."})
-    
+
+    if ReturnUser:
+        return ({"success": True, "username": username})
+
     return None
 
 def sendEmail(sender,reciever,subject,html):

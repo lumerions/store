@@ -249,7 +249,7 @@ async def pendingorders(request: Request, SessionId: str = Cookie(None)):
 
             for row in rows:
                 PendingOrdersDict["orders"].append({
-                    "id": row["id"],
+                    "id": int(row["id"]),
                     "username": row["username"],
                     "items": row["items"],
                     "total": row["total"]
@@ -434,6 +434,34 @@ async def additem(request: Request,data: AddItemSchema, SessionId: str = Cookie(
 
     return {"success": True}
 
+
+@app.post("/adminapi/deliverOrder")
+@limiter.limit("60/minute")
+async def deliverorder(request: Request,data: MarkOrderAsDelivered, SessionId: str = Cookie(None)):
+
+    with getPostgresConnection() as conn:
+        with conn.cursor() as cursor:
+            trustCheck = trustCheckAdminUser(cursor,SessionId,True)
+
+            if trustCheck:
+                return trustCheck
+            
+            try:
+                cursor.execute("""
+                    INSERT INTO orders (username, items, total)
+                    VALUES (%s, %s, %s)
+                """, (OrderIdUserName,Description,f"${TotalPaid:.2f}" ))
+
+                cursor.execute("""
+                    INSERT INTO purchases (orderid, total, items, username)
+                    VALUES (%s, %s, %s, %s);
+                """, (OrderId, f"${TotalPaid:.2f}", Description, OrderIdUserName))
+
+                conn.commit()
+            except Exception as error:
+                return JSONResponse({"success": False, "message": f"Database error: {str(error)}"})
+
+    return {"success": True}
 
 @app.post("/adminapi/changeItem")
 @limiter.limit("60/minute")
@@ -688,7 +716,7 @@ async def verifyemail(request: Request, data: VerifyAccountEmail, response: Resp
 
 @app.post("/api/OTP")
 @limiter.limit("60/minute")
-async def otp(request: Request, data: OTP, response: Response, SessionId: str = Cookie(None)):
+async def otp(request: Request, data: OTPSchema, response: Response, SessionId: str = Cookie(None)):
     InputUsername = data.username
 
     if not checkUserEmailLimit(InputUsername):

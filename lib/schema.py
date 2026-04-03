@@ -39,6 +39,9 @@ class CryptoInvoiceSchema(BaseModel):
 class VerifyAccountEmail(BaseModel):
     code: str
 
-class OTP(BaseModel):
+class OTPSchema(BaseModel):
+    username: str
+
+class MarkOrderAsDelivered(BaseModel):
     username: str
 
