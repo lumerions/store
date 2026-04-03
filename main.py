@@ -782,6 +782,9 @@ async def createinvoice(request: Request, data: CryptoInvoiceSchema, SessionIdTo
         "Content-Type": "application/json"
     }
 
+    if not SessionIdToken:
+        return JSONResponse({"success": False, "message": "Not logged in."}, status_code=401)
+
     if not data.coin.lower() in cfg.SUPPORTEDCOINS:
         return JSONResponse({"success": False,"message": f"We currently do not support {data.coin}"})
 
@@ -810,15 +813,15 @@ async def createinvoice(request: Request, data: CryptoInvoiceSchema, SessionIdTo
         "pay_currency": data.coin,
         "ipn_callback_url": "https://store-weld-five.vercel.app/api/cryptobuy",
         "order_id": secrets.token_urlsafe(16) + "©" + SessionUsername,
-        "order_description": ", ".join(data.itemnames)"
+        "order_description": ", ".join(data.itemnames)
     }
 
     try:
         response = requests.post("https://api.nowpayments.io/v1/invoice", json=payload, headers=headers)
 
         if response.status_code == 200:
-            data = response.json()
-            return {"invoice_url": data.get('invoice_url')}
+            responsedata = response.json()
+            return {"invoice_url": responsedata.get('invoice_url')}
         else:
             return JSONResponse({"error": "Error with sending post request to nowpayments."}, status_code=400)
     except Exception as e:
@@ -866,7 +869,7 @@ async def cryptobuy(request: Request):
                                 INSERT INTO orders (username, items, total)
                                 VALUES (%s, %s, %s)
                             """, (OrderIdUserName,Description,f"${TotalPaid:.2f}" ))
-                            
+
                             cursor.execute("""
                                 INSERT INTO purchases (orderid, total, items, username)
                                 VALUES (%s, %s, %s, %s);
