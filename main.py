@@ -102,7 +102,7 @@ async def login(request: Request):
 @app.get("/notfound",response_class=HTMLResponse)
 @limiter.limit("60/minute")
 async def login(request: Request):
-    return templates.TemplateResponse("notfound.html", {
+    return templates.TemplateResponse("errors.html", {
         "request": request, 
         "store_name": cfg.StoreName,  
         "error_code": 429  
@@ -111,7 +111,7 @@ async def login(request: Request):
 @app.get("/internalerror",response_class=HTMLResponse)
 @limiter.limit("60/minute")
 async def login(request: Request):
-    return templates.TemplateResponse("internalerror.html", {
+    return templates.TemplateResponse("errors.html", {
         "request": request, 
         "store_name": cfg.StoreName,  
         "error_code": 500  
