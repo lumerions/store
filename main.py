@@ -48,6 +48,7 @@ async def ratelimited(request : Request,exc: RateLimitExceeded):
 async def root(request: Request, SessionId: str = Cookie(None)):
 
     CachedStoreData = redis.get("storedata")
+    SessionData = userIsLoggedIn(SessionId)
 
     if CachedStoreData is None:
         with getPostgresConnection() as conn:
@@ -58,10 +59,9 @@ async def root(request: Request, SessionId: str = Cookie(None)):
         return templates.TemplateResponse("index.html", {
             "request": request, 
             "store_name": cfg.StoreName,  
-            "products": json.loads(CachedStoreData)
+            "products": json.loads(CachedStoreData),
+            "sessiondata": SessionData
         })
-
-    SessionData = userIsLoggedIn(SessionId)
 
     items = []
     onsaleitems = []
