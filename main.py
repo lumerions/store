@@ -3,7 +3,7 @@ from fastapi.responses import HTMLResponse,JSONResponse,RedirectResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from datetime import datetime
-import re,os,sys,bcrypt,secrets,resend,json,requests
+import re,os,sys,bcrypt,secrets,resend,json,requests,hmac
 libPath = os.path.join(os.path.dirname(__file__), 'lib')
 sys.path.append(libPath)
 from slowapi import Limiter
