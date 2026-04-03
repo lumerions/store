@@ -3,6 +3,35 @@ import { logout } from "./functions.js";
 let cart = JSON.parse(localStorage.getItem("store_cart")) || [];
 const loginBtn = document.querySelector(".login-btn"); 
 const loginBtnText = document.querySelector("button.login-btn"); 
+const SUPPORTED_COINS = {
+    "btc": "Bitcoin", "eth": "Ethereum", "sol": "Solana",
+    "usdc": "USD Coin", "usdt": "Tether", "pyusd": "PayPal USD",
+    "busd": "Binance USD", "ltc": "Litecoin", "xrp": "Ripple",
+    "doge": "Dogecoin", "trx": "Tron", "bch": "Bitcoin Cash",
+    "xlm": "Stellar", "matic": "Polygon", "ada": "Cardano",
+    "shib": "Shiba Inu", "avax": "Avalanche", "link": "Chainlink",
+    "dot": "Polkadot", "near": "Near Protocol", "atom": "Cosmos",
+    "algo": "Algorand", "ftm": "Fantom", "hbar": "Hedera",
+    "vet": "VeChain", "pepe": "Pepe", "uni": "Uniswap",
+    "kas": "Kaspa", "xmr": "Monero", "zec": "Zcash"
+};
+
+function initializeCoinSelect() {
+    const select = document.getElementById("coin-select");
+    if (!select) return;
+
+    select.innerHTML = "";
+
+    Object.entries(SUPPORTED_COINS).forEach(([symbol, name]) => {
+        const option = document.createElement("option");
+        option.value = symbol;
+        option.textContent = `${name} (${symbol.toUpperCase()})`;
+        
+        if (symbol === "sol") option.selected = true;
+
+        select.appendChild(option);
+    });
+}
 
 function toggleCart() {
     const panel = document.getElementById("cart-panel");
@@ -129,6 +158,8 @@ function backToMethods() {
 
 async function createInvoice() {
     const itemNames = cart.map(item => item.name);
+    const coinDropdown = document.getElementById("coin-select");
+    const selectedCoin = coinDropdown.value;
 
     if (cart.length === 0) {
         showNotification("Add some items first!")
@@ -195,6 +226,7 @@ async function CheckIfUserLoggedIn() {
 
 CheckIfUserLoggedIn()
 logout()
+initializeCoinSelect()
 
 window.toggleCart = toggleCart
 window.addToCart = addToCart
