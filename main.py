@@ -793,7 +793,7 @@ async def createinvoice(request: Request, data: CryptoInvoiceSchema):
                 for row in rows
             }
 
-    if itemname in data.itemnames:
+    for itemname in data.itemnames:
         itemnameStriped = itemname.strip()
 
         if itemnameStriped in PriceLookup:
