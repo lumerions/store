@@ -860,7 +860,7 @@ async def cryptobuy(request: Request):
                 OrderIdList = OrderId.split("©")
                 OrderIdUserName = OrderIdList[0]
                 ItemsList = [item.strip() for item in Description.split(",")]
-                TotalPaid = float(TotalPaid)
+                TotalPaid = float(RawAmount)
 
                 try:
                     with getPostgresConnection() as conn:
