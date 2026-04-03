@@ -94,7 +94,7 @@ async def root(request: Request, SessionId: str = Cookie(None)):
 @app.get("/ratelimited",response_class=HTMLResponse)
 @limiter.limit("60/minute")
 async def login(request: Request):
-    return templates.TemplateResponse("ratelimited.html", {
+    return templates.TemplateResponse("errors.html", {
         "request": request, 
         "store_name": cfg.StoreName,  
         "error_code": 429
@@ -121,10 +121,56 @@ async def login(request: Request):
 @app.get("/settings",response_class=HTMLResponse)
 @limiter.limit("60/minute")
 async def login(request: Request):
-    return templates.TemplateResponse("settings.html", {
-        "request": request, 
-        "store_name": cfg.StoreName,  
-    })
+
+    sessionData = None 
+    print(SessionId)
+    if SessionId:
+        keys = [
+            SessionId,
+            SessionId + "e",
+            SessionId + "oe"
+        ]
+
+        sessionData, EmailCached, OrderEmailsCached = redis.mget(*keys)
+        SessionIdList = SessionId.split(":")
+        SessionId = SessionIdList[0]
+        SessionUsername = SessionIdList[1]
+
+        if EmailCached is None and OrderEmailsCached is None:
+            with getPostgresConnection() as conn:
+                with conn.cursor() as cursor:
+                    cursor.execute("""
+                        SELECT email,orderemails password FROM accounts WHERE username = %s AND sessionid = %s;
+                    """, (SessionUsername,SessionId))
+
+                    result = cursor.fetchone()
+
+                    if not result:
+                        return JSONResponse({"success": False, "message": "This username has no data."})
+                    
+                    email = result[0]
+                    orderEmails = result[1]
+
+                    redis.mset({
+                        SessionId + "e": email,
+                        SessionId + "oe": orderEmails,
+                    })
+
+
+                return templates.TemplateResponse("settings.html", {
+                    "request": request,
+                    "store_name": cfg.StoreName,
+                    "email": email,
+                    "order_emails": orderEmails
+                })
+        else:
+            return templates.TemplateResponse("settings.html", {
+                "request": request,
+                "store_name": cfg.StoreName,
+                "email": EmailCached,
+                "order_emails": OrderEmailsCached
+            })
+
 
 @app.get("/signup",response_class=HTMLResponse)
 @limiter.limit("60/minute")
@@ -220,48 +266,6 @@ async def pendingorders(request: Request, SessionId: str = Cookie(None)):
                 "orders": rows
             }
         
-@app.get("/api/getSettingsData")
-@limiter.limit("60/minute")
-async def getsettingsdata(request: Request, SessionId: str = Cookie(None)):
-    sessionData = None 
-    print(SessionId)
-    if SessionId:
-        keys = [
-            SessionId,
-            SessionId + "e",
-            SessionId + "oe"
-        ]
-
-        sessionData, EmailCached, OrderEmailsCached = redis.mget(*keys)
-        SessionIdList = SessionId.split(":")
-        SessionId = SessionIdList[0]
-        SessionUsername = SessionIdList[1]
-
-        if EmailCached is None and OrderEmailsCached is None:
-            with getPostgresConnection() as conn:
-                with conn.cursor() as cursor:
-                    cursor.execute("""
-                        SELECT email,orderemails password FROM accounts WHERE username = %s AND sessionid = %s;
-                    """, (SessionUsername,SessionId))
-
-                    result = cursor.fetchone()
-
-                    if not result:
-                        return JSONResponse({"success": False, "message": "This username has no data."})
-                    
-                    email = result[0]
-                    orderEmails = result[1]
-
-                    redis.mset({
-                        SessionId + "e": email,
-                        SessionId + "oe": orderEmails,
-                    })
-
-                return JSONResponse({"loggedin": sessionData,"currentemailaddress":email,"orderEmails":orderEmails})
-        else:
-            return JSONResponse({"loggedin": sessionData,"currentemailaddress":EmailCached,"orderEmails":OrderEmailsCached})
-
-    return JSONResponse({"loggedin": sessionData})
 
 @app.get("/store/product/{itemid}")
 async def getproduct(request: Request,itemid : int):

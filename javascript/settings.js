@@ -124,25 +124,3 @@ verifyCodeBtn.addEventListener("click", async () => {
 closeModalBtn.addEventListener("click", async () => {
     emailModal.style.display = "none"
 })
-
-async function LoadSettingsData() {
-    try {
-        const response = await fetch("/api/getSettingsData")
-        const data = await response.json()
-
-        console.log(data)
-
-        if (data.currentemailaddress !== undefined) {
-            document.getElementById("settingsEmail").value = data.currentemailaddress.trim();
-        }
-
-        if (data.orderEmails !== undefined) {
-            document.getElementById("notifyToggle").checked = data.orderEmails;
-        }
-
-    } catch(error) {
-        console.log(error)
-    }
-}
-
-LoadSettingsData()
