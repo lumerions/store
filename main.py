@@ -105,6 +105,7 @@ async def login(request: Request):
     return templates.TemplateResponse("notfound.html", {
         "request": request, 
         "store_name": cfg.StoreName,  
+        "error_code": 429  
     })
 
 @app.get("/internalerror",response_class=HTMLResponse)
@@ -113,6 +114,7 @@ async def login(request: Request):
     return templates.TemplateResponse("internalerror.html", {
         "request": request, 
         "store_name": cfg.StoreName,  
+        "error_code": 500  
     })
 
 @app.get("/settings",response_class=HTMLResponse)
@@ -806,7 +808,8 @@ async def createinvoice(request: Request, data: CryptoInvoiceSchema):
 @app.get("/{path:path}", response_class=HTMLResponse)
 @limiter.limit("60/minute")
 async def catchall(request: Request, path: str):
-    return templates.TemplateResponse("notfound.html", {
+    return templates.TemplateResponse("error.html", { 
         "request": request, 
-        "store_name": cfg.StoreName,  
+        "store_name": cfg.StoreName,
+        "error_code": 404  
     })

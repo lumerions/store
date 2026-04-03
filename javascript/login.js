@@ -1,4 +1,3 @@
-
 import { showNotification } from "./functions.js";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -8,20 +7,22 @@ document.addEventListener("DOMContentLoaded", () => {
     const verifyCodeBtn = document.getElementById("verifyCodeBtn");
     const verificationCodeInput = document.getElementById("verificationCode");
     const closeModalBtn = document.getElementById("closeModalBtn");
-    const delay = (ms) => new Promise(res => setTimeout(res,ms))
+    const delay = (ms) => new Promise(res => setTimeout(res, ms));
     let username = null;
+
     if (!loginForm) return;
 
     loginForm.addEventListener("submit", async (e) => {
         e.preventDefault();
-
         const submitBtn = document.getElementById("submit-btn");
         const errorBox = document.getElementById("error-box");
         const errorMessage = document.getElementById("error-message");
         const password = document.getElementById("password").value;
-        username = document.getElementById("username").value.trim()
+        username = document.getElementById("username").value.trim();
 
-        errorBox.style.display = "none"
+        if (!submitBtn || !errorBox || !errorMessage) return; 
+
+        errorBox.style.display = "none";
         submitBtn.disabled = true;
         submitBtn.innerText = "Logging in...";
 
@@ -35,96 +36,86 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
             const response = await fetch("/login", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    username: username,
-                    password: password,
-                })
-            })
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, password })
+            });
 
-            const responseJson = await response.json()
-
-            console.log(responseJson)
+            const responseJson = await response.json();
+            console.log(responseJson);
 
             if (!responseJson.success) {
-                const message = responseJson.message || responseJson.detail[0].msg
-                showError(message)
-                return
+                const message = responseJson.message || responseJson.detail?.[0]?.msg;
+                showError(message);
+                return;
             }
-            
-            window.location.replace("/")
-        } catch(error) {
-            console.log(error)
+
+            window.location.replace("/");
+        } catch (error) {
+            console.log(error);
             if (error.message) {
-                showError(error.message)
+                showError(error.message);
             } else {
-                showError(String(error))
+                showError(String(error));
             }
         }
-    })
+    });
 
-    OTPBtn.addEventListener("click", async () => {
-        emailModal.style.display = "flex"
-        username = document.getElementById("username").value.trim()
+    if (OTPBtn && emailModal) {
+        OTPBtn.addEventListener("click", async () => {
+            emailModal.style.display = "flex";
+            username = document.getElementById("username")?.value.trim() || "";
 
-        try {
-            const response = await fetch("/api/OTP", {
-                method: "POST",
-                headers: {
-                    "Content-Type":"application/json",
-                },
-                body: JSON.stringify({
-                    username: username,
-                })
-            })
+            try {
+                const response = await fetch("/api/OTP", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username })
+                });
 
-            const data = await response.json()
-    
-            if (data.success) {
-                showNotification("Sent verification email to the email linked to your account.", "success")
-            } else {
-                showNotification(data.message)
+                const data = await response.json();
+                if (data.success) {
+                    showNotification("Sent verification email to the email linked to your account.", "success");
+                } else {
+                    showNotification(data.message);
+                }
+            } catch (error) {
+                window.location.href = "/internalerror";
             }
-        } catch(error) {
-            window.location.href = "/internalerror"
-        }
-    })
+        });
+    }
 
-    verifyCodeBtn.addEventListener("click",async () => {
-        const code = verificationCodeInput.value
+    if (verifyCodeBtn && verificationCodeInput && emailModal) {
+        verifyCodeBtn.addEventListener("click", async () => {
+            const code = verificationCodeInput.value;
 
-        try {
-            const response = await fetch("/api/VerifyOTP", {
-                method: "POST",
-                headers: {
-                    "Content-Type":"application/json",
-                },
-                body: JSON.stringify({
-                    code: code,
-                })
-            })
+            try {
+                const response = await fetch("/api/VerifyOTP", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ code })
+                });
 
-            const data = await response.json()
-    
-            if (data.success) {
-                await delay(1000)
-                verificationCodeInput.value = ""
-                emailModal.style.display = "none"
-                showNotification("Successfully logged in via OTP.", "success")
-                await delay(2500)
-                window.location.href = "/"
-            } else {
-                emailModal.style.display = "none"
-                showNotification(data.message)
+                const data = await response.json();
+                if (data.success) {
+                    await delay(1000);
+                    verificationCodeInput.value = "";
+                    emailModal.style.display = "none";
+                    showNotification("Successfully logged in via OTP.", "success");
+                    await delay(2500);
+                    window.location.href = "/";
+                } else {
+                    emailModal.style.display = "none";
+                    showNotification(data.message);
+                }
+            } catch (error) {
+                window.location.href = "/internalerror";
             }
-        } catch(error) {
-            window.location.href = "/internalerror"
-        }
-    })
+        });
+    }
 
-    closeModalBtn.addEventListener("click", async () => {
-        emailModal.style.display = "none"
-    })
-})
+    if (closeModalBtn && emailModal) {
+        closeModalBtn.addEventListener("click", () => {
+            emailModal.style.display = "none";
+        });
+    }
+});
