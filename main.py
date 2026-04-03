@@ -776,6 +776,7 @@ async def verifyotp(request: Request, data: VerifyAccountEmail, response: Respon
 @limiter.limit("60/minute")
 async def createinvoice(request: Request, data: CryptoInvoiceSchema):
     TotalPrice = 0
+    PriceLookup = None
     headers = {
         "x-api-key": cfg.NowPaymentsAPISecret,
         "Content-Type": "application/json"
@@ -788,13 +789,18 @@ async def createinvoice(request: Request, data: CryptoInvoiceSchema):
         with conn.cursor(row_factory=dict_row) as cursor:
             cursor.execute("""SELECT * from storeitems""")
             rows = cursor.fetchall()
-            for row in rows:
-                if row["itemname"].strip() in data.itemnames:
-                    PriceCleaned = int(row["price"].replace("$",""))
-                    TotalPrice += PriceCleaned
-                else:
-                    return JSONResponse({"success": False,"message": "One of the cart items doesn't exist."})
-                
+            PriceLookup = {row["itemname"].strip(): int(row["price"].replace("$",""))
+                for row in rows
+            }
+
+    if itemname in data.itemnames:
+        itemnameStriped = itemname.strip()
+
+        if itemnameStriped in PriceLookup:
+            TotalPrice += int(PriceLookup[itemnameStriped])
+        else:
+            return JSONResponse({"success": False,"message": "One of the cart items doesn't exist."})        
+
     payload = {
         "price_amount": TotalPrice, 
         "price_currency": "usd",
