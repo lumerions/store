@@ -805,7 +805,7 @@ async def createinvoice(request: Request, data: CryptoInvoiceSchema):
         "price_amount": TotalPrice, 
         "price_currency": "usd",
         "pay_currency": data.coin,
-        "ipn_callback_url": "/",
+        "ipn_callback_url": "https://store-weld-five.vercel.app/api/cryptobuy",
         "order_id": secrets.token_urlsafe(16),
         "order_description": f"Items: {', '.join(data.itemnames)}"
     }
