@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
             errorMessage.innerText = text;
             errorBox.style.display = "block";
             submitBtn.disabled = false;
-            submitBtn.innerText = "Create account";
+            submitBtn.innerText = "Login";
         }
 
         try {

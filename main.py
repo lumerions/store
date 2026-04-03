@@ -245,34 +245,18 @@ async def pendingorders(request: Request, SessionId: str = Cookie(None)):
             """)
 
             rows = cursor.fetchall()
+            PendingOrdersDict = {"success": True,"orders":[]}
 
-            rows = {
-                "success": True,
-                "orders": [
-                    {
-                    "id": 101,
-                    "username": "Builderman_99",
-                    "items": "1x Dominus Empyreus, 2x Dr. Elephant",
-                    "total": "$2000.00"
-                    },
-                    {
-                    "id": 102,
-                    "username": "Player1",
-                    "items": "1x Classic Hoodie",
-                    "total": "$50.00"
-                    }
-                ]
-            }
+            for row in rows:
+                PendingOrdersDict["orders"].append({
+                    "id": row["id"],
+                    "username": row["username"],
+                    "items": row["items"],
+                    "total": row["total"]
+                })
 
-            if rows:
-                return rows
-
-            return {
-                "success": True, 
-                "orders": rows
-            }
+            return PendingOrdersDict
         
-
 @app.get("/store/product/{itemid}")
 async def getproduct(request: Request,itemid : int):
     with getPostgresConnection() as conn:
