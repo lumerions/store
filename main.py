@@ -887,7 +887,7 @@ async def cryptobuy(request: Request):
 @app.get("/{path:path}", response_class=HTMLResponse)
 @limiter.limit("60/minute")
 async def catchall(request: Request, path: str):
-    return templates.TemplateResponse("error.html", { 
+    return templates.TemplateResponse("errors.html", { 
         "request": request, 
         "store_name": cfg.StoreName,
         "error_code": 404  
