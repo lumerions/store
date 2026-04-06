@@ -42,7 +42,6 @@ app.state.limiter = limiter
 async def ratelimited(request : Request,exc: RateLimitExceeded):
     return RedirectResponse(url="/ratelimited")
 
-
 @app.get("/", response_class=HTMLResponse)
 @limiter.limit("60/minute")
 async def root(request: Request, SessionId: str = Cookie(None)):
@@ -116,6 +115,64 @@ async def internalerror(request: Request):
         "request": request, 
         "store_name": cfg.StoreName,  
         "error_code": 500  
+    })
+
+
+@app.get("/purchases",response_class=HTMLResponse)
+@limiter.limit("60/minute")
+async def purchases(request: Request):
+    if not SessionId:
+        return templates.TemplateResponse("purchases.html", {
+            "request": request, 
+            "store_name": cfg.StoreName,  
+            "purchases": []
+        })
+
+    SessionIdList = SessionId.split(":")
+    SessionId = SessionIdList[0]
+    SessionUsername = SessionIdList[1]
+    CachedPurchases = redis.get(SessionId + "p")
+
+    if CachedPurchases:
+        return templates.TemplateResponse("purchases.html", {
+            "request": request, 
+            "store_name": cfg.StoreName,  
+            "purchases": json.loads(CachedPurchases)
+        })
+
+    with getPostgresConnection() as conn:
+        with conn.cursor(row_factory=dict_row) as cursor:
+            cursor.execute("""
+                SELECT * 
+                FROM purchases 
+                WHERE username = %s AND sessionid = %s;
+            """, (SessionUsername, SessionId))
+
+            rows = cursor.fetchall()
+
+            if not rows:
+                return JSONResponse({"success": False, "message": "This user has no data."})
+
+            purchases = []
+
+            for row in rows:
+                Delivered = row["delivered"]
+                purchases.append({
+                    "id": row["orderid"],
+                    "name": row["items"],
+                    "price": row["total"],
+                    "image": "",
+                    "date": row["created_at"],   
+                    "status": "Completed" if delivered else "In Progress",
+                    "product_id": row["orderid"]
+                })
+
+            redis.set(SessionId + "p", json.dumps(rows), ex=3600)
+
+    return templates.TemplateResponse("purchases.html", {
+        "request": request, 
+        "store_name": cfg.StoreName,  
+        "purchases": rows
     })
 
 @app.get("/settings",response_class=HTMLResponse)

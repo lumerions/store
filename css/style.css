@@ -498,3 +498,32 @@ hr {
     filter: drop-shadow(0 0 6px var(--accent));
     transform: scale(1.1);
 }
+
+.order-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 0.85rem;
+}
+
+.order-date {
+    color: #888;
+}
+
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+}
+
+.status-badge.delivered { background: #d4edda; color: #155724; }
+.status-badge.processing { background: #fff3cd; color: #856404; }
+.status-badge.shipped { background: #cce5ff; color: #004085; }
+
+.icon-btn.active {
+    color: var(--accent-color, #007bff); 
+    border-bottom: 2px solid currentColor;
+}
