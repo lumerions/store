@@ -163,7 +163,7 @@ async def purchases(request: Request):
                     "price": row["total"],
                     "image": "",
                     "date": row["created_at"],   
-                    "status": "Completed" if delivered else "In Progress",
+                    "status": "Completed" if Delivered else "In Progress",
                     "product_id": row["orderid"]
                 })
 
