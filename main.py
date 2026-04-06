@@ -93,7 +93,7 @@ async def root(request: Request, SessionId: str = Cookie(None)):
 
 @app.get("/ratelimited",response_class=HTMLResponse)
 @limiter.limit("60/minute")
-async def login(request: Request):
+async def ratelimited(request: Request):
     return templates.TemplateResponse("errors.html", {
         "request": request, 
         "store_name": cfg.StoreName,  
@@ -102,7 +102,7 @@ async def login(request: Request):
 
 @app.get("/notfound",response_class=HTMLResponse)
 @limiter.limit("60/minute")
-async def login(request: Request):
+async def notfound(request: Request):
     return templates.TemplateResponse("errors.html", {
         "request": request, 
         "store_name": cfg.StoreName,  
@@ -111,7 +111,7 @@ async def login(request: Request):
 
 @app.get("/internalerror",response_class=HTMLResponse)
 @limiter.limit("60/minute")
-async def login(request: Request):
+async def internalerror(request: Request):
     return templates.TemplateResponse("errors.html", {
         "request": request, 
         "store_name": cfg.StoreName,  
@@ -146,8 +146,10 @@ async def settings(request: Request, SessionId: str = Cookie(None)):
         with getPostgresConnection() as conn:
             with conn.cursor() as cursor:
                 cursor.execute("""
-                    SELECT email,orderemails password FROM accounts WHERE username = %s AND sessionid = %s;
-                """, (SessionUsername,SessionId))
+                    SELECT email, orderemails, password 
+                    FROM accounts 
+                    WHERE username = %s AND sessionid = %s;
+                """, (SessionUsername, SessionId))
 
                 result = cursor.fetchone()
 
@@ -194,7 +196,7 @@ async def login(request: Request):
         "store_name": cfg.StoreName,  
     })
 
-@app.get("/admin",response_class=JSONResponse)
+@app.get("/admin",response_class=HTMLResponse)
 @limiter.limit("60/minute")
 async def adminload(request: Request,SessionId: str = Cookie(None)):
 
@@ -467,7 +469,7 @@ async def deliverorder(request: Request,data: MarkOrderAsDelivered, SessionId: s
 
                 if UpdatedRows == 0:
                     return JSONResponse({"success": False, "message": "No order found."})
-                if UpdatedRows == 0:
+                if deletedrows == 0:
                     return JSONResponse({"success": False, "message": "No purchases found to update."})
 
             except Exception as error:
@@ -544,7 +546,7 @@ async def lockaccount(request: Request,data: LockAccountSchema, SessionId: str =
             locked = result[0]
 
             if locked == lockAccount:
-                return JSONResponse({"success": False, "message": "This account"s status is the same value to what you are trying to set it to."})
+                return JSONResponse({"success": False, "message": "This account's status is the same value to what you are trying to set it to."})
 
             cursor.execute("""
                 UPDATE accounts 
@@ -598,7 +600,7 @@ async def changepw(request: Request,data: ChangePasswordSchema, response: Respon
                     return JSONResponse({"success": False, "message": "Incorrect password."})
                 
                 if bcrypt.checkpw(newpassword.encode("utf-8"),passwordHash.encode("utf-8")):
-                    return JSONResponse({"success": False, "message": "The new password, can"t be the same as the old one."})
+                    return JSONResponse({"success": False, "message": "The new password can't be the same as the old one."})
 
                 newPasswordHash = bcrypt.hashpw(newpassword.encode("utf-8"),bcrypt.gensalt(12)).decode("utf-8")
                 sessionId = secrets.token_urlsafe(32)
@@ -625,6 +627,9 @@ async def changepw(request: Request,data: ChangePasswordSchema, response: Respon
 @limiter.limit("60/minute")
 async def changeorderemail(request: Request,data: EnableOrderEmailsSchema, response: Response, SessionId: str = Cookie(None)):
     enable = data.enable
+
+    if not SessionId:
+        return JSONResponse({"success": False,"message": "This session is invalid."})
 
     if not isinstance(enable, bool):
         return JSONResponse({"success": False, "message": "This change email order query is not valid."})
@@ -826,7 +831,7 @@ async def createinvoice(request: Request, data: CryptoInvoiceSchema, SessionIdTo
         if itemnameStriped in PriceLookup:
             TotalPrice += int(PriceLookup[itemnameStriped])
         else:
-            return JSONResponse({"success": False,"message": "One of the cart items doesn"t exist."})    
+            return JSONResponse({"success": False,"message": "One of the cart items doesn't exist."})    
 
     SessionIdList = SessionIdToken.split(":")
     SessionUsername = SessionIdList[1]    
