@@ -4,7 +4,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from datetime import datetime
 import re,os,sys,bcrypt,secrets,resend,json,requests,hmac,hashlib
-libPath = os.path.join(os.path.dirname(__file__), 'lib')
+libPath = os.path.join(os.path.dirname(__file__), "lib")
 sys.path.append(libPath)
 from slowapi import Limiter
 from slowapi.errors import RateLimitExceeded
@@ -68,12 +68,12 @@ async def root(request: Request, SessionId: str = Cookie(None)):
 
     for row in rows:
         itemdata = ({
-            "id": row['itemid'],
-            "name": row['itemname'],    
-            "price": row['price'],       
-            "image": row['imageurl'],    
-            "description": row['description'], 
-            "offsale": row['offsale'],
+            "id": row["itemid"],
+            "name": row["itemname"],    
+            "price": row["price"],       
+            "image": row["imageurl"],    
+            "description": row["description"], 
+            "offsale": row["offsale"],
             "desc": ""                   # for now temporary
         })
 
@@ -438,6 +438,7 @@ async def additem(request: Request,data: AddItemSchema, SessionId: str = Cookie(
 @app.post("/adminapi/deliverOrder")
 @limiter.limit("60/minute")
 async def deliverorder(request: Request,data: MarkOrderAsDelivered, SessionId: str = Cookie(None)):
+    OrderId = data.orderid
 
     with getPostgresConnection() as conn:
         with conn.cursor() as cursor:
@@ -447,17 +448,28 @@ async def deliverorder(request: Request,data: MarkOrderAsDelivered, SessionId: s
                 return trustCheck
             
             try:
-                cursor.execute("""
-                    INSERT INTO orders (username, items, total)
-                    VALUES (%s, %s, %s)
-                """, (OrderIdUserName,Description,f"${TotalPaid:.2f}" ))
 
                 cursor.execute("""
-                    INSERT INTO purchases (orderid, total, items, username)
-                    VALUES (%s, %s, %s, %s);
-                """, (OrderId, f"${TotalPaid:.2f}", Description, OrderIdUserName))
+                    DELETE FROM orders 
+                    WHERE id = %s
+                """, (OrderId,))
 
+                deletedrows = cursor.rowcount  
+
+                cursor.execute("""
+                    UPDATE purchases 
+                    SET delivered = %s
+                    WHERE id = %s
+                """, (True,OrderId))
+
+                UpdatedRows = cursor.rowcount
                 conn.commit()
+
+                if UpdatedRows == 0:
+                    return JSONResponse({"success": False, "message": "No order found."})
+                if UpdatedRows == 0:
+                    return JSONResponse({"success": False, "message": "No purchases found to update."})
+
             except Exception as error:
                 return JSONResponse({"success": False, "message": f"Database error: {str(error)}"})
 
@@ -532,7 +544,7 @@ async def lockaccount(request: Request,data: LockAccountSchema, SessionId: str =
             locked = result[0]
 
             if locked == lockAccount:
-                return JSONResponse({"success": False, "message": "This account's status is the same value to what you are trying to set it to."})
+                return JSONResponse({"success": False, "message": "This account"s status is the same value to what you are trying to set it to."})
 
             cursor.execute("""
                 UPDATE accounts 
@@ -586,7 +598,7 @@ async def changepw(request: Request,data: ChangePasswordSchema, response: Respon
                     return JSONResponse({"success": False, "message": "Incorrect password."})
                 
                 if bcrypt.checkpw(newpassword.encode("utf-8"),passwordHash.encode("utf-8")):
-                    return JSONResponse({"success": False, "message": "The new password, can't be the same as the old one."})
+                    return JSONResponse({"success": False, "message": "The new password, can"t be the same as the old one."})
 
                 newPasswordHash = bcrypt.hashpw(newpassword.encode("utf-8"),bcrypt.gensalt(12)).decode("utf-8")
                 sessionId = secrets.token_urlsafe(32)
@@ -703,7 +715,7 @@ async def verifyemail(request: Request, data: VerifyAccountEmail, response: Resp
                 AND sessionid = %s
                 AND emailcode = %s
                 AND pendingnewemail IS NOT NULL
-                AND emailcodetime > NOW() - INTERVAL '15 minutes'
+                AND emailcodetime > NOW() - INTERVAL "15 minutes"
             """, (SessionUsername, SessionId, VerificationCode))
 
 
@@ -766,7 +778,7 @@ async def verifyotp(request: Request, data: VerifyAccountEmail, response: Respon
                     SET otpcode = NULL,
                         otpcodetime = NULL
                     WHERE otpcode = %s
-                    AND otpcodetime > NOW() - INTERVAL '15 minutes'
+                    AND otpcodetime > NOW() - INTERVAL "15 minutes"
                     RETURNING username, sessionid;
                 """, (OPTCodeInput,)) 
 
@@ -814,7 +826,7 @@ async def createinvoice(request: Request, data: CryptoInvoiceSchema, SessionIdTo
         if itemnameStriped in PriceLookup:
             TotalPrice += int(PriceLookup[itemnameStriped])
         else:
-            return JSONResponse({"success": False,"message": "One of the cart items doesn't exist."})    
+            return JSONResponse({"success": False,"message": "One of the cart items doesn"t exist."})    
 
     SessionIdList = SessionIdToken.split(":")
     SessionUsername = SessionIdList[1]    
@@ -833,7 +845,7 @@ async def createinvoice(request: Request, data: CryptoInvoiceSchema, SessionIdTo
 
         if response.status_code == 200:
             responsedata = response.json()
-            return {"invoice_url": responsedata.get('invoice_url')}
+            return {"invoice_url": responsedata.get("invoice_url")}
         else:
             return JSONResponse({"error": "Error with sending post request to nowpayments."}, status_code=400)
     except Exception as e:
@@ -896,6 +908,8 @@ async def cryptobuy(request: Request):
         print(f"Webhook Error with {OrderId}: {e}")
 
     return {"status": "ok"}
+
+
 
 @app.get("/{path:path}", response_class=HTMLResponse)
 @limiter.limit("60/minute")

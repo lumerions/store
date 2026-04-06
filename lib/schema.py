@@ -43,5 +43,5 @@ class OTPSchema(BaseModel):
     username: str
 
 class MarkOrderAsDelivered(BaseModel):
-    username: str
+    orderid: int
 

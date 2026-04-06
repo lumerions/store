@@ -21,11 +21,11 @@ export function showNotification(text, type = "error") {
         
         setTimeout(() => toast.remove(), 400);
     }, 3000);
-}
+};
 
 export function logout() {
-    const logoutBtn = document.getElementById("logout-btn") || document.querySelector(".login-btn")
-    if (!logoutBtn) return
+    const logoutBtn = document.getElementById("logout-btn") || document.querySelector(".login-btn");
+    if (!logoutBtn) return;
 
     logoutBtn.addEventListener("click", async function(event) {
         event.preventDefault(); 
@@ -37,13 +37,13 @@ export function logout() {
                         "Content-Type": "application/json"
                     },
                     credentials: "include"
-                })
-                window.location.reload()
+                });
+                window.location.reload();
             } catch {
-                window.location.href = "/internalerror"
+                window.location.href = "/internalerror";
             }
         } else {
-            window.location.href = "/login"
+            window.location.href = "/login";
         }
-    })
-}
+    });
+};

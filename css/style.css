@@ -476,3 +476,25 @@ hr {
     .product-view { grid-template-columns: 1fr; }
     .info-label { width: 100px; }
 }
+
+.icon-btn {
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+    color: var(--text);
+    transition: all 0.2s ease;
+}
+
+.icon-btn svg {
+    transition: all 0.2s ease;
+}
+
+.icon-btn:hover {
+    transform: translateY(-1px);
+}
+
+.icon-btn:hover svg {
+    color: var(--accent);
+    filter: drop-shadow(0 0 6px var(--accent));
+    transform: scale(1.1);
+}

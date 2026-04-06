@@ -1,9 +1,11 @@
 import { showNotification } from "./functions.js";
 import { logout } from "./functions.js";
+
 let cart = JSON.parse(localStorage.getItem("store_cart")) || [];
 const loginBtn = document.querySelector(".login-btn"); 
 const loginBtnText = document.querySelector("button.login-btn"); 
-const SUPPORTED_COINS = {
+
+const SUPPORTEDCOINS = {
     "btc": "Bitcoin", "eth": "Ethereum", "sol": "Solana",
     "usdc": "USD Coin", "usdt": "Tether", "pyusd": "PayPal USD",
     "busd": "Binance USD", "ltc": "Litecoin", "xrp": "Ripple",
@@ -22,7 +24,7 @@ function initializeCoinSelect() {
 
     select.innerHTML = "";
 
-    Object.entries(SUPPORTED_COINS).forEach(([symbol, name]) => {
+    Object.entries(SUPPORTEDCOINS).forEach(([symbol, name]) => {
         const option = document.createElement("option");
         option.value = symbol;
         option.textContent = `${name} (${symbol.toUpperCase()})`;
@@ -31,7 +33,7 @@ function initializeCoinSelect() {
 
         select.appendChild(option);
     });
-}
+};
 
 function toggleCart() {
     const panel = document.getElementById("cart-panel");
@@ -41,9 +43,9 @@ function toggleCart() {
     overlay.style.display = panel.classList.contains("open") ? "block" : "none";
     
     renderCart();
-}
+};
 
-function addToCart(name, price,image) {
+function addToCart(name, price, image) {
     const item = {
         id: Date.now(), 
         name: name,
@@ -54,23 +56,23 @@ function addToCart(name, price,image) {
     cart.push(item);
     showNotification(`Success! Added ${name} to cart.`, "success");
     saveAndRefresh();
-}
+};
 
 function removeItem(id) {
     cart = cart.filter(item => item.id !== id);
     saveAndRefresh();
-}
+};
 
 function saveAndRefresh() {
     localStorage.setItem("store_cart", JSON.stringify(cart));
     updateCountBadge();
     renderCart();
-}
+};
 
 function updateCountBadge() {
     const badge = document.getElementById("cart-count");
-    if(badge) badge.innerText = cart.length;
-}
+    if (badge) badge.innerText = cart.length;
+};
 
 function renderCart() {
     const container = document.getElementById("cart-items");
@@ -115,11 +117,11 @@ function renderCart() {
     }
     
     totalEl.innerText = `$${total.toFixed(2)}`;
-}
+};
 
 function openCheckout() {
     if (cart.length === 0) {
-        showNotification("Add some items first!")
+        showNotification("Add some items first!");
         return;
     }
 
@@ -129,32 +131,32 @@ function openCheckout() {
     document.getElementById("modal-total-display").innerText = `$${total.toFixed(2)}`;
     document.getElementById("checkout-modal").style.display = "block";
     document.getElementById("modal-overlay").style.display = "block";
-}
+};
 
 function closeCheckout() {
     document.getElementById("checkout-modal").style.display = "none";
     document.getElementById("modal-overlay").style.display = "none";
-}
+};
 
 function processPayment(method) {    
     saveAndRefresh();
     closeCheckout();
-    if (method == "Crypto") {
-        createInvoice()
+    if (method === "Crypto") {
+        createInvoice();
     }
-}
+};
 
 function showCryptoOptions() {
     document.getElementById("method-selection").style.display = "none";
     document.getElementById("modal-title").innerText = "Select Crypto";
     document.getElementById("crypto-selection").style.display = "flex";
-}
+};
 
 function backToMethods() {
     document.getElementById("method-selection").style.display = "block";
     document.getElementById("modal-title").innerText = "Checkout";
     document.getElementById("crypto-selection").style.display = "none";
-}
+};
 
 async function createInvoice() {
     const itemNames = cart.map(item => item.name);
@@ -162,78 +164,76 @@ async function createInvoice() {
     const selectedCoin = coinDropdown.value;
 
     if (cart.length === 0) {
-        showNotification("Add some items first!")
+        showNotification("Add some items first!");
         return;
     }
 
-    const response = await fetch("/api/createcryptoinvoice",{
+    const response = await fetch("/api/createcryptoinvoice", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
             itemnames: itemNames, 
             coin: selectedCoin
         })
-    })
+    });
 
     const data = await response.json();
 
-    console.log(data)
+    console.log(data);
     
     if (data.invoice_url) {
         window.location.href = data.invoice_url;
     } else {
-        showNotification("Something went wrong with creating crypto invoice.")
+        showNotification("Something went wrong with creating crypto invoice.");
     }
-}
+};
 
-updateCountBadge()
+updateCountBadge();
 
 async function CheckIfUserLoggedIn() {
     try {
         const response = await fetch("/userloggedin", {
             method: "GET",
             credentials: "include"
-        })
+        });
 
         if (!response) {
-            throw new Error("GET request was not okay. " + response.statusText)
+            throw new Error("GET request was not okay. " + response.statusText);
         }
 
-        const data = await response.json()
+        const data = await response.json();
 
-        if (!loginBtnText || !loginBtn) {
-            return
-        }
+        if (!loginBtnText || !loginBtn) return;
 
         if (!data.loggedin) {
-            loginBtnText.innerText = "Login"
-            loginBtn.style.display = "flex"
+            loginBtnText.innerText = "Login";
+            loginBtn.style.display = "flex";
         } else {
-            loginBtnText.innerText = "Logout"
-            loginBtn.style.display = "flex"
+            loginBtnText.innerText = "Logout";
+            loginBtn.style.display = "flex";
         }
 
         if (data.isadmin) {
             const adminBtn = document.getElementById("admin-btn");
-            adminBtn.style.display = "flex"
+            adminBtn.style.display = "flex";
         }
 
     } catch(error) { 
-        console.log(error)
-        window.location.href = "/internalerror"
+        console.log(error);
+        window.location.href = "/internalerror";
     }
-}
+};
 
-CheckIfUserLoggedIn()
-logout()
-initializeCoinSelect()
+CheckIfUserLoggedIn();
+logout();
+initializeCoinSelect();
 
-window.toggleCart = toggleCart
-window.addToCart = addToCart
-window.removeItem = removeItem
-window.openCheckout = openCheckout
-window.closeCheckout = closeCheckout
-window.processPayment = processPayment
-window.showCryptoOptions = showCryptoOptions
-window.backToMethods = backToMethods
-window.createInvoice = createInvoice
+window.toggleCart = toggleCart;
+window.addToCart = addToCart;
+window.removeItem = removeItem;
+window.openCheckout = openCheckout;
+window.closeCheckout = closeCheckout;
+window.processPayment = processPayment;
+window.showCryptoOptions = showCryptoOptions;
+window.backToMethods = backToMethods;
+window.createInvoice = createInvoice;

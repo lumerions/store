@@ -1,4 +1,3 @@
-
 document.addEventListener("DOMContentLoaded", () => {
     const signupForm = document.getElementById("signupForm");
     if (!signupForm) return;
@@ -14,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const errorBox = document.getElementById("error-box");
         const errorMessage = document.getElementById("error-message");
 
-        errorBox.style.display = "none"
+        errorBox.style.display = "none";
         submitBtn.disabled = true;
         submitBtn.innerText = "Creating account...";
 
@@ -26,18 +25,18 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         if (password !== confirmPassword) {
-            showError("Passwords dont match.")
-            return
+            showError("Passwords dont match.");
+            return;
         }
 
         if (username.length > 20) {
-            showError("Username cannot be over 20 characters.")
-            return
+            showError("Username cannot be over 20 characters.");
+            return;
         }
 
         if (password.length < 8) {
-            showError("Passwords must be atleast 8 characters long.")
-            return
+            showError("Passwords must be atleast 8 characters long.");
+            return;
         }
 
         const usernameRegex = /^\w{3,20}$/;
@@ -51,34 +50,33 @@ document.addEventListener("DOMContentLoaded", () => {
             const response = await fetch("/signup", {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
                     confirmpassword: confirmPassword,
                     password: password,
                     username: username,
-                    email: email
-                })
-            })
+                    email: email,
+                }),
+            });
 
-            const responseJson = await response.json()
-
-            console.log(responseJson)
+            const responseJson = await response.json();
+            console.log(responseJson);
 
             if (!responseJson.success) {
-                const message = responseJson.message || responseJson.detail[0].msg
-                showError(message)
-                return
+                const message = responseJson.message || responseJson.detail[0].msg;
+                showError(message);
+                return;
             }
-            
-            window.location.replace("/")
-        } catch(error) {
-            console.log(error)
+
+            window.location.replace("/");
+        } catch (error) {
+            console.log(error);
             if (error.message) {
-                showError(error.message)
+                showError(error.message);
             } else {
-                showError(String(error))
+                showError(String(error));
             }
         }
-    })
-})
+    });
+});
