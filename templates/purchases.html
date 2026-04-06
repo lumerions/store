@@ -22,7 +22,7 @@
                 </button>
             {% endif %}
 
-            <a href="/purchases" id="purchases-link" class="icon-btn">
+            <a href="/purchases" id="purchases-link" class="icon-btn active">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" 
                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M6 6h15l-1.5 9h-13z"></path>
@@ -43,29 +43,43 @@
     </nav>
 
     <header class="hero">
-        <h1>Welcome to {{ store_name }}</h1>
-        <p>Premium items curated just for you.</p>
+        <h1>Order History</h1>
+        <p>Manage and track your previous orders.</p>
     </header>
 
     <div class="container">
-        <div class="grid">
-            {% for item in products %}
-            <div class="card product-card-hover {{ 'item-offsale' if item.offsale }}" 
-                 {% if not item.offsale %} onclick="location.href='/store/product/{{ item.id }}'" {% endif %}>
-                {% if item.image %}<img src="{{ item.image }}" alt="{{ item.name }}" class="product-img">
-                {% else %}<div class="product-img no-image">No Image</div>{% endif %}
-                <div class="card-content">
-                    <h3>{{ item.name }}</h3>
-                    <p class="price">{{ item.price }}</p>
-                    <p class="product-desc">{{ item.desc }}</p>
-                    <button class="add-btn {{ 'offsale-btn' if item.offsale }}" {{ 'disabled' if item.offsale }}
-                            {% if not item.offsale %} onclick="event.stopPropagation(); addToCart('{{ item.name }}', '{{ item.price }}', '{{ item.image }}')" {% endif %}>
-                        {{ 'Unavailable' if item.offsale else 'Add to Cart' }}
-                    </button>
+        {% if purchases %}
+            <div class="grid">
+                {% for order in purchases %}
+                <div class="card">
+                    {% if order.image %}
+                        <img src="{{ order.image }}" alt="{{ order.name }}" class="product-img">
+                    {% else %}
+                        <div class="product-img no-image">No Image</div>
+                    {% endif %}
+                    
+                    <div class="card-content">
+                        <div class="order-meta">
+                            <span class="order-date">{{ order.date }}</span>
+                            <span class="status-badge {{ order.status|lower }}">{{ order.status }}</span>
+                        </div>
+                        <h3>{{ order.name }}</h3>
+                        <p class="price">{{ order.price }}</p>
+                        <p class="product-desc">Order ID: #{{ order.id }}</p>
+                        
+                        <button class="add-btn" onclick="location.href='/store/product/{{ order.product_id }}'">
+                            Buy Again
+                        </button>
+                    </div>
                 </div>
+                {% endfor %}
             </div>
-            {% endfor %}
-        </div>
+        {% else %}
+            <div class="empty-state" style="text-align: center; padding: 50px 20px;">
+                <p>You haven't made any purchases yet.</p>
+                <a href="/" class="admin-btn" style="display: inline-block; margin-top: 20px; text-decoration: none;">Start Shopping</a>
+            </div>
+        {% endif %}
     </div>
 
     <script type="module" src="/javascript/index.js"></script>
