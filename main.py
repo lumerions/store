@@ -170,7 +170,12 @@ async def purchases(request: Request, SessionId: str = Cookie(None)):
                 rows = cursor.fetchall()
 
                 if not rows:
-                    return JSONResponse({"success": False, "message": "This user has no data."})
+                    return templates.TemplateResponse("purchases.html", {
+                        "request": request, 
+                        "store_name": cfg.StoreName,  
+                        "purchases": [],
+                        "sessiondata": {"loggedin": True}
+                    })
 
                 purchases = []
 
