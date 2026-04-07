@@ -127,20 +127,6 @@ async def purchases(request: Request, SessionId: str = Cookie(None)):
             "store_name": cfg.StoreName,  
             "purchases": []
         })
-    else:
-        return templates.TemplateResponse("purchases.html", {
-            "request": request, 
-            "store_name": cfg.StoreName,  
-            "purchases": [{
-                    "id": "rwrw3er4w3esewew",
-                    "name": "T-Shirt",
-                    "price": "$500",
-                    "image": "",
-                    "date": "2024-08-12 14:30:00",   
-                    "status": "Completed",
-                    "product_id": "rwrw3er4w3esewew"
-            }]
-        })
 
     SessionIdList = SessionId.split(":")
     SessionId = SessionIdList[0]
@@ -197,7 +183,6 @@ async def purchases(request: Request, SessionId: str = Cookie(None)):
                     "image": "",
                     "date": row["created_at"],   
                     "status": "Completed" if Delivered else "In Progress",
-                    "product_id": row["orderid"]
                 })
 
             redis.set(SessionId + "p", json.dumps(rows), ex=3600)

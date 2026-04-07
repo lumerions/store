@@ -42,10 +42,6 @@
                         <div class="row-price">{{ order.price }}</div>
                         <span class="status-badge {{ order.status|lower|replace(' ', '-') }}">{{ order.status }}</span>
                     </div>
-
-                    <button class="add-btn" style="width: auto; padding: 10px 20px;" onclick="location.href='/store/product/{{ order.product_id }}'">
-                        Reorder
-                    </button>
                 </div>
                 {% endfor %}
             </div>
