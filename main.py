@@ -120,7 +120,7 @@ async def internalerror(request: Request):
 
 @app.get("/purchases",response_class=HTMLResponse)
 @limiter.limit("60/minute")
-async def purchases(request: Request):
+async def purchases(request: Request, SessionId: str = Cookie(None)):
     try:
         if not SessionId:
             return templates.TemplateResponse("purchases.html", {
