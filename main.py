@@ -165,7 +165,7 @@ async def purchases(request: Request, SessionId: str = Cookie(None)):
                     SELECT * 
                     FROM purchases 
                     WHERE username = %s;
-                """, (SessionUsername))
+                """, (SessionUsername,))
 
                 rows = cursor.fetchall()
 
