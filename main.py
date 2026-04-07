@@ -131,7 +131,7 @@ async def purchases(request: Request, SessionId: str = Cookie(None)):
         return templates.TemplateResponse("purchases.html", {
             "request": request, 
             "store_name": cfg.StoreName,  
-            "purchases": [
+            "purchases": [{
                     "id": "rwrw3er4w3esewew",
                     "name": "T-Shirt",
                     "price": "$500",
@@ -139,7 +139,7 @@ async def purchases(request: Request, SessionId: str = Cookie(None)):
                     "date": "2024-08-12 14:30:00",   
                     "status": "Completed",
                     "product_id": "rwrw3er4w3esewew"
-            ]
+            }]
         })
 
     SessionIdList = SessionId.split(":")
