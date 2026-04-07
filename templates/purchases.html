@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
-{% block title %}{{ store_name }}{% endblock %}
+{% block title %}My Purchases | {{ store_name }}{% endblock %}
 {% block content %}
-    {% include "cart.html" %}
+    {# Removed {% include "cart.html" %} because the cart button is gone #}
 
     <nav>
         <a href="/" class="logo">{{ store_name }}</a>
@@ -10,19 +10,9 @@
                 <a href="/admin" id="admin-btn" class="admin-btn" style="display: flex;">Admin</a>
             {% endif %}
 
-            <div class="cart-link" onclick="toggleCart()">Cart <span id="cart-count">0</span></div>
+            {# Cart and Login/Logout buttons removed per request #}
 
-            {% if sessiondata.loggedin %}
-                <button type="button" id="login-link" class="login-btn" onclick="logout()">
-                    Logout
-                </button>
-            {% else %}
-                <button type="button" id="login-link" class="login-btn" onclick="location.href='/login'">
-                    Login
-                </button>
-            {% endif %}
-
-            <a href="/purchases" id="purchases-link" class="icon-btn active">
+            <a href="/purchases" id="purchases-link" class="icon-btn">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" 
                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M6 6h15l-1.5 9h-13z"></path>
@@ -61,7 +51,7 @@
                     <div class="card-content">
                         <div class="order-meta">
                             <span class="order-date">{{ order.date }}</span>
-                            <span class="status-badge {{ order.status|lower }}">{{ order.status }}</span>
+                            <span class="status-badge {{ order.status|lower|replace(' ', '-') }}">{{ order.status }}</span>
                         </div>
                         <h3>{{ order.name }}</h3>
                         <p class="price">{{ order.price }}</p>

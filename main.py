@@ -121,86 +121,92 @@ async def internalerror(request: Request):
 @app.get("/purchases",response_class=HTMLResponse)
 @limiter.limit("60/minute")
 async def purchases(request: Request, SessionId: str = Cookie(None)):
-    try:
-        if not SessionId:
-            return templates.TemplateResponse("purchases.html", {
-                "request": request, 
-                "store_name": cfg.StoreName,  
-                "purchases": [],
-                "sessiondata": {"loggedin": False}
-            })
-
-        SessionIdList = SessionId.split(":")
-        SessionId = SessionIdList[0]
-        SessionUsername = SessionIdList[1]
-        CachedPurchases = redis.get(SessionId + "p")
-
-        if CachedPurchases:
-            return templates.TemplateResponse("purchases.html", {
-                "request": request, 
-                "store_name": cfg.StoreName,  
-                "purchases": json.loads(CachedPurchases),
-                "sessiondata": {"loggedin": True}
-            })
-
-        with getPostgresConnection() as conn:
-            with conn.cursor(row_factory=dict_row) as cursor:
-                cursor.execute("""
-                    SELECT * 
-                    FROM accounts 
-                    WHERE username = %s AND sessionid = %s;
-                """, (SessionUsername, SessionId))
-
-                accountFind = cursor.fetchone()
-
-                if not accountFind:
-                    return templates.TemplateResponse("purchases.html", {
-                        "request": request, 
-                        "store_name": cfg.StoreName,  
-                        "purchases": [],
-                        "sessiondata": {"loggedin": False}
-                    })
-
-                cursor.execute("""
-                    SELECT * 
-                    FROM purchases 
-                    WHERE username = %s;
-                """, (SessionUsername,))
-
-                rows = cursor.fetchall()
-
-                if not rows:
-                    return templates.TemplateResponse("purchases.html", {
-                        "request": request, 
-                        "store_name": cfg.StoreName,  
-                        "purchases": [],
-                        "sessiondata": {"loggedin": True}
-                    })
-
-                purchases = []
-
-                for row in rows:
-                    Delivered = row["delivered"]
-                    purchases.append({
-                        "id": row["orderid"],
-                        "name": row["items"],
-                        "price": row["total"],
-                        "image": "",
-                        "date": row["created_at"],   
-                        "status": "Completed" if Delivered else "In Progress",
-                        "product_id": row["orderid"]
-                    })
-
-                redis.set(SessionId + "p", json.dumps(rows), ex=3600)
-
+    if not SessionId:
         return templates.TemplateResponse("purchases.html", {
             "request": request, 
             "store_name": cfg.StoreName,  
-            "purchases": rows,
-            "sessiondata": {"loggedin": True}
+            "purchases": []
         })
-    except Exception as e:
-        print(e)
+    else:
+        return templates.TemplateResponse("purchases.html", {
+            "request": request, 
+            "store_name": cfg.StoreName,  
+            "purchases": [
+                    "id": "rwrw3er4w3esewew",
+                    "name": "T-Shirt",
+                    "price": "$500",
+                    "image": "",
+                    "date": "2024-08-12 14:30:00",   
+                    "status": "Completed",
+                    "product_id": "rwrw3er4w3esewew"
+            ]
+        })
+
+    SessionIdList = SessionId.split(":")
+    SessionId = SessionIdList[0]
+    SessionUsername = SessionIdList[1]
+    CachedPurchases = redis.get(SessionId + "p")
+
+    if CachedPurchases:
+        return templates.TemplateResponse("purchases.html", {
+            "request": request, 
+            "store_name": cfg.StoreName,  
+            "purchases": json.loads(CachedPurchases)
+        })
+
+    with getPostgresConnection() as conn:
+        with conn.cursor(row_factory=dict_row) as cursor:
+            cursor.execute("""
+                SELECT * 
+                FROM accounts 
+                WHERE username = %s AND sessionid = %s;
+            """, (SessionUsername, SessionId))
+
+            accountFind = cursor.fetchone()
+
+            if not accountFind:
+                return templates.TemplateResponse("purchases.html", {
+                    "request": request, 
+                    "store_name": cfg.StoreName,  
+                    "purchases": []
+                })
+
+            cursor.execute("""
+                SELECT * 
+                FROM purchases 
+                WHERE username = %s;
+            """, (SessionUsername,))
+
+            rows = cursor.fetchall()
+
+            if not rows:
+                return templates.TemplateResponse("purchases.html", {
+                    "request": request, 
+                    "store_name": cfg.StoreName,  
+                    "purchases": []
+                })
+
+            purchases = []
+
+            for row in rows:
+                Delivered = row["delivered"]
+                purchases.append({
+                    "id": row["orderid"],
+                    "name": row["items"],
+                    "price": row["total"],
+                    "image": "",
+                    "date": row["created_at"],   
+                    "status": "Completed" if Delivered else "In Progress",
+                    "product_id": row["orderid"]
+                })
+
+            redis.set(SessionId + "p", json.dumps(rows), ex=3600)
+
+    return templates.TemplateResponse("purchases.html", {
+        "request": request, 
+        "store_name": cfg.StoreName,  
+        "purchases": rows
+    })
 
 @app.get("/settings",response_class=HTMLResponse)
 @limiter.limit("60/minute")
