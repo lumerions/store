@@ -1,16 +1,16 @@
 from pydantic_settings import BaseSettings
 
 class Config(BaseSettings):
-    RedisConnectionToken: str = "AfvMAAIncDFlYzAyODM4OGM0Nzg0ODBlODdkYzEyZTY3ZjExOWU3MHAxNjQ0NjA"
-    RedisConnectionURL: str = "https://steady-heron-64460.upstash.io"
-    PostgresConnection: str = "postgresql://neondb_owner:npg_nuc5NPZl0DJA@ep-tiny-waterfall-adb4f3n3-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require&connect_timeout=10&keepalives=1&keepalives_idle=30"
+    RedisConnectionToken: str = ""
+    RedisConnectionURL: str = ""
+    PostgresConnection: str = ""
     StoreName: str = "MODERN"
     AdminUsername: str = "Admin"
-    ResendAPIKey: str = "re_Pwq37GMA_BbyuATLy4p5eQhUWE9FyRwjy"
+    ResendAPIKey: str = ""
     EMAILLimit: int = 5
-    EMAILWindow: int = 15 * 60
-    NowPaymentsIPNSecret: str = "D/8dp2NgaLJXHk966I2NePXSMrFwCmos"
-    NowPaymentsAPISecret: str = "5FW8DQ8-H814VMB-HG04DHE-0W2JTN3"
+    EMAILWindow: int = 900
+    NowPaymentsIPNSecret: str = ""
+    NowPaymentsAPISecret: str = ""
     SUPPORTEDCOINS: dict = {
         "btc": "Bitcoin",
         "eth": "Ethereum",
