@@ -1,73 +1,59 @@
 {% extends "layout.html" %}
 {% block title %}My Purchases | {{ store_name }}{% endblock %}
 {% block content %}
-    {# Removed {% include "cart.html" %} because the cart button is gone #}
 
     <nav>
         <a href="/" class="logo">{{ store_name }}</a>
         <div class="nav-right">
-
-            {# Cart and Login/Logout buttons removed per request #}
-
             <a href="/purchases" id="purchases-link" class="icon-btn">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" 
-                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M6 6h15l-1.5 9h-13z"></path>
-                    <path d="M6 6L5 3H2"></path>
-                    <circle cx="9" cy="20" r="1"></circle>
-                    <circle cx="18" cy="20" r="1"></circle>
-                </svg>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6h15l-1.5 9h-13z"></path><path d="M6 6L5 3H2"></path><circle cx="9" cy="20" r="1"></circle><circle cx="18" cy="20" r="1"></circle></svg>
             </a>
-
             <a href="/settings" id="settings-link" class="icon-btn">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" 
-                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
-                    <circle cx="12" cy="12" r="3"/>
-                </svg>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
             </a>
         </div>
     </nav>
 
     <header class="hero">
         <h1>Order History</h1>
-        <p>Manage and track your previous orders.</p>
+        <p>Your recent transactions.</p>
     </header>
 
     <div class="container">
         {% if purchases %}
-            <div class="grid">
+            <div class="purchase-list">
                 {% for order in purchases %}
-                <div class="card">
+                <div class="purchase-row">
                     {% if order.image %}
-                        <img src="{{ order.image }}" alt="{{ order.name }}" class="product-img">
+                        <img src="{{ order.image }}" alt="{{ order.name }}" class="row-img">
                     {% else %}
-                        <div class="product-img no-image">No Image</div>
+                        <div class="row-img" style="display: flex; align-items: center; justify-content: center; font-size: 10px; text-align: center; border: 1px solid #ddd;">No Img</div>
                     {% endif %}
-                    
-                    <div class="card-content">
-                        <div class="order-meta">
-                            <span class="order-date">{{ order.date }}</span>
-                            <span class="status-badge {{ order.status|lower|replace(' ', '-') }}">{{ order.status }}</span>
-                        </div>
+
+                    <div class="row-info">
                         <h3>{{ order.name }}</h3>
-                        <p class="price">{{ order.price }}</p>
-                        <p class="product-desc">Order ID: #{{ order.id }}</p>
-                        
-                        <button class="add-btn" onclick="location.href='/store/product/{{ order.product_id }}'">
-                            Buy Again
-                        </button>
+                        <div class="row-meta">
+                            <span>Order ID: #{{ order.id }}</span> • 
+                            <span>{{ order.date }}</span>
+                        </div>
                     </div>
+
+                    <div class="row-status-container">
+                        <div class="row-price">{{ order.price }}</div>
+                        <span class="status-badge {{ order.status|lower|replace(' ', '-') }}">{{ order.status }}</span>
+                    </div>
+
+                    <button class="add-btn" style="width: auto; padding: 10px 20px;" onclick="location.href='/store/product/{{ order.product_id }}'">
+                        Reorder
+                    </button>
                 </div>
                 {% endfor %}
             </div>
         {% else %}
-            <div class="empty-state" style="text-align: center; padding: 50px 20px;">
-                <p>You haven't made any purchases yet.</p>
-                <a href="/" class="admin-btn" style="display: inline-block; margin-top: 20px; text-decoration: none;">Start Shopping</a>
+            <div class="empty-state">
+                <p>No history found.</p>
+                <a href="/" class="admin-btn">Shop Now</a>
             </div>
         {% endif %}
     </div>
-
-    <script type="module" src="/javascript/purchases.js"></script>
 {% endblock %}
