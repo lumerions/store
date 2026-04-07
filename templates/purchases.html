@@ -14,30 +14,20 @@
         </div>
     </nav>
 
-    <header class="hero">
-        <h1>Order History</h1>
-        <p>Your recent transactions.</p>
-    </header>
-
     <div class="container">
         {% if purchases %}
+            <header class="hero">
+                <h1>Order History</h1>
+                <p>Your recent transactions.</p>
+            </header>
+            
             <div class="purchase-list">
                 {% for order in purchases %}
                 <div class="purchase-row">
-                    {% if order.image %}
-                        <img src="{{ order.image }}" alt="{{ order.name }}" class="row-img">
-                    {% else %}
-                        <div class="row-img" style="display: flex; align-items: center; justify-content: center; font-size: 10px; text-align: center; border: 1px solid #ddd;">No Img</div>
-                    {% endif %}
-
                     <div class="row-info">
                         <h3>{{ order.name }}</h3>
-                        <div class="row-meta">
-                            <span>Order ID: #{{ order.id }}</span> • 
-                            <span>{{ order.date }}</span>
-                        </div>
+                        <div class="row-meta"><span>#{{ order.id }}</span> • <span>{{ order.date }}</span></div>
                     </div>
-
                     <div class="row-status-container">
                         <div class="row-price">{{ order.price }}</div>
                         <span class="status-badge {{ order.status|lower|replace(' ', '-') }}">{{ order.status }}</span>
@@ -46,9 +36,11 @@
                 {% endfor %}
             </div>
         {% else %}
-            <div class="empty-state">
-                <p>No history found.</p>
-                <a href="/" class="admin-btn">Shop Now</a>
+            <div class="empty-history-container">
+                <div class="empty-state">
+                    <p>No history found.</p>
+                    <a href="/" class="admin-btn">Shop Now</a>
+                </div>
             </div>
         {% endif %}
     </div>
