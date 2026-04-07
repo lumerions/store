@@ -121,59 +121,65 @@ async def internalerror(request: Request):
 @app.get("/purchases",response_class=HTMLResponse)
 @limiter.limit("60/minute")
 async def purchases(request: Request):
-    if not SessionId:
+    try:
+        if not SessionId:
+            return templates.TemplateResponse("purchases.html", {
+                "request": request, 
+                "store_name": cfg.StoreName,  
+                "purchases": [],
+                "sessiondata": {"loggedin": False}
+            })
+
+        SessionIdList = SessionId.split(":")
+        SessionId = SessionIdList[0]
+        SessionUsername = SessionIdList[1]
+        CachedPurchases = redis.get(SessionId + "p")
+
+        if CachedPurchases:
+            return templates.TemplateResponse("purchases.html", {
+                "request": request, 
+                "store_name": cfg.StoreName,  
+                "purchases": json.loads(CachedPurchases),
+                "sessiondata": {"loggedin": True}
+            })
+
+        with getPostgresConnection() as conn:
+            with conn.cursor(row_factory=dict_row) as cursor:
+                cursor.execute("""
+                    SELECT * 
+                    FROM purchases 
+                    WHERE username = %s AND sessionid = %s;
+                """, (SessionUsername, SessionId))
+
+                rows = cursor.fetchall()
+
+                if not rows:
+                    return JSONResponse({"success": False, "message": "This user has no data."})
+
+                purchases = []
+
+                for row in rows:
+                    Delivered = row["delivered"]
+                    purchases.append({
+                        "id": row["orderid"],
+                        "name": row["items"],
+                        "price": row["total"],
+                        "image": "",
+                        "date": row["created_at"],   
+                        "status": "Completed" if Delivered else "In Progress",
+                        "product_id": row["orderid"]
+                    })
+
+                redis.set(SessionId + "p", json.dumps(rows), ex=3600)
+
         return templates.TemplateResponse("purchases.html", {
             "request": request, 
             "store_name": cfg.StoreName,  
-            "purchases": []
+            "purchases": rows,
+            "sessiondata": {"loggedin": True}
         })
-
-    SessionIdList = SessionId.split(":")
-    SessionId = SessionIdList[0]
-    SessionUsername = SessionIdList[1]
-    CachedPurchases = redis.get(SessionId + "p")
-
-    if CachedPurchases:
-        return templates.TemplateResponse("purchases.html", {
-            "request": request, 
-            "store_name": cfg.StoreName,  
-            "purchases": json.loads(CachedPurchases)
-        })
-
-    with getPostgresConnection() as conn:
-        with conn.cursor(row_factory=dict_row) as cursor:
-            cursor.execute("""
-                SELECT * 
-                FROM purchases 
-                WHERE username = %s AND sessionid = %s;
-            """, (SessionUsername, SessionId))
-
-            rows = cursor.fetchall()
-
-            if not rows:
-                return JSONResponse({"success": False, "message": "This user has no data."})
-
-            purchases = []
-
-            for row in rows:
-                Delivered = row["delivered"]
-                purchases.append({
-                    "id": row["orderid"],
-                    "name": row["items"],
-                    "price": row["total"],
-                    "image": "",
-                    "date": row["created_at"],   
-                    "status": "Completed" if Delivered else "In Progress",
-                    "product_id": row["orderid"]
-                })
-
-            redis.set(SessionId + "p", json.dumps(rows), ex=3600)
-
-    return templates.TemplateResponse("purchases.html", {
-        "request": request, 
-        "store_name": cfg.StoreName,  
-        "purchases": rows
-    })
+    except Exception as e:
+        print(e)
 
 @app.get("/settings",response_class=HTMLResponse)
 @limiter.limit("60/minute")
