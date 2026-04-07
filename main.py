@@ -147,9 +147,25 @@ async def purchases(request: Request, SessionId: str = Cookie(None)):
             with conn.cursor(row_factory=dict_row) as cursor:
                 cursor.execute("""
                     SELECT * 
-                    FROM purchases 
+                    FROM accounts 
                     WHERE username = %s AND sessionid = %s;
                 """, (SessionUsername, SessionId))
+
+                accountFind = cursor.fetchone()
+
+                if not accountFind:
+                    return templates.TemplateResponse("purchases.html", {
+                        "request": request, 
+                        "store_name": cfg.StoreName,  
+                        "purchases": [],
+                        "sessiondata": {"loggedin": False}
+                    })
+
+                cursor.execute("""
+                    SELECT * 
+                    FROM purchases 
+                    WHERE username = %s;
+                """, (SessionUsername))
 
                 rows = cursor.fetchall()
 
